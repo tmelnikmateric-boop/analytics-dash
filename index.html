@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналитика загрузки файлов и товаров</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #e0e0e0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+        
+        .stats-card.main {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .stats-card.main .stats-number {
+            color: white;
+        }
+        
+        .stats-card.main .stats-label,
+        .stats-card.main .stats-icon {
+            color: white;
+        }
+        
+        .stats-icon {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .stats-label {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .stats-number {
+            font-size: 4em;
+            font-weight: 800;
+            color: #667eea;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin: 15px 0;
+        }
+        
+        .stats-unit {
+            font-size: 1.3em;
+            color: #666;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        .stats-subtitle {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .info-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 40px;
+            font-size: 1.2em;
+            color: #666;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .error {
+            background-color: #ffe6e6;
+            color: #cc0000;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #cc0000;
+            margin: 20px 0;
+        }
+        
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #ffc107;
+            margin: 20px 0;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #28a745;
+            margin: 20px 0;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+        
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-completed {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-available {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-loading {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #eee;
+            background-color: #f8f9fa;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .percentage {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            header {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .stats-number {
+                font-size: 3em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1em;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+        }
+        
+        .last-update {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .debug-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.85em;
+            color: #6c757d;
+            display: none;
+        }
+        
+        .debug-toggle {
+            cursor: pointer;
+            color: #667eea;
+            text-decoration: underline;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .emoji-info {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-pie"></i> Аналитика загрузки</h1>
+            <div class="subtitle">Статистика файлов и товаров по статусам</div>
+        </header>
+        
+        <div class="content">
+            <div id="warningMessage" class="warning" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i> Используются демо-данные. Для загрузки реальных данных нажмите "Обновить".
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i> Данные успешно обновлены!
+            </div>
+            
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner fa-spin fa-2x pulse"></i>
+                <p style="margin-top: 15px;">Анализ данных с листа "Рабочие группы"...</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #888;">
+                    <i class="fas fa-info-circle"></i> Учитываются эмоджи в статусах
+                </p>
+            </div>
+            
+            <div id="statsSection" style="display: none;">
+                <div class="emoji-info">
+                    <i class="fas fa-robot"></i> <strong>Анализ с учетом эмоджи:</strong> 
+                    "🆕 Доступна" → Доступно, "✅ Завершена" → Выполнено, "🔄 В работе" → В работе
+                </div>
+                
+                <h2 style="color: #333; margin-bottom: 25px; text-align: center;">
+                    <i class="fas fa-file-alt"></i> Статистика файлов
+                </h2>
+                
+                <div class="stats-grid">
+                    <div class="stats-card main">
+                        <div class="stats-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="stats-label">Всего файлов для загрузки</div>
+                        <div class="stats-number" id="totalFiles">0</div>
+                        <div class="stats-unit">файлов</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="totalProgress" style="width: 100%"></div>
+                        </div>
+                        <div class="stats-subtitle">Все строки в таблице</div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="stats-label">Файлов в работе</div>
+                        <div class="stats-number" id="filesInProgress">0</div>
+                        <div class="stats-unit">файлов</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="inProgressProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="percentage" id="inProgressPercent">0%</div>
+                        <div class="stats-subtitle">Статус: 🔄 В работе</div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stats-label">Файлов выполнено</div>
+                        <div class="stats-number" id="filesCompleted">0</div>
+                        <div class="stats-unit">файлов</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="completedProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="percentage" id="completedPercent">0%</div>
+                        <div class="stats-subtitle">Статус: ✅ Завершена</div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="stats-label">Файлов доступно</div>
+                        <div class="stats-number" id="filesAvailable">0</div>
+                        <div class="stats-unit">файлов</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="availableProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="percentage" id="availablePercent">0%</div>
+                        <div class="stats-subtitle">Статус: 🆕 Доступна</div>
+                    </div>
+                </div>
+                
+                <h2 style="color: #333; margin: 40px 0 25px; text-align: center;">
+                    <i class="fas fa-boxes"></i> Статистика товаров
+                </h2>
+                
+                <div class="stats-grid">
+                    <div class="stats-card main">
+                        <div class="stats-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="stats-label">Всего товаров</div>
+                        <div class="stats-number" id="totalProducts">0</div>
+                        <div class="stats-unit">товаров</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="totalProductsProgress" style="width: 100%"></div>
+                        </div>
+                        <div class="stats-subtitle">Сумма всех товаров</div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="stats-label">Товаров в работе</div>
+                        <div class="stats-number" id="productsInProgress">0</div>
+                        <div class="stats-unit">товаров</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="productsInProgressProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="percentage" id="productsInProgressPercent">0%</div>
+                        <div class="stats-subtitle">Из файлов в работе</div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="stats-label">Товаров выполнено</div>
+                        <div class="stats-number" id="productsCompleted">0</div>
+                        <div class="stats-unit">товаров</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="productsCompletedProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="percentage" id="productsCompletedPercent">0%</div>
+                        <div class="stats-subtitle">Из выполненных файлов</div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="stats-label">Товаров доступно</div>
+                        <div class="stats-number" id="productsAvailable">0</div>
+                        <div class="stats-unit">товаров</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="productsAvailableProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="percentage" id="productsAvailablePercent">0%</div>
+                        <div class="stats-subtitle">Из доступных файлов</div>
+                    </div>
+                </div>
+                
+                <div class="info-panel">
+                    <h3 style="color: #333; margin-bottom: 20px;">
+                        <i class="fas fa-info-circle"></i> Информация об анализе
+                    </h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-database"></i> Источник данных
+                            </div>
+                            <div class="info-value">Google Таблица</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-table"></i> Анализируемый лист
+                            </div>
+                            <div class="info-value">"Рабочие группы"</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-filter"></i> Анализ статусов
+                            </div>
+                            <div class="info-value">С учетом эмоджи ✅🔄🆕</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-calculator"></i> Подсчет товаров
+                            </div>
+                            <div class="info-value">Столбец: "Количество товаров"</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                        <div class="info-item" style="background: none; padding: 10px 0; border-left: none;">
+                            <div class="info-label">
+                                <i class="fas fa-chart-line"></i> Состояние системы
+                            </div>
+                            <div class="info-value">
+                                <span id="tableStatus" class="status-badge status-loading">
+                                    <i class="fas fa-spinner fa-spin"></i> Загрузка...
+                                </span>
+                            </div>
+                        </div>
+                        <div class="info-item" style="background: none; padding: 10px 0; border-left: none;">
+                            <div class="info-label">
+                                <i class="fas fa-clock"></i> Последнее обновление
+                            </div>
+                            <div class="info-value" id="lastUpdate">-</div>
+                        </div>
+                        <div class="info-item" style="background: none; padding: 10px 0; border-left: none;">
+                            <div class="info-label">
+                                <i class="fas fa-code"></i> Режим отладки
+                            </div>
+                            <div class="info-value">
+                                <span class="debug-toggle" onclick="toggleDebug()">Показать отладочную информацию</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="debugInfo" class="debug-info">
+                    <h4><i class="fas fa-bug"></i> Отладочная информация</h4>
+                    <div id="debugContent">
+                        Загрузите данные для отображения отладочной информации...
+                    </div>
+                </div>
+                
+                <div id="errorSection" style="display: none;"></div>
+                
+                <div class="buttons">
+                    <button onclick="loadData(true)" class="btn">
+                        <i class="fas fa-sync-alt"></i> Обновить данные
+                    </button>
+                    <button onclick="showDetailedReport()" class="btn btn-secondary">
+                        <i class="fas fa-file-alt"></i> Подробный отчет
+                    </button>
+                </div>
+                
+                <div class="last-update" id="autoUpdateInfo" style="text-align: center; margin-top: 20px;">
+                    Автоматическое обновление каждые 5 минут
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p><i class="fas fa-chart-bar"></i> Система аналитики загрузки файлов и товаров</p>
+            <p style="margin-top: 5px; font-size: 0.8em;">
+                Анализ данных выполняется в реальном времени на основе листа "Рабочие группы"
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // ID вашей Google Таблицы
+        const SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
+        // ID листа "Рабочие группы" (gid из ссылки)
+        const SHEET_GID = '1272115114';
+        // Название листа для отображения
+        const SHEET_NAME = 'Рабочие группы';
+        
+        // Названия столбцов для анализа (возможные варианты)
+        const STATUS_COLUMN_NAMES = ['Статус группы', 'Статус', 'Статус файла', 'Состояние'];
+        const PRODUCTS_COLUMN_NAMES = ['Количество товаров', 'Товары', 'Кол-во товаров', 'Количество'];
+        
+        // Эмоджи для статусов
+        const EMOJI_STATUSES = {
+            '🆕': 'available',     // Доступна
+            '✅': 'completed',     // Завершена
+            '🔄': 'in_progress'    // В работе
+        };
+        
+        // Переменные для данных
+        let allData = [];
+        let tableHeaders = [];
+        let isDemoData = false;
+        let lastUpdateTime = null;
+        
+        // Статистика
+        let stats = {
+            totalFiles: 0,
+            filesInProgress: 0,
+            filesCompleted: 0,
+            filesAvailable: 0,
+            totalProducts: 0,
+            productsInProgress: 0,
+            productsCompleted: 0,
+            productsAvailable: 0
+        };
+        
+        // Функция для загрузки и анализа данных
+        async function loadData(forceLoad = false) {
+            const loading = document.getElementById('loading');
+            const statsSection = document.getElementById('statsSection');
+            const errorSection = document.getElementById('errorSection');
+            const warningMessage = document.getElementById('warningMessage');
+            const successMessage = document.getElementById('successMessage');
+            const tableStatus = document.getElementById('tableStatus');
+            const debugContent = document.getElementById('debugContent');
+            
+            // Если уже загружены демо-данные и не принудительная загрузка
+            if (isDemoData && !forceLoad) {
+                warningMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                return;
+            }
+            
+            // Показываем индикатор загрузки
+            loading.style.display = 'block';
+            statsSection.style.display = 'none';
+            errorSection.style.display = 'none';
+            warningMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            errorSection.innerHTML = '';
+            
+            // Обновляем статус
+            tableStatus.className = 'status-badge status-loading';
+            tableStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Анализ данных...';
+            
+            try {
+                console.log(`Загрузка данных с листа "${SHEET_NAME}"...`);
+                
+                // Используем gid для указания конкретного листа
+                const csvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+                
+                // Альтернативный URL
+                const altCsvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
+                
+                let response;
+                
+                // Пробуем первый метод
+                try {
+                    console.log('Пробуем метод 1...');
+                    response = await fetch(csvUrl);
+                    if (!response.ok) {
+                        console.log('Метод 1 не сработал, пробуем метод 2...');
+                        throw new Error(`Метод 1: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.log('Пробуем альтернативный метод...');
+                    response = await fetch(altCsvUrl);
+                    if (!response.ok) {
+                        throw new Error(`Метод 2: ${response.status}`);
+                    }
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка загрузки: ${response.status} ${response.statusText}`);
+                }
+                
+                const csvText = await response.text();
+                
+                // Парсим CSV
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                
+                if (rows.length === 0) {
+                    throw new Error('Таблица пуста');
+                }
+                
+                console.log(`Загружено ${rows.length} строк`);
+                
+                // Парсим заголовки (первая строка)
+                tableHeaders = parseCSVRow(rows[0]);
+                
+                // Находим индексы нужных столбцов
+                const statusColumnIndex = findColumnIndex(STATUS_COLUMN_NAMES);
+                const productsColumnIndex = findColumnIndex(PRODUCTS_COLUMN_NAMES);
+                
+                console.log('Найденные индексы:', {
+                    status: statusColumnIndex,
+                    products: productsColumnIndex,
+                    headers: tableHeaders
+                });
+                
+                // Сбрасываем статистику
+                resetStats();
+                
+                // Парсим данные и анализируем
+                allData = [];
+                let debugInfo = [];
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const rowData = parseCSVRow(rows[i]);
+                    if (rowData.length > 0 && rowData.some(cell => cell && cell.trim() !== '')) {
+                        allData.push(rowData);
+                        
+                        // Анализируем строку
+                        const rowAnalysis = analyzeRowWithEmoji(rowData, statusColumnIndex, productsColumnIndex, i);
+                        debugInfo.push(rowAnalysis);
+                    }
+                }
+                
+                isDemoData = false;
+                
+                // Обновляем отображение
+                updateDisplay();
+                
+                // Обновляем отладочную информацию
+                debugContent.innerHTML = `
+                    <strong>Заголовки таблицы:</strong><br>
+                    ${tableHeaders.map((h, i) => `${i}: "${h}"`).join(', ')}<br><br>
+                    
+                    <strong>Найденные столбцы:</strong><br>
+                    • Статус: ${statusColumnIndex !== -1 ? `столбец ${statusColumnIndex} ("${tableHeaders[statusColumnIndex]}")` : 'не найден'}<br>
+                    • Товары: ${productsColumnIndex !== -1 ? `столбец ${productsColumnIndex} ("${tableHeaders[productsColumnIndex]}")` : 'не найден'}<br><br>
+                    
+                    <strong>Определение статусов по эмоджи:</strong><br>
+                    • 🆕 → Доступно<br>
+                    • ✅ → Выполнено<br>
+                    • 🔄 → В работе<br><br>
+                    
+                    <strong>Анализ строк (первые 10):</strong><br>
+                    ${debugInfo.slice(0, 10).map(info => info.text).join('<br>')}
+                    ${debugInfo.length > 10 ? `<br>... и еще ${debugInfo.length - 10} строк` : ''}<br><br>
+                    
+                    <strong>Итоговая статистика:</strong><br>
+                    • Всего строк: ${stats.totalFiles}<br>
+                    • В работе: ${stats.filesInProgress}<br>
+                    • Выполнено: ${stats.filesCompleted}<br>
+                    • Доступно: ${stats.filesAvailable}<br>
+                    • Всего товаров: ${stats.totalProducts}
+                `;
+                
+                // Показываем статистику
+                loading.style.display = 'none';
+                statsSection.style.display = 'block';
+                
+                // Показываем сообщение об успехе
+                successMessage.textContent = `✅ Анализ данных завершен! Обработано ${stats.totalFiles} файлов.`;
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+                
+                // Настраиваем автообновление
+                setupAutoRefresh();
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                
+                // Если не удалось загрузить данные, показываем демо-данные
+                loading.style.display = 'none';
+                
+                if (stats.totalFiles === 0 || forceLoad) {
+                    showDemoData();
+                    warningMessage.style.display = 'block';
+                    warningMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Не удалось загрузить данные. Показаны демо-данные.`;
+                } else {
+                    // Если уже есть данные, показываем их
+                    statsSection.style.display = 'block';
+                    tableStatus.className = 'status-badge status-warning';
+                    tableStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Кэшированные данные';
+                    updateLastUpdateTime();
+                }
+                
+                errorSection.style.display = 'block';
+                errorSection.innerHTML = `
+                    <div class="error">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Ошибка анализа данных</h3>
+                        <p><strong>${error.message}</strong></p>
+                        <p>Убедитесь, что в таблице есть нужные столбцы</p>
+                        <div style="margin-top: 15px;">
+                            <button onclick="loadData(true)" class="btn" style="font-size: 0.9em; padding: 10px 20px;">
+                                <i class="fas fa-redo"></i> Попробовать снова
+                            </button>
+                            <button onclick="showDemoData()" class="btn btn-secondary" style="font-size: 0.9em; padding: 10px 20px; margin-left: 10px;">
+                                <i class="fas fa-eye"></i> Демо-режим
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Функция для поиска индекса столбца по списку возможных названий
+        function findColumnIndex(columnNames) {
+            for (const columnName of columnNames) {
+                // Ищем точное совпадение
+                let index = tableHeaders.findIndex(header => 
+                    header && header.trim().toLowerCase() === columnName.toLowerCase()
+                );
+                
+                // Если не нашли точного совпадения, ищем частичное
+                if (index === -1) {
+                    index = tableHeaders.findIndex(header => 
+                        header && header.toLowerCase().includes(columnName.toLowerCase())
+                    );
+                }
+                
+                // Если нашли, возвращаем индекс
+                if (index !== -1) {
+                    return index;
+                }
+            }
+            
+            return -1;
+        }
+        
+        // Функция для анализа строки данных с учетом эмоджи
+        function analyzeRowWithEmoji(rowData, statusIndex, productsIndex, rowNumber) {
+            // Увеличиваем счетчик файлов
+            stats.totalFiles++;
+            
+            // Анализируем статус
+            let status = '';
+            let statusType = 'unknown';
+            let emoji = '';
+            
+            if (statusIndex !== -1 && rowData[statusIndex]) {
+                status = rowData[statusIndex].trim();
+                
+                // Определяем статус по эмоджи
+                emoji = getFirstEmoji(status);
+                
+                if (emoji === '🆕') {
+                    statusType = 'available';
+                } else if (emoji === '✅') {
+                    statusType = 'completed';
+                } else if (emoji === '🔄') {
+                    statusType = 'in_progress';
+                } else {
+                    // Если нет эмоджи, анализируем текст
+                    const statusLower = status.toLowerCase();
+                    if (statusLower.includes('заверш') || statusLower.includes('выполн')) {
+                        statusType = 'completed';
+                    } else if (statusLower.includes('доступ')) {
+                        statusType = 'available';
+                    } else if (statusLower.includes('работ')) {
+                        statusType = 'in_progress';
+                    }
+                }
+            }
+            
+            // Анализируем количество товаров
+            let productsCount = 0;
+            if (productsIndex !== -1 && rowData[productsIndex]) {
+                const productsStr = rowData[productsIndex].trim();
+                // Убираем все нецифровые символы, кроме точки и запятой
+                const cleanedStr = productsStr.replace(/[^\d.,]/g, '');
+                // Заменяем запятую на точку для парсинга
+                const normalizedStr = cleanedStr.replace(',', '.');
+                productsCount = parseFloat(normalizedStr) || 0;
+            }
+            
+            // Добавляем товары к общему количеству
+            stats.totalProducts += productsCount;
+            
+            // Распределяем по статусам
+            switch(statusType) {
+                case 'completed':
+                    stats.filesCompleted++;
+                    stats.productsCompleted += productsCount;
+                    break;
+                    
+                case 'available':
+                    stats.filesAvailable++;
+                    stats.productsAvailable += productsCount;
+                    break;
+                    
+                case 'in_progress':
+                    stats.filesInProgress++;
+                    stats.productsInProgress += productsCount;
+                    break;
+                    
+                default:
+                    // Если статус не определен, считаем как "в работе"
+                    stats.filesInProgress++;
+                    stats.productsInProgress += productsCount;
+            }
+            
+            // Возвращаем информацию для отладки
+            return {
+                text: `Строка ${rowNumber}: "${status}" (эмоджи: ${emoji || 'нет'}) → ${statusType}, товаров=${productsCount}`,
+                status: status,
+                emoji: emoji,
+                products: productsCount,
+                statusType: statusType
+            };
+        }
+        
+        // Функция для получения первого эмоджи из строки
+        function getFirstEmoji(text) {
+            if (!text) return '';
+            
+            // Регулярное выражение для поиска эмоджи
+            const emojiRegex = /[\p{Emoji}]/u;
+            const match = text.match(emojiRegex);
+            
+            if (match && match[0] in EMOJI_STATUSES) {
+                return match[0];
+            }
+            
+            return '';
+        }
+        
+        // Функция для сброса статистики
+        function resetStats() {
+            stats = {
+                totalFiles: 0,
+                filesInProgress: 0,
+                filesCompleted: 0,
+                filesAvailable: 0,
+                totalProducts: 0,
+                productsInProgress: 0,
+                productsCompleted: 0,
+                productsAvailable: 0
+            };
+        }
+        
+        // Функция для обновления отображения
+        function updateDisplay() {
+            // Обновляем основные показатели файлов
+            document.getElementById('totalFiles').textContent = stats.totalFiles;
+            document.getElementById('filesInProgress').textContent = stats.filesInProgress;
+            document.getElementById('filesCompleted').textContent = stats.filesCompleted;
+            document.getElementById('filesAvailable').textContent = stats.filesAvailable;
+            
+            // Обновляем основные показатели товаров
+            document.getElementById('totalProducts').textContent = stats.totalProducts;
+            document.getElementById('productsInProgress').textContent = stats.productsInProgress;
+            document.getElementById('productsCompleted').textContent = stats.productsCompleted;
+            document.getElementById('productsAvailable').textContent = stats.productsAvailable;
+            
+            // Рассчитываем проценты для файлов
+            const inProgressPercent = stats.totalFiles > 0 ? Math.round((stats.filesInProgress / stats.totalFiles) * 100) : 0;
+            const completedPercent = stats.totalFiles > 0 ? Math.round((stats.filesCompleted / stats.totalFiles) * 100) : 0;
+            const availablePercent = stats.totalFiles > 0 ? Math.round((stats.filesAvailable / stats.totalFiles) * 100) : 0;
+            
+            // Рассчитываем проценты для товаров
+            const productsInProgressPercent = stats.totalProducts > 0 ? Math.round((stats.productsInProgress / stats.totalProducts) * 100) : 0;
+            const productsCompletedPercent = stats.totalProducts > 0 ? Math.round((stats.productsCompleted / stats.totalProducts) * 100) : 0;
+            const productsAvailablePercent = stats.totalProducts > 0 ? Math.round((stats.productsAvailable / stats.totalProducts) * 100) : 0;
+            
+            // Обновляем прогресс-бары и проценты для файлов
+            document.getElementById('inProgressProgress').style.width = `${inProgressPercent}%`;
+            document.getElementById('inProgressPercent').textContent = `${inProgressPercent}%`;
+            
+            document.getElementById('completedProgress').style.width = `${completedPercent}%`;
+            document.getElementById('completedPercent').textContent = `${completedPercent}%`;
+            
+            document.getElementById('availableProgress').style.width = `${availablePercent}%`;
+            document.getElementById('availablePercent').textContent = `${availablePercent}%`;
+            
+            // Обновляем прогресс-бары и проценты для товаров
+            document.getElementById('productsInProgressProgress').style.width = `${productsInProgressPercent}%`;
+            document.getElementById('productsInProgressPercent').textContent = `${productsInProgressPercent}%`;
+            
+            document.getElementById('productsCompletedProgress').style.width = `${productsCompletedPercent}%`;
+            document.getElementById('productsCompletedPercent').textContent = `${productsCompletedPercent}%`;
+            
+            document.getElementById('productsAvailableProgress').style.width = `${productsAvailablePercent}%`;
+            document.getElementById('productsAvailablePercent').textContent = `${productsAvailablePercent}%`;
+            
+            // Обновляем статус
+            const tableStatus = document.getElementById('tableStatus');
+            if (isDemoData) {
+                tableStatus.className = 'status-badge status-warning';
+                tableStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Демо-данные';
+            } else {
+                tableStatus.className = 'status-badge status-active';
+                tableStatus.innerHTML = '<i class="fas fa-check-circle"></i> Актуально';
+            }
+            
+            // Обновляем время последнего обновления
+            updateLastUpdateTime();
+            
+            // Анимация обновления
+            animateNumbers();
+        }
+        
+        // Функция для обновления времени последнего обновления
+        function updateLastUpdateTime() {
+            lastUpdateTime = new Date();
+            document.getElementById('lastUpdate').textContent = lastUpdateTime.toLocaleString('ru-RU');
+            
+            // Обновляем информацию об автообновлении
+            const nextUpdate = new Date(lastUpdateTime.getTime() + 5 * 60 * 1000);
+            document.getElementById('autoUpdateInfo').textContent = 
+                `Следующее обновление: ${nextUpdate.getHours().toString().padStart(2, '0')}:${nextUpdate.getMinutes().toString().padStart(2, '0')}`;
+        }
+        
+        // Функция для анимации чисел
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.stats-number');
+            numbers.forEach(number => {
+                number.classList.add('pulse');
+                setTimeout(() => {
+                    number.classList.remove('pulse');
+                }, 1000);
+            });
+        }
+        
+        // Функция для показа демо-данных
+        function showDemoData() {
+            const loading = document.getElementById('loading');
+            const statsSection = document.getElementById('statsSection');
+            const errorSection = document.getElementById('errorSection');
+            const warningMessage = document.getElementById('warningMessage');
+            
+            // Генерируем демо-статистику на основе реальных данных
+            resetStats();
+            
+            // Демо-данные: 1 в работе, 2 выполнено, остальные доступно
+            stats.totalFiles = 8;
+            stats.filesInProgress = 1;    // В работе
+            stats.filesCompleted = 2;     // Выполнено
+            stats.filesAvailable = stats.totalFiles - stats.filesInProgress - stats.filesCompleted; // Доступно
+            
+            stats.totalProducts = 150;
+            stats.productsInProgress = 20;    // Товары в работе
+            stats.productsCompleted = 60;     // Товары выполнено
+            stats.productsAvailable = stats.totalProducts - stats.productsInProgress - stats.productsCompleted; // Товары доступно
+            
+            isDemoData = true;
+            
+            // Обновляем отображение
+            updateDisplay();
+            
+            // Показываем статистику
+            loading.style.display = 'none';
+            statsSection.style.display = 'block';
+            errorSection.style.display = 'none';
+            warningMessage.style.display = 'block';
+            warningMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Используются демо-данные. Для загрузки реальных данных нажмите "Обновить".`;
+        }
+        
+        // Функция для показа подробного отчета
+        function showDetailedReport() {
+            const report = `
+📊 **ДЕТАЛЬНЫЙ ОТЧЕТ ПО АНАЛИЗУ ДАННЫХ**
+
+**ИСТОЧНИК ДАННЫХ:**
+• Лист таблицы: "${SHEET_NAME}"
+• Всего строк: ${stats.totalFiles}
+• Время анализа: ${lastUpdateTime ? lastUpdateTime.toLocaleString('ru-RU') : 'Не проведен'}
+
+**СТАТИСТИКА ФАЙЛОВ:**
+• Всего файлов: ${stats.totalFiles}
+• Файлов в работе: ${stats.filesInProgress} (${stats.totalFiles > 0 ? Math.round((stats.filesInProgress / stats.totalFiles) * 100) : 0}%)
+• Файлов выполнено: ${stats.filesCompleted} (${stats.totalFiles > 0 ? Math.round((stats.filesCompleted / stats.totalFiles) * 100) : 0}%)
+• Файлов доступно: ${stats.filesAvailable} (${stats.totalFiles > 0 ? Math.round((stats.filesAvailable / stats.totalFiles) * 100) : 0}%)
+
+**СТАТИСТИКА ТОВАРОВ:**
+• Всего товаров: ${stats.totalProducts}
+• Товаров в работе: ${stats.productsInProgress} (${stats.totalProducts > 0 ? Math.round((stats.productsInProgress / stats.totalProducts) * 100) : 0}%)
+• Товаров выполнено: ${stats.productsCompleted} (${stats.totalProducts > 0 ? Math.round((stats.productsCompleted / stats.totalProducts) * 100) : 0}%)
+• Товаров доступно: ${stats.productsAvailable} (${stats.totalProducts > 0 ? Math.round((stats.productsAvailable / stats.totalProducts) * 100) : 0}%)
+
+**АНАЛИЗ ПО СТОЛБЦАМ:**
+• Анализ статусов: "${STATUS_COLUMN_NAMES[0]}" (с учетом эмоджи)
+• Подсчет товаров: "${PRODUCTS_COLUMN_NAMES[0]}"
+
+**РАСПОЗНАВАНИЕ ЭМОДЖИ:**
+• 🆕 → Доступно
+• ✅ → Выполнено
+• 🔄 → В работе
+
+**РЕЖИМ ДАННЫХ:** ${isDemoData ? 'Демо-данные ⚠️' : 'Реальные данные ✅'}
+            `;
+            
+            // Показываем отчет в модальном окне
+            alert(report);
+        }
+        
+        // Функция для переключения отладочной информации
+        function toggleDebug() {
+            const debugInfo = document.getElementById('debugInfo');
+            const toggleBtn = document.querySelector('.debug-toggle');
+            
+            if (debugInfo.style.display === 'block') {
+                debugInfo.style.display = 'none';
+                toggleBtn.textContent = 'Показать отладочную информацию';
+            } else {
+                debugInfo.style.display = 'block';
+                toggleBtn.textContent = 'Скрыть отладочную информацию';
+            }
+        }
+        
+        // Функция для настройки автообновления
+        function setupAutoRefresh() {
+            // Очищаем предыдущий интервал
+            if (window.refreshInterval) {
+                clearInterval(window.refreshInterval);
+            }
+            
+            // Устанавливаем новый интервал (5 минут)
+            window.refreshInterval = setInterval(() => {
+                console.log('Автообновление данных...');
+                loadData(true);
+            }, 5 * 60 * 1000);
+        }
+        
+        // Функция для парсинга CSV строки
+        function parseCSVRow(row) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < row.length; i++) {
+                const char = row[i];
+                const nextChar = row[i + 1];
+                
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        current += '"';
+                        i++; // Пропускаем следующий символ
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current);
+            return result.map(cell => cell.trim());
+        }
+        
+        // Загружаем данные при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+        
+        // Обновляем данные при видимости страницы
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && !isDemoData) {
+                loadData(true);
+            }
+        });
+    </script>
+</body>
+</html>
