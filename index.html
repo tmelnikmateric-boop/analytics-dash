@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аналитика загрузки файлов и товаров</title>
+    <title>Загрузка новых товаров на сайт</title>
     <style>
         /* Все стили остаются без изменений */
         * {
@@ -30,7 +30,7 @@
         }
         
         header {
-            background: linear-gradient(90deg, #667eea 0%, #FFB500 100%);
+            background: linear-gradient(90deg, #ff8c00 0%, #FFB500 100%);
             color: white;
             padding: 40px 30px;
             text-align: center;
@@ -622,9 +622,9 @@
 
     <div class="container">
         <header>
-            <h1><i class="fas fa-chart-pie"></i> Аналитика загрузки</h1>
-            <div class="subtitle">Статистика файлов и товаров по статусам</div>
-            
+            <h1><i class="fas fa-chart-pie"></i>Загрузка новых товаров на сайт</h1>
+            <div class="subtitle">Очередь загрузки товаров</div>
+        
             <!-- Кнопка "Правила работы" -->
             <div class="header-buttons">
                 <button class="btn-rules" onclick="openRulesModal()">
@@ -655,34 +655,34 @@
                 <div class="products-summary">
                     <div class="summary-card important">
                         <div class="summary-label">
-                            <i class="fas fa-cart-plus"></i> Товаров на добавление
+                            <i class="fas fa-cart-plus"></i> Количество новых товаров на добавление
                         </div>
                         <div class="summary-number" id="productsToAdd">0</div>
-                        <div class="summary-subtitle">Сумма товаров в работе и доступных</div>
+                        
                     </div>
                     
                     <div class="summary-card">
                         <div class="summary-label">
-                            <i class="fas fa-check-circle"></i> Товаров добавлено
+                            <i class="fas fa-check-circle"></i>Количество добавленных товаров
                         </div>
                         <div class="summary-number" id="productsAdded">0</div>
-                        <div class="summary-subtitle">Товары из завершенных файлов</div>
+                       
                     </div>
                 </div>
                 
                 <!-- Таблица файлов -->
                 <div class="files-table-container">
                     <h2 style="color: #333; margin-bottom: 25px; text-align: center;">
-                        <i class="fas fa-file-alt"></i> Файлы для обработки
+                        <i class="fas fa-file-alt"></i>Файлы для проработки
                     </h2>
                     
                     <table class="files-table">
                         <thead>
                             <tr>
-                                <th><i class="fas fa-file"></i> Имя файла</th>
-                                <th><i class="fas fa-boxes"></i> Количество товаров</th>
-                                <th><i class="fas fa-calendar-plus"></i> Дата добавления</th>
-                                <th><i class="fas fa-info-circle"></i> Статус</th>
+                                <th><i class="fas fa-file"></i>Название файла</th>
+                                <th><i class="fas fa-boxes"></i>Количество товаров из файла</th>
+                                <th><i class="fas fa-calendar-plus"></i>Дата принятия файла от менеджера</th>
+                                <th><i class="fas fa-info-circle"></i>Статус</th>
                             </tr>
                         </thead>
                         <tbody id="filesTableBody">
@@ -699,10 +699,10 @@
                     <div class="chart-header">
                         <div>
                             <div class="chart-title">
-                                <i class="fas fa-chart-bar"></i> Динамика добавления товаров по месяцам
+                                <i class="fas fa-chart-bar"></i>Динамика добавления товаров по месяцам
                             </div>
                             <div class="chart-subtitle">
-                                Сумма товаров в статусе "Выполнено" по месяцам (из столбца "Дата завершения работы")
+                                Сумма товаров в статусе "Выполнено" по месяцам
                             </div>
                         </div>
                         <div style="color: #666; font-size: 0.9em;">
