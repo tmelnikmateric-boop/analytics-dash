@@ -14,7 +14,6 @@
         }
         
         body {
-            
             min-height: 100vh;
             padding: 20px;
         }
@@ -105,8 +104,6 @@
             transform: translateY(-5px);
         }
         
-        
-        
         .summary-card.important .summary-number {
             color: #a7334e;
         }
@@ -128,7 +125,6 @@
             gap: 10px;
         }
         
-                
         .summary-subtitle {
             font-size: 0.9em;
             color: #777;
@@ -197,6 +193,23 @@
         }
         
         .status-available {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        /* Стили для срочности */
+        .urgency-high {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+        }
+        
+        .urgency-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .urgency-low {
             background-color: #d1ecf1;
             color: #0c5460;
         }
@@ -632,10 +645,10 @@
                     
                     <div class="summary-card">
                         <div class="summary-label">
-                            <i class="fas fa-check-circle"></i> Количество добавленных товаров
+                            <i class="fas fa-check-circle"></i> Товаров завершено в текущем месяце
                         </div>
-                        <div class="summary-number" id="productsAdded">0</div>
-                       
+                        <div class="summary-number" id="productsCompletedThisMonth">0</div>
+                        <div class="summary-subtitle">Только товары со статусом "Завершено"</div>
                     </div>
                 </div>
                 
@@ -652,6 +665,7 @@
                                 <th><i class="fas fa-boxes"></i> Количество товаров из файла</th>
                                 <th><i class="fas fa-calendar-plus"></i> Дата принятия файла от менеджера</th>
                                 <th><i class="fas fa-info-circle"></i> Статус</th>
+                                <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
                         </thead>
                         <tbody id="filesTableBody">
@@ -699,9 +713,6 @@
                     <button onclick="loadData(true)" class="btn">
                         <i class="fas fa-sync-alt"></i> Обновить данные
                     </button>
-                    <button onclick="showDetailedReport()" class="btn btn-secondary">
-                        <i class="fas fa-file-alt"></i> Подробный отчет
-                    </button>
                 </div>
             </div>
         </div>
@@ -722,6 +733,7 @@
         const FILENAME_COLUMN_NAMES = ['Имя файла', 'Файл', 'Название файла', 'File name'];
         const COMPLETION_DATE_COLUMN_NAMES = ['Дата завершения работы', 'Дата завершения', 'Дата окончания', 'Completion date'];
         const ADDITION_DATE_COLUMN_NAMES = ['Дата добавления файла', 'Дата добавления', 'Дата загрузки', 'Upload date', 'Дата создания'];
+        const URGENCY_COLUMN_NAMES = ['Срочность', 'Срочно', 'Приоритет', 'Urgency'];
         
         // Эмоджи для статусов
         const EMOJI_STATUSES = {
@@ -742,7 +754,7 @@
         
         // Основные показатели
         let productsToAdd = 0;
-        let productsAdded = 0;
+        let productsCompletedThisMonth = 0;
         
         // Массив для файлов (без выполненных)
         let filesForProcessing = [];
@@ -811,10 +823,11 @@
                 const filenameColumnIndex = findColumnIndex(FILENAME_COLUMN_NAMES);
                 const completionDateColumnIndex = findColumnIndex(COMPLETION_DATE_COLUMN_NAMES);
                 const additionDateColumnIndex = findColumnIndex(ADDITION_DATE_COLUMN_NAMES);
+                const urgencyColumnIndex = findColumnIndex(URGENCY_COLUMN_NAMES);
                 
                 // Сбрасываем данные
                 productsToAdd = 0;
-                productsAdded = 0;
+                productsCompletedThisMonth = 0;
                 filesForProcessing = [];
                 monthlyData = [];
                 allData = [];
@@ -822,6 +835,11 @@
                 // Объект для сбора данных по месяцам
                 const monthlyTotals = {};
                 const debugData = [];
+                
+                // Текущая дата для определения текущего месяца
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth(); // 0-11
+                const currentYear = currentDate.getFullYear();
                 
                 // Парсим и анализируем данные
                 for (let i = 1; i < rows.length; i++) {
@@ -833,7 +851,7 @@
                     // Анализируем строку
                     const analysis = analyzeRow(rowData, statusColumnIndex, productsColumnIndex, 
                                                filenameColumnIndex, completionDateColumnIndex, 
-                                               additionDateColumnIndex, i);
+                                               additionDateColumnIndex, urgencyColumnIndex, i);
                     
                     // Отладка
                     debugData.push({
@@ -843,7 +861,9 @@
                         productsCount: analysis.productsCount,
                         additionDate: analysis.additionDateFormatted,
                         dateStr: analysis.dateStr,
-                        completionMonth: analysis.completionMonth
+                        completionMonth: analysis.completionMonth,
+                        isCurrentMonth: analysis.isCurrentMonth,
+                        urgency: analysis.urgency
                     });
                     
                     // Добавляем в массив файлов для обработки, если не "завершено"
@@ -855,13 +875,18 @@
                             statusType: analysis.statusType,
                             additionDate: analysis.additionDateFormatted,
                             additionDateOriginal: analysis.additionDateOriginal,
+                            urgency: analysis.urgency,
+                            urgencyClass: getUrgencyClass(analysis.urgency),
                             rowIndex: i
                         });
                     }
                     
                     // Считаем товары для верхних показателей
                     if (analysis.statusType === 'completed') {
-                        productsAdded += analysis.productsCount;
+                        // Считаем товары завершенные в текущем месяце
+                        if (analysis.isCurrentMonth) {
+                            productsCompletedThisMonth += analysis.productsCount;
+                        }
                         
                         // Добавляем в статистику по месяцам для графика
                         if (analysis.completionMonth) {
@@ -877,6 +902,7 @@
                 
                 console.log('Отладочная информация:', debugData);
                 console.log('Итоги по месяцам:', monthlyTotals);
+                console.log('Товаров завершено в текущем месяце:', productsCompletedThisMonth);
                 
                 // Преобразуем данные по месяцам в массив для графика
                 monthlyData = Object.keys(monthlyTotals)
@@ -910,7 +936,7 @@
         
         // Функция для анализа строки
         function analyzeRow(rowData, statusIndex, productsIndex, filenameIndex, 
-                           completionDateIndex, additionDateIndex, rowNumber) {
+                           completionDateIndex, additionDateIndex, urgencyIndex, rowNumber) {
             let status = '';
             let statusType = 'unknown';
             let productsCount = 0;
@@ -920,6 +946,8 @@
             let dateStr = '';
             let additionDateOriginal = '';
             let additionDateFormatted = '';
+            let urgency = '';
+            let isCurrentMonth = false;
             
             // Получаем статус
             if (statusIndex !== -1 && rowData[statusIndex]) {
@@ -946,6 +974,11 @@
                 additionDateFormatted = formatDate(additionDateOriginal);
             }
             
+            // Получаем срочность
+            if (urgencyIndex !== -1 && rowData[urgencyIndex]) {
+                urgency = rowData[urgencyIndex].trim();
+            }
+            
             // Получаем дату завершения
             if (completionDateIndex !== -1 && rowData[completionDateIndex]) {
                 dateStr = rowData[completionDateIndex].trim();
@@ -964,6 +997,9 @@
                             
                             if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
                                 completionDate = new Date(year, month, day);
+                                
+                                // Проверяем, является ли дата текущим месяцем
+                                isCurrentMonth = (month === currentMonth && year === currentYear);
                                 
                                 // Форматируем как "Декабрь 2025"
                                 const monthName = MONTH_NAMES_RU[month];
@@ -985,8 +1021,25 @@
                 completionMonth: completionMonth,
                 dateStr: dateStr,
                 additionDateOriginal: additionDateOriginal,
-                additionDateFormatted: additionDateFormatted
+                additionDateFormatted: additionDateFormatted,
+                urgency: urgency,
+                isCurrentMonth: isCurrentMonth
             };
+        }
+        
+        // Функция для определения класса срочности
+        function getUrgencyClass(urgencyText) {
+            if (!urgencyText) return 'urgency-low';
+            
+            const urgencyLower = urgencyText.toLowerCase();
+            
+            if (urgencyLower.includes('высок') || urgencyLower.includes('срочн') || urgencyLower.includes('urgent') || urgencyLower.includes('high')) {
+                return 'urgency-high';
+            } else if (urgencyLower.includes('средн') || urgencyLower.includes('medium') || urgencyLower.includes('normal')) {
+                return 'urgency-medium';
+            } else {
+                return 'urgency-low';
+            }
         }
         
         // Функция для форматирования даты
@@ -1095,7 +1148,7 @@
         function updateDisplay() {
             // Обновляем основные показатели
             document.getElementById('productsToAdd').textContent = productsToAdd;
-            document.getElementById('productsAdded').textContent = productsAdded;
+            document.getElementById('productsCompletedThisMonth').textContent = productsCompletedThisMonth;
             
             // Обновляем таблицу файлов
             updateFilesTable();
@@ -1115,7 +1168,7 @@
             if (filesForProcessing.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="4" style="text-align: center; padding: 40px; color: #666;">
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
                             <i class="fas fa-info-circle"></i> Нет файлов для обработки
                         </td>
                     </tr>
@@ -1127,6 +1180,8 @@
             filesForProcessing.forEach((file, index) => {
                 const statusClass = `status-${file.statusType}`;
                 const statusText = getStatusText(file.statusType);
+                const urgencyClass = file.urgencyClass || 'urgency-low';
+                const urgencyText = file.urgency || 'Не указана';
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -1134,6 +1189,7 @@
                     <td><span class="highlight">${file.productsCount}</span> товаров</td>
                     <td class="date-cell">${file.additionDate || 'Не указана'}</td>
                     <td><span class="file-status ${statusClass}">${statusText}</span></td>
+                    <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -1283,15 +1339,49 @@
             const statsSection = document.getElementById('statsSection');
             const warningMessage = document.getElementById('warningMessage');
             
+            // Текущая дата для демо-данных
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+            const currentMonthName = MONTH_NAMES_RU[currentMonth];
+            
             // Демо-данные
             productsToAdd = 85;
-            productsAdded = 65;
+            productsCompletedThisMonth = 42; // Демо-значение для текущего месяца
             
             filesForProcessing = [
-                { filename: 'Каталог_товаров_1.xlsx', productsCount: 25, statusType: 'in_progress', additionDate: '15.03.2024' },
-                { filename: 'Каталог_товаров_2.xlsx', productsCount: 30, statusType: 'available', additionDate: '22.03.2024' },
-                { filename: 'Каталог_товаров_3.xlsx', productsCount: 20, statusType: 'in_progress', additionDate: '28.03.2024' },
-                { filename: 'Каталог_товаров_4.xlsx', productsCount: 10, statusType: 'available', additionDate: '05.04.2024' }
+                { 
+                    filename: 'Каталог_товаров_1.xlsx', 
+                    productsCount: 25, 
+                    statusType: 'in_progress', 
+                    additionDate: '15.03.2024',
+                    urgency: 'Высокая',
+                    urgencyClass: 'urgency-high'
+                },
+                { 
+                    filename: 'Каталог_товаров_2.xlsx', 
+                    productsCount: 30, 
+                    statusType: 'available', 
+                    additionDate: '22.03.2024',
+                    urgency: 'Средняя',
+                    urgencyClass: 'urgency-medium'
+                },
+                { 
+                    filename: 'Каталог_товаров_3.xlsx', 
+                    productsCount: 20, 
+                    statusType: 'in_progress', 
+                    additionDate: '28.03.2024',
+                    urgency: 'Низкая',
+                    urgencyClass: 'urgency-low'
+                },
+                { 
+                    filename: 'Каталог_товаров_4.xlsx', 
+                    productsCount: 10, 
+                    statusType: 'available', 
+                    additionDate: '05.04.2024',
+                    urgency: '',
+                    urgencyClass: 'urgency-low'
+                }
             ];
             
             // Демо-данные для графика
@@ -1301,7 +1391,7 @@
                 { month: 'Январь 2025', total: 52 },
                 { month: 'Февраль 2025', total: 89 },
                 { month: 'Март 2025', total: 76 },
-                { month: 'Апрель 2025', total: 94 }
+                { month: `${currentMonthName} ${currentYear}`, total: productsCompletedThisMonth }
             ];
             
             isDemoData = true;
@@ -1348,35 +1438,6 @@
             
             result.push(current);
             return result.map(cell => cell.trim());
-        }
-        
-        // Функция для подробного отчета
-        function showDetailedReport() {
-            let report = `📊 ПОДРОБНЫЙ ОТЧЕТ\n\n`;
-            report += `Товаров на добавление: ${productsToAdd.toLocaleString('ru-RU')}\n`;
-            report += `Товаров добавлено: ${productsAdded.toLocaleString('ru-RU')}\n\n`;
-            report += `Файлов для обработки: ${filesForProcessing.length}\n\n`;
-            
-            if (filesForProcessing.length > 0) {
-                report += `ФАЙЛЫ ДЛЯ ОБРАБОТКИ:\n`;
-                filesForProcessing.forEach((file, index) => {
-                    report += `${index + 1}. ${file.filename}\n`;
-                    report += `   Товаров: ${file.productsCount}\n`;
-                    report += `   Дата добавления: ${file.additionDate || 'Не указана'}\n`;
-                    report += `   Статус: ${getStatusText(file.statusType)}\n\n`;
-                });
-            }
-            
-            if (monthlyData.length > 0) {
-                report += `СТАТИСТИКА ПО МЕСЯЦАМ:\n`;
-                monthlyData.forEach(item => {
-                    report += `• ${item.month}: ${item.total.toLocaleString('ru-RU')} товаров\n`;
-                });
-            }
-            
-            report += `\nИсточник: ${SHEET_NAME}`;
-            
-            alert(report);
         }
         
         // Загружаем данные при загрузке страницы
