@@ -104,8 +104,25 @@
             transform: translateY(-5px);
         }
         
-        .summary-card.important .summary-number {
-            color: #a7334e;
+        .summary-card.important {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .summary-card.important-2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .summary-card.important-3 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .summary-card.important .summary-number,
+        .summary-card.important-2 .summary-number,
+        .summary-card.important-3 .summary-number {
+            color: white;
         }
         
         .summary-number {
@@ -125,20 +142,43 @@
             gap: 10px;
         }
         
+        .summary-card.important .summary-label,
+        .summary-card.important-2 .summary-label,
+        .summary-card.important-3 .summary-label {
+            color: rgba(255,255,255,0.9);
+        }
+        
         .summary-subtitle {
             font-size: 0.9em;
             color: #777;
             margin-top: 10px;
         }
         
-        .summary-card.important .summary-subtitle {
+        .summary-card.important .summary-subtitle,
+        .summary-card.important-2 .summary-subtitle,
+        .summary-card.important-3 .summary-subtitle {
             color: rgba(255,255,255,0.9);
         }
         
-        /* Таблица файлов */
+        /* Таблицы файлов */
         .files-table-container {
             margin: 40px 0;
             overflow-x: auto;
+        }
+        
+        .section-title {
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            font-size: 1.2em;
         }
         
         .files-table {
@@ -626,7 +666,7 @@
             
             <div id="loading" class="loading">
                 <i class="fas fa-spinner fa-spin fa-2x pulse"></i>
-                <p style="margin-top: 15px;">Анализ данных с листа "Рабочие группы"...</p>
+                <p style="margin-top: 15px;">Загрузка данных с листов "Рабочие группы от КАМ" и "Рабочие группы контента"...</p>
                 <p style="margin-top: 10px; font-size: 0.9em; color: #888;">
                     <i class="fas fa-info-circle"></i> Анализ с учетом дат завершения работы
                 </p>
@@ -637,25 +677,33 @@
                 <div class="products-summary">
                     <div class="summary-card important">
                         <div class="summary-label">
-                            <i class="fas fa-cart-plus"></i> Количество новых товаров на добавление
+                            <i class="fas fa-user-tie"></i> Количество новых товаров менеджеров
                         </div>
-                        <div class="summary-number" id="productsToAdd">0</div>
-                        
+                        <div class="summary-number" id="managerProductsToAdd">0</div>
+                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "Рабочие группы от КАМ"</div>
                     </div>
                     
-                    <div class="summary-card">
+                    <div class="summary-card important-2">
+                        <div class="summary-label">
+                            <i class="fas fa-file-alt"></i> Количество новых товаров контента
+                        </div>
+                        <div class="summary-number" id="contentProductsToAdd">0</div>
+                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "Рабочие группы контента"</div>
+                    </div>
+                    
+                    <div class="summary-card important-3">
                         <div class="summary-label">
                             <i class="fas fa-check-circle"></i> Добавлено в текущем месяце
                         </div>
                         <div class="summary-number" id="productsAddedThisMonth">0</div>
-                        <div class="summary-subtitle">Только товары со статусом "Завершено" в текущем месяце</div>
+                        <div class="summary-subtitle">Сумма товаров со статусом "Завершено" из обоих листов в текущем месяце</div>
                     </div>
                 </div>
                 
-                <!-- Таблица файлов -->
+                <!-- Таблица файлов от менеджеров -->
                 <div class="files-table-container">
-                    <h2 style="color: #333; margin-bottom: 25px; text-align: center;">
-                        <i class="fas fa-file-alt"></i> Файлы для проработки
+                    <h2 class="section-title">
+                        <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера
                     </h2>
                     
                     <table class="files-table">
@@ -668,7 +716,32 @@
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
                         </thead>
-                        <tbody id="filesTableBody">
+                        <tbody id="managerFilesTableBody">
+                            <!-- Данные будут загружены сюда -->
+                        </tbody>
+                    </table>
+                    <div class="last-update" style="margin-top: 15px; text-align: center;">
+                        <i class="fas fa-info-circle"></i> Показаны только файлы со статусами "В работе" и "Доступно". Завершенные файлы скрыты.
+                    </div>
+                </div>
+                
+                <!-- Таблица файлов контента -->
+                <div class="files-table-container">
+                    <h2 class="section-title">
+                        <i class="fas fa-file-alt"></i> Загрузка ассортимента контента
+                    </h2>
+                    
+                    <table class="files-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-file"></i> Название файла</th>
+                                <th><i class="fas fa-boxes"></i> Количество товаров из файла</th>
+                                <th><i class="fas fa-calendar-plus"></i> Дата принятия файла от менеджера</th>
+                                <th><i class="fas fa-info-circle"></i> Статус</th>
+                                <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contentFilesTableBody">
                             <!-- Данные будут загружены сюда -->
                         </tbody>
                     </table>
@@ -685,7 +758,7 @@
                                 <i class="fas fa-chart-bar"></i> Динамика добавления товаров по месяцам
                             </div>
                             <div class="chart-subtitle">
-                                Сумма товаров в статусе "Выполнено" по месяцам
+                                Сумма товаров в статусе "Выполнено" по месяцам из обоих листов
                             </div>
                         </div>
                         <div style="color: #666; font-size: 0.9em;">
@@ -722,10 +795,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
-        // ID вашей Google Таблицы
-        const SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
-        const SHEET_GID = '1272115114';
-        const SHEET_NAME = 'Рабочие группы';
+        // ID Google Таблиц
+        const MANAGER_SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
+        const MANAGER_SHEET_GID = '1272115114';
+        const MANAGER_SHEET_NAME = 'Рабочие группы от КАМ';
+        
+        const CONTENT_SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O/pubhtml';
+        const CONTENT_SHEET_NAME = 'Рабочие группы контента';
         
         // Названия столбцов для анализа
         const STATUS_COLUMN_NAMES = ['Статус группы', 'Статус', 'Статус файла', 'Состояние'];
@@ -747,19 +823,19 @@
                                'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
         
         // Переменные для данных
-        let allData = [];
-        let tableHeaders = [];
         let isDemoData = false;
         let monthlyChart = null;
         
         // Основные показатели
-        let productsToAdd = 0;
+        let managerProductsToAdd = 0;
+        let contentProductsToAdd = 0;
         let productsAddedThisMonth = 0;
         
-        // Массив для файлов (без выполненных)
-        let filesForProcessing = [];
+        // Массивы для файлов (без выполненных)
+        let managerFilesForProcessing = [];
+        let contentFilesForProcessing = [];
         
-        // Данные для графика
+        // Данные для графика (объединенные из двух листов)
         let monthlyData = [];
         
         // Текущий месяц и год
@@ -790,7 +866,7 @@
             }
         });
         
-        // Функция для загрузки и анализа данных
+        // Функция для загрузки и анализа данных из обеих таблиц
         async function loadData(forceLoad = false) {
             const loading = document.getElementById('loading');
             const statsSection = document.getElementById('statsSection');
@@ -799,113 +875,27 @@
             statsSection.style.display = 'none';
             
             try {
-                const csvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
-                const altCsvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
-                
-                let response;
-                
-                try {
-                    response = await fetch(csvUrl);
-                    if (!response.ok) throw new Error(`Метод 1: ${response.status}`);
-                } catch (error) {
-                    response = await fetch(altCsvUrl);
-                    if (!response.ok) throw new Error(`Метод 2: ${response.status}`);
-                }
-                
-                const csvText = await response.text();
-                const rows = csvText.split('\n').filter(row => row.trim() !== '');
-                
-                if (rows.length === 0) throw new Error('Таблица пуста');
-                
-                // Парсим заголовки
-                tableHeaders = parseCSVRow(rows[0]);
-                
-                // Находим индексы нужных столбцов
-                const statusColumnIndex = findColumnIndex(STATUS_COLUMN_NAMES);
-                const productsColumnIndex = findColumnIndex(PRODUCTS_COLUMN_NAMES);
-                const filenameColumnIndex = findColumnIndex(FILENAME_COLUMN_NAMES);
-                const completionDateColumnIndex = findColumnIndex(COMPLETION_DATE_COLUMN_NAMES);
-                const additionDateColumnIndex = findColumnIndex(ADDITION_DATE_COLUMN_NAMES);
-                const urgencyColumnIndex = findColumnIndex(URGENCY_COLUMN_NAMES);
-                
                 // Сбрасываем данные
-                productsToAdd = 0;
+                managerProductsToAdd = 0;
+                contentProductsToAdd = 0;
                 productsAddedThisMonth = 0;
-                filesForProcessing = [];
+                managerFilesForProcessing = [];
+                contentFilesForProcessing = [];
                 monthlyData = [];
-                allData = [];
-                
-                // Объект для сбора данных по месяцам
-                const monthlyTotals = {};
-                const debugData = [];
                 
                 // Определяем текущий месяц и год
                 const currentDate = new Date();
                 currentMonth = currentDate.getMonth(); // 0-11
                 currentYear = currentDate.getFullYear();
                 
-                // Парсим и анализируем данные
-                for (let i = 1; i < rows.length; i++) {
-                    const rowData = parseCSVRow(rows[i]);
-                    if (rowData.length === 0 || !rowData.some(cell => cell && cell.trim() !== '')) continue;
-                    
-                    allData.push(rowData);
-                    
-                    // Анализируем строку
-                    const analysis = analyzeRow(rowData, statusColumnIndex, productsColumnIndex, 
-                                               filenameColumnIndex, completionDateColumnIndex, 
-                                               additionDateColumnIndex, urgencyColumnIndex, i);
-                    
-                    // Отладка
-                    debugData.push({
-                        row: i,
-                        filename: analysis.filename,
-                        status: analysis.status,
-                        productsCount: analysis.productsCount,
-                        additionDate: analysis.additionDateFormatted,
-                        dateStr: analysis.dateStr,
-                        completionMonth: analysis.completionMonth,
-                        isCurrentMonth: analysis.isCurrentMonth,
-                        urgency: analysis.urgency
-                    });
-                    
-                    // Добавляем в массив файлов для обработки, если не "завершено"
-                    if (analysis.statusType !== 'completed' && analysis.filename) {
-                        filesForProcessing.push({
-                            filename: analysis.filename,
-                            productsCount: analysis.productsCount,
-                            status: analysis.status,
-                            statusType: analysis.statusType,
-                            additionDate: analysis.additionDateFormatted,
-                            additionDateOriginal: analysis.additionDateOriginal,
-                            urgency: analysis.urgency,
-                            urgencyClass: getUrgencyClass(analysis.urgency),
-                            rowIndex: i
-                        });
-                    }
-                    
-                    // Считаем товары для верхних показателей
-                    if (analysis.statusType === 'completed') {
-                        // Считаем товары завершенные в текущем месяце
-                        if (analysis.isCurrentMonth) {
-                            productsAddedThisMonth += analysis.productsCount;
-                        }
-                        
-                        // Добавляем в статистику по месяцам для графика
-                        if (analysis.completionMonth) {
-                            if (!monthlyTotals[analysis.completionMonth]) {
-                                monthlyTotals[analysis.completionMonth] = 0;
-                            }
-                            monthlyTotals[analysis.completionMonth] += analysis.productsCount;
-                        }
-                    } else {
-                        productsToAdd += analysis.productsCount;
-                    }
-                }
+                // Объект для сбора данных по месяцам (объединенных)
+                const monthlyTotals = {};
                 
-                console.log('Отладочная информация:', debugData);
-                console.log('Итоги по месяцам:', monthlyTotals);
-                console.log('Товаров завершено в текущем месяце:', productsAddedThisMonth);
+                // Загружаем данные из таблицы менеджеров
+                await loadManagerData(monthlyTotals);
+                
+                // Загружаем данные из таблицы контента
+                await loadContentData(monthlyTotals);
                 
                 // Преобразуем данные по месяцам в массив для графика
                 monthlyData = Object.keys(monthlyTotals)
@@ -934,6 +924,171 @@
                 console.error('Ошибка загрузки данных:', error);
                 loading.style.display = 'none';
                 showDemoData();
+            }
+        }
+        
+        // Функция для загрузки данных из таблицы менеджеров
+        async function loadManagerData(monthlyTotals) {
+            try {
+                const csvUrl = `https://docs.google.com/spreadsheets/d/${MANAGER_SPREADSHEET_ID}/export?format=csv&gid=${MANAGER_SHEET_GID}`;
+                const altCsvUrl = `https://docs.google.com/spreadsheets/d/${MANAGER_SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${MANAGER_SHEET_GID}`;
+                
+                let response;
+                
+                try {
+                    response = await fetch(csvUrl);
+                    if (!response.ok) throw new Error(`Метод 1: ${response.status}`);
+                } catch (error) {
+                    response = await fetch(altCsvUrl);
+                    if (!response.ok) throw new Error(`Метод 2: ${response.status}`);
+                }
+                
+                const csvText = await response.text();
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                
+                if (rows.length === 0) throw new Error('Таблица менеджеров пуста');
+                
+                // Парсим заголовки
+                const tableHeaders = parseCSVRow(rows[0]);
+                
+                // Находим индексы нужных столбцов
+                const statusColumnIndex = findColumnIndex(tableHeaders, STATUS_COLUMN_NAMES);
+                const productsColumnIndex = findColumnIndex(tableHeaders, PRODUCTS_COLUMN_NAMES);
+                const filenameColumnIndex = findColumnIndex(tableHeaders, FILENAME_COLUMN_NAMES);
+                const completionDateColumnIndex = findColumnIndex(tableHeaders, COMPLETION_DATE_COLUMN_NAMES);
+                const additionDateColumnIndex = findColumnIndex(tableHeaders, ADDITION_DATE_COLUMN_NAMES);
+                const urgencyColumnIndex = findColumnIndex(tableHeaders, URGENCY_COLUMN_NAMES);
+                
+                // Парсим и анализируем данные
+                for (let i = 1; i < rows.length; i++) {
+                    const rowData = parseCSVRow(rows[i]);
+                    if (rowData.length === 0 || !rowData.some(cell => cell && cell.trim() !== '')) continue;
+                    
+                    // Анализируем строку
+                    const analysis = analyzeRow(rowData, statusColumnIndex, productsColumnIndex, 
+                                               filenameColumnIndex, completionDateColumnIndex, 
+                                               additionDateColumnIndex, urgencyColumnIndex, i);
+                    
+                    // Добавляем в массив файлов для обработки, если не "завершено"
+                    if (analysis.statusType !== 'completed' && analysis.filename) {
+                        managerFilesForProcessing.push({
+                            filename: analysis.filename,
+                            productsCount: analysis.productsCount,
+                            status: analysis.status,
+                            statusType: analysis.statusType,
+                            additionDate: analysis.additionDateFormatted,
+                            additionDateOriginal: analysis.additionDateOriginal,
+                            urgency: analysis.urgency,
+                            urgencyClass: getUrgencyClass(analysis.urgency),
+                            rowIndex: i
+                        });
+                    }
+                    
+                    // Считаем товары для верхних показателей
+                    if (analysis.statusType === 'completed') {
+                        // Считаем товары завершенные в текущем месяце
+                        if (analysis.isCurrentMonth) {
+                            productsAddedThisMonth += analysis.productsCount;
+                        }
+                        
+                        // Добавляем в статистику по месяцам для графика
+                        if (analysis.completionMonth) {
+                            if (!monthlyTotals[analysis.completionMonth]) {
+                                monthlyTotals[analysis.completionMonth] = 0;
+                            }
+                            monthlyTotals[analysis.completionMonth] += analysis.productsCount;
+                        }
+                    } else {
+                        managerProductsToAdd += analysis.productsCount;
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных менеджеров:', error);
+                throw error;
+            }
+        }
+        
+        // Функция для загрузки данных из таблицы контента
+        async function loadContentData(monthlyTotals) {
+            try {
+                // Для таблицы контента используем HTML-экспорт
+                const response = await fetch(CONTENT_SPREADSHEET_URL);
+                if (!response.ok) throw new Error(`Ошибка загрузки: ${response.status}`);
+                
+                const htmlText = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
+                
+                // Находим таблицу
+                const table = doc.querySelector('table');
+                if (!table) throw new Error('Таблица контента не найдена');
+                
+                // Парсим строки таблицы
+                const rows = table.querySelectorAll('tr');
+                if (rows.length < 2) throw new Error('Таблица контента пуста');
+                
+                // Первая строка - заголовки
+                const headerCells = rows[0].querySelectorAll('th, td');
+                const tableHeaders = Array.from(headerCells).map(cell => cell.textContent.trim());
+                
+                // Находим индексы нужных столбцов
+                const statusColumnIndex = findColumnIndex(tableHeaders, STATUS_COLUMN_NAMES);
+                const productsColumnIndex = findColumnIndex(tableHeaders, PRODUCTS_COLUMN_NAMES);
+                const filenameColumnIndex = findColumnIndex(tableHeaders, FILENAME_COLUMN_NAMES);
+                const completionDateColumnIndex = findColumnIndex(tableHeaders, COMPLETION_DATE_COLUMN_NAMES);
+                const additionDateColumnIndex = findColumnIndex(tableHeaders, ADDITION_DATE_COLUMN_NAMES);
+                const urgencyColumnIndex = findColumnIndex(tableHeaders, URGENCY_COLUMN_NAMES);
+                
+                // Парсим и анализируем данные
+                for (let i = 1; i < rows.length; i++) {
+                    const cells = rows[i].querySelectorAll('td');
+                    if (cells.length === 0) continue;
+                    
+                    const rowData = Array.from(cells).map(cell => cell.textContent.trim());
+                    
+                    // Анализируем строку
+                    const analysis = analyzeRow(rowData, statusColumnIndex, productsColumnIndex, 
+                                               filenameColumnIndex, completionDateColumnIndex, 
+                                               additionDateColumnIndex, urgencyColumnIndex, i);
+                    
+                    // Добавляем в массив файлов для обработки, если не "завершено"
+                    if (analysis.statusType !== 'completed' && analysis.filename) {
+                        contentFilesForProcessing.push({
+                            filename: analysis.filename,
+                            productsCount: analysis.productsCount,
+                            status: analysis.status,
+                            statusType: analysis.statusType,
+                            additionDate: analysis.additionDateFormatted,
+                            additionDateOriginal: analysis.additionDateOriginal,
+                            urgency: analysis.urgency,
+                            urgencyClass: getUrgencyClass(analysis.urgency),
+                            rowIndex: i
+                        });
+                    }
+                    
+                    // Считаем товары для верхних показателей
+                    if (analysis.statusType === 'completed') {
+                        // Считаем товары завершенные в текущем месяце
+                        if (analysis.isCurrentMonth) {
+                            productsAddedThisMonth += analysis.productsCount;
+                        }
+                        
+                        // Добавляем в статистику по месяцам для графика
+                        if (analysis.completionMonth) {
+                            if (!monthlyTotals[analysis.completionMonth]) {
+                                monthlyTotals[analysis.completionMonth] = 0;
+                            }
+                            monthlyTotals[analysis.completionMonth] += analysis.productsCount;
+                        }
+                    } else {
+                        contentProductsToAdd += analysis.productsCount;
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных контента:', error);
+                // Не прерываем загрузку, продолжаем с данными менеджеров
             }
         }
         
@@ -1130,7 +1285,7 @@
         }
         
         // Функция для поиска индекса столбца
-        function findColumnIndex(columnNames) {
+        function findColumnIndex(tableHeaders, columnNames) {
             for (const columnName of columnNames) {
                 let index = tableHeaders.findIndex(header => 
                     header && header.trim().toLowerCase() === columnName.toLowerCase()
@@ -1150,11 +1305,13 @@
         // Функция для обновления отображения
         function updateDisplay() {
             // Обновляем основные показатели
-            document.getElementById('productsToAdd').textContent = productsToAdd;
+            document.getElementById('managerProductsToAdd').textContent = managerProductsToAdd;
+            document.getElementById('contentProductsToAdd').textContent = contentProductsToAdd;
             document.getElementById('productsAddedThisMonth').textContent = productsAddedThisMonth;
             
-            // Обновляем таблицу файлов
-            updateFilesTable();
+            // Обновляем таблицы файлов
+            updateManagerFilesTable();
+            updateContentFilesTable();
             
             // Обновляем график
             updateChart();
@@ -1163,12 +1320,12 @@
             animateNumbers();
         }
         
-        // Функция для обновления таблицы файлов
-        function updateFilesTable() {
-            const tableBody = document.getElementById('filesTableBody');
+        // Функция для обновления таблицы файлов менеджеров
+        function updateManagerFilesTable() {
+            const tableBody = document.getElementById('managerFilesTableBody');
             tableBody.innerHTML = '';
             
-            if (filesForProcessing.length === 0) {
+            if (managerFilesForProcessing.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
@@ -1179,8 +1336,41 @@
                 return;
             }
             
-            // Сортируем файлы так же, как в исходной таблице (по порядку)
-            filesForProcessing.forEach((file, index) => {
+            managerFilesForProcessing.forEach((file, index) => {
+                const statusClass = `status-${file.statusType}`;
+                const statusText = getStatusText(file.statusType);
+                const urgencyClass = file.urgencyClass || 'urgency-low';
+                const urgencyText = file.urgency || 'Не указана';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${file.filename || 'Без имени'}</strong></td>
+                    <td><span class="highlight">${file.productsCount}</span> товаров</td>
+                    <td class="date-cell">${file.additionDate || 'Не указана'}</td>
+                    <td><span class="file-status ${statusClass}">${statusText}</span></td>
+                    <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Функция для обновления таблицы файлов контента
+        function updateContentFilesTable() {
+            const tableBody = document.getElementById('contentFilesTableBody');
+            tableBody.innerHTML = '';
+            
+            if (contentFilesForProcessing.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            contentFilesForProcessing.forEach((file, index) => {
                 const statusClass = `status-${file.statusType}`;
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
@@ -1347,11 +1537,17 @@
             currentMonth = currentDate.getMonth();
             currentYear = currentDate.getFullYear();
             
-            // Демо-данные
-            productsToAdd = 85;
-            productsAddedThisMonth = 42; // Демо-значение для текущего месяца
+            // Демо-данные для менеджеров
+            managerProductsToAdd = 85;
             
-            filesForProcessing = [
+            // Демо-данные для контента
+            contentProductsToAdd = 45;
+            
+            // Демо-данные для завершенных в текущем месяце
+            productsAddedThisMonth = 42;
+            
+            // Демо-файлы для менеджеров
+            managerFilesForProcessing = [
                 { 
                     filename: 'Каталог_товаров_1.xlsx', 
                     productsCount: 25, 
@@ -1386,13 +1582,41 @@
                 }
             ];
             
-            // Демо-данные для графика
+            // Демо-файлы для контента
+            contentFilesForProcessing = [
+                { 
+                    filename: 'Контент_товаров_1.xlsx', 
+                    productsCount: 15, 
+                    statusType: 'in_progress', 
+                    additionDate: '10.03.2024',
+                    urgency: 'Высокая',
+                    urgencyClass: 'urgency-high'
+                },
+                { 
+                    filename: 'Контент_товаров_2.xlsx', 
+                    productsCount: 20, 
+                    statusType: 'available', 
+                    additionDate: '18.03.2024',
+                    urgency: 'Средняя',
+                    urgencyClass: 'urgency-medium'
+                },
+                { 
+                    filename: 'Контент_товаров_3.xlsx', 
+                    productsCount: 10, 
+                    statusType: 'in_progress', 
+                    additionDate: '25.03.2024',
+                    urgency: 'Низкая',
+                    urgencyClass: 'urgency-low'
+                }
+            ];
+            
+            // Демо-данные для графика (объединенные)
             monthlyData = [
-                { month: 'Ноябрь 2024', total: 45 },
-                { month: 'Декабрь 2024', total: 68 },
-                { month: 'Январь 2025', total: 52 },
-                { month: 'Февраль 2025', total: 89 },
-                { month: 'Март 2025', total: 76 },
+                { month: 'Ноябрь 2024', total: 65 },
+                { month: 'Декабрь 2024', total: 88 },
+                { month: 'Январь 2025', total: 72 },
+                { month: 'Февраль 2025', total: 109 },
+                { month: 'Март 2025', total: 96 },
                 { month: `${MONTH_NAMES_RU[currentMonth]} ${currentYear}`, total: productsAddedThisMonth }
             ];
             
