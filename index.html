@@ -798,10 +798,9 @@
         // ID Google Таблиц
         const MANAGER_SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
         const MANAGER_SHEET_GID = '1272115114';
-        const MANAGER_SHEET_NAME = 'Рабочие группы от КАМ';
         
-        const CONTENT_SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O/pubhtml';
-        const CONTENT_SHEET_NAME = 'Рабочие группы контента';
+        // Для публичной таблицы контента используем Sheet ID из URL
+        const CONTENT_SPREADSHEET_ID = '2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O';
         
         // Названия столбцов для анализа
         const STATUS_COLUMN_NAMES = ['Статус группы', 'Статус', 'Статус файла', 'Состояние'];
@@ -930,6 +929,7 @@
         // Функция для загрузки данных из таблицы менеджеров
         async function loadManagerData(monthlyTotals) {
             try {
+                console.log('Загрузка данных менеджеров...');
                 const csvUrl = `https://docs.google.com/spreadsheets/d/${MANAGER_SPREADSHEET_ID}/export?format=csv&gid=${MANAGER_SHEET_GID}`;
                 const altCsvUrl = `https://docs.google.com/spreadsheets/d/${MANAGER_SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${MANAGER_SHEET_GID}`;
                 
@@ -939,17 +939,20 @@
                     response = await fetch(csvUrl);
                     if (!response.ok) throw new Error(`Метод 1: ${response.status}`);
                 } catch (error) {
+                    console.log('Попытка альтернативного метода загрузки...');
                     response = await fetch(altCsvUrl);
                     if (!response.ok) throw new Error(`Метод 2: ${response.status}`);
                 }
                 
                 const csvText = await response.text();
+                console.log('CSV данные менеджеров загружены, длина:', csvText.length);
                 const rows = csvText.split('\n').filter(row => row.trim() !== '');
                 
                 if (rows.length === 0) throw new Error('Таблица менеджеров пуста');
                 
                 // Парсим заголовки
                 const tableHeaders = parseCSVRow(rows[0]);
+                console.log('Заголовки менеджеров:', tableHeaders);
                 
                 // Находим индексы нужных столбцов
                 const statusColumnIndex = findColumnIndex(tableHeaders, STATUS_COLUMN_NAMES);
@@ -958,6 +961,15 @@
                 const completionDateColumnIndex = findColumnIndex(tableHeaders, COMPLETION_DATE_COLUMN_NAMES);
                 const additionDateColumnIndex = findColumnIndex(tableHeaders, ADDITION_DATE_COLUMN_NAMES);
                 const urgencyColumnIndex = findColumnIndex(tableHeaders, URGENCY_COLUMN_NAMES);
+                
+                console.log('Индексы столбцов менеджеров:', {
+                    statusColumnIndex,
+                    productsColumnIndex,
+                    filenameColumnIndex,
+                    completionDateColumnIndex,
+                    additionDateColumnIndex,
+                    urgencyColumnIndex
+                });
                 
                 // Парсим и анализируем данные
                 for (let i = 1; i < rows.length; i++) {
@@ -1003,6 +1015,11 @@
                     }
                 }
                 
+                console.log('Данные менеджеров загружены:', {
+                    filesCount: managerFilesForProcessing.length,
+                    productsToAdd: managerProductsToAdd
+                });
+                
             } catch (error) {
                 console.error('Ошибка загрузки данных менеджеров:', error);
                 throw error;
@@ -1012,25 +1029,28 @@
         // Функция для загрузки данных из таблицы контента
         async function loadContentData(monthlyTotals) {
             try {
-                // Для таблицы контента используем HTML-экспорт
-                const response = await fetch(CONTENT_SPREADSHEET_URL);
+                console.log('Загрузка данных контента...');
+                
+                // Для публичных таблиц Google Sheets можно использовать CSV экспорт
+                // Формат URL: https://docs.google.com/spreadsheets/d/e/{ID}/pub?output=csv
+                const csvUrl = `https://docs.google.com/spreadsheets/d/e/${CONTENT_SPREADSHEET_ID}/pub?output=csv`;
+                
+                const response = await fetch(csvUrl);
                 if (!response.ok) throw new Error(`Ошибка загрузки: ${response.status}`);
                 
-                const htmlText = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(htmlText, 'text/html');
+                const csvText = await response.text();
+                console.log('CSV данные контента загружены, длина:', csvText.length);
                 
-                // Находим таблицу
-                const table = doc.querySelector('table');
-                if (!table) throw new Error('Таблица контента не найдена');
+                const rows = csvText.split('\n').filter(row => row.trim() !== '');
                 
-                // Парсим строки таблицы
-                const rows = table.querySelectorAll('tr');
-                if (rows.length < 2) throw new Error('Таблица контента пуста');
+                if (rows.length < 2) {
+                    console.log('Таблица контента пуста или имеет недостаточно строк');
+                    return;
+                }
                 
-                // Первая строка - заголовки
-                const headerCells = rows[0].querySelectorAll('th, td');
-                const tableHeaders = Array.from(headerCells).map(cell => cell.textContent.trim());
+                // Парсим заголовки
+                const tableHeaders = parseCSVRow(rows[0]);
+                console.log('Заголовки контента:', tableHeaders);
                 
                 // Находим индексы нужных столбцов
                 const statusColumnIndex = findColumnIndex(tableHeaders, STATUS_COLUMN_NAMES);
@@ -1040,17 +1060,24 @@
                 const additionDateColumnIndex = findColumnIndex(tableHeaders, ADDITION_DATE_COLUMN_NAMES);
                 const urgencyColumnIndex = findColumnIndex(tableHeaders, URGENCY_COLUMN_NAMES);
                 
+                console.log('Индексы столбцов контента:', {
+                    statusColumnIndex,
+                    productsColumnIndex,
+                    filenameColumnIndex,
+                    completionDateColumnIndex,
+                    additionDateColumnIndex,
+                    urgencyColumnIndex
+                });
+                
                 // Парсим и анализируем данные
                 for (let i = 1; i < rows.length; i++) {
-                    const cells = rows[i].querySelectorAll('td');
-                    if (cells.length === 0) continue;
-                    
-                    const rowData = Array.from(cells).map(cell => cell.textContent.trim());
+                    const rowData = parseCSVRow(rows[i]);
+                    if (rowData.length === 0 || !rowData.some(cell => cell && cell.trim() !== '')) continue;
                     
                     // Анализируем строку
                     const analysis = analyzeRow(rowData, statusColumnIndex, productsColumnIndex, 
                                                filenameColumnIndex, completionDateColumnIndex, 
-                                               additionDateColumnIndex, urgencyColumnIndex, i);
+                                               additionDateIndex, urgencyColumnIndex, i);
                     
                     // Добавляем в массив файлов для обработки, если не "завершено"
                     if (analysis.statusType !== 'completed' && analysis.filename) {
@@ -1086,9 +1113,15 @@
                     }
                 }
                 
+                console.log('Данные контента загружены:', {
+                    filesCount: contentFilesForProcessing.length,
+                    productsToAdd: contentProductsToAdd
+                });
+                
             } catch (error) {
                 console.error('Ошибка загрузки данных контента:', error);
                 // Не прерываем загрузку, продолжаем с данными менеджеров
+                // Просто логируем ошибку и продолжаем
             }
         }
         
@@ -1329,14 +1362,20 @@
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-info-circle"></i> Нет файлов для обработки
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки от менеджеров
                         </td>
                     </tr>
                 `;
                 return;
             }
             
-            managerFilesForProcessing.forEach((file, index) => {
+            // Сортируем файлы по дате добавления (новые сверху)
+            const sortedFiles = [...managerFilesForProcessing].sort((a, b) => {
+                if (!a.additionDateOriginal || !b.additionDateOriginal) return 0;
+                return new Date(b.additionDateOriginal) - new Date(a.additionDateOriginal);
+            });
+            
+            sortedFiles.forEach((file, index) => {
                 const statusClass = `status-${file.statusType}`;
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
@@ -1363,14 +1402,20 @@
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-info-circle"></i> Нет файлов для обработки
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки контента
                         </td>
                     </tr>
                 `;
                 return;
             }
             
-            contentFilesForProcessing.forEach((file, index) => {
+            // Сортируем файлы по дате добавления (новые сверху)
+            const sortedFiles = [...contentFilesForProcessing].sort((a, b) => {
+                if (!a.additionDateOriginal || !b.additionDateOriginal) return 0;
+                return new Date(b.additionDateOriginal) - new Date(a.additionDateOriginal);
+            });
+            
+            sortedFiles.forEach((file, index) => {
                 const statusClass = `status-${file.statusType}`;
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
