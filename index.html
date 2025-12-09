@@ -348,21 +348,18 @@
             font-size: 0.9em;
         }
         
+        .last-update-info {
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
         .btn-success {
             background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(90deg, #6c757d 0%, #495057 100%);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
-        }
-        
-        .btn-warning {
-            background: linear-gradient(90deg, #ffc107 0%, #e0a800 100%);
-            color: #212529;
         }
         
         @media (max-width: 768px) {
@@ -528,22 +525,12 @@
                 
                 <div class="buttons">
                     <button onclick="loadPublicData()" class="btn btn-success">
-                        <i class="fas fa-cloud-download-alt"></i> Загрузить реальные данные
-                    </button>
-                    <button onclick="showDebugInfo()" class="btn btn-secondary">
-                        <i class="fas fa-bug"></i> Отладка
-                    </button>
-                    <button onclick="showDemoData()" class="btn btn-warning">
-                        <i class="fas fa-eye"></i> Показать демо-данные
-                    </button>
-                    <button onclick="clearData()" class="btn btn-danger">
-                        <i class="fas fa-trash-alt"></i> Очистить
+                        <i class="fas fa-sync-alt"></i> Обновить данные
                     </button>
                 </div>
                 
-                <div id="debugSection" class="debug-info" style="display: none;">
-                    <h4><i class="fas fa-bug"></i> Информация для отладки:</h4>
-                    <div id="debugContent"></div>
+                <div class="last-update-info">
+                    <i class="fas fa-clock"></i> Последнее обновление: <span id="lastUpdateTime">-</span>
                 </div>
             </div>
         </div>
@@ -603,28 +590,11 @@
             }
         }
         
-        function showDebugInfo() {
-            const debugSection = document.getElementById('debugSection');
-            const debugContent = document.getElementById('debugContent');
-            
-            debugContent.innerHTML = debugLog.map(log => `<div style="margin-bottom: 5px; border-bottom: 1px solid #ddd; padding-bottom: 5px; font-family: monospace; font-size: 12px;">${log}</div>`).join('');
-            debugSection.style.display = 'block';
-        }
-        
-        function clearData() {
-            managerProductsToAdd = 0;
-            contentProductsToAdd = 0;
-            productsAddedThisMonth = 0;
-            managerFilesForProcessing = [];
-            contentFilesForProcessing = [];
-            
-            updateDisplay();
-            
-            const warningMessage = document.getElementById('warningMessage');
-            warningMessage.style.display = 'block';
-            warningMessage.innerHTML = '<i class="fas fa-info-circle"></i> Данные очищены. Нажмите "Загрузить реальные данные" для обновления.';
-            
-            logDebug('Данные очищены');
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ru-RU');
+            const dateString = now.toLocaleDateString('ru-RU');
+            document.getElementById('lastUpdateTime').textContent = `${dateString} ${timeString}`;
         }
         
         // ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ (через публичный доступ)
@@ -687,6 +657,7 @@
                 
                 // Обновляем отображение
                 updateDisplay();
+                updateLastUpdateTime();
                 
                 loading.style.display = 'none';
                 statsSection.style.display = 'block';
@@ -708,8 +679,7 @@
                     });
                 } else {
                     warningMessage.style.display = 'block';
-                    warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Не удалось загрузить данные. Используются демо-данные.';
-                    showDemoData();
+                    warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Не удалось загрузить данные. Проверьте подключение к интернету.';
                 }
                 
             } catch (error) {
@@ -719,10 +689,9 @@
                 });
                 
                 loading.style.display = 'none';
+                statsSection.style.display = 'block';
                 errorMessage.style.display = 'block';
-                document.getElementById('errorText').textContent = `Ошибка: ${error.message}. Используются демо-данные.`;
-                
-                showDemoData();
+                document.getElementById('errorText').textContent = `Ошибка: ${error.message}. Попробуйте обновить данные.`;
             }
         }
         
@@ -732,10 +701,10 @@
             
             // Формируем URL для разных методов
             const urls = [
-                // Метод 1: Публичный доступ через /pub
+                // Метод 1: Публичный доступ через /pub (самый надежный)
                 `https://docs.google.com/spreadsheets/d/e/${PUBLIC_SPREADSHEET_ID}/pub?gid=${gid}&single=true&output=csv`,
                 
-                // Метод 2: Прямой доступ через /export (может не работать из-за CORS)
+                // Метод 2: Прямой доступ через /export
                 `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}`,
                 
                 // Метод 3: Альтернативный публичный URL
@@ -748,11 +717,7 @@
             for (let i = 0; i < urls.length; i++) {
                 const url = urls[i];
                 try {
-                    updateLoadingDetails(`Попытка ${i+1}/${urls.length} для ${source}...`);
-                    logDebug(`Пробуем URL ${i+1} для ${source}`, { 
-                        url: url.substring(0, 100) + '...',
-                        method: getMethodFromUrl(url)
-                    });
+                    updateLoadingDetails(`Загрузка ${source} (метод ${i+1}/${urls.length})...`);
                     
                     // Добавляем случайный параметр для предотвращения кэширования
                     const timestamp = new Date().getTime();
@@ -761,45 +726,27 @@
                     const response = await fetch(finalUrl);
                     
                     if (!response.ok) {
-                        logDebug(`URL ${i+1} не сработал`, { 
-                            status: response.status,
-                            statusText: response.statusText 
-                        });
                         continue;
                     }
                     
                     const text = await response.text();
                     
                     if (!text || text.trim() === '') {
-                        logDebug(`URL ${i+1} вернул пустой ответ`);
                         continue;
                     }
                     
                     // Проверяем, что это действительно CSV
                     if (text.includes('<!DOCTYPE') || text.includes('<html')) {
-                        logDebug(`URL ${i+1} вернул HTML вместо CSV`);
                         continue;
                     }
-                    
-                    logDebug(`URL ${i+1} успешен для ${source}`, { 
-                        textLength: text.length,
-                        preview: text.substring(0, 200) + '...'
-                    });
                     
                     const rows = parseCSV(text);
                     
                     if (rows.length > 0) {
-                        logDebug(`CSV распарсен для ${source}`, { 
-                            rows: rows.length,
-                            headers: rows[0]
-                        });
                         return rows;
                     }
                     
                 } catch (error) {
-                    logDebug(`Ошибка при попытке ${i+1} для ${source}`, { 
-                        error: error.message 
-                    });
                     // Продолжаем пробовать следующие URL
                 }
             }
@@ -808,18 +755,30 @@
             return [];
         }
         
-        function getMethodFromUrl(url) {
-            if (url.includes('/pub?')) return 'Публичный доступ';
-            if (url.includes('/export?')) return 'Экспорт CSV';
-            if (url.includes('/gviz/tq?')) return 'Google Visualization API';
-            return 'Неизвестный метод';
-        }
-        
-        // Парсинг CSV (работает с разными форматами)
+        // Парсинг CSV
         function parseCSV(csvText) {
             // Если это ответ от Google Visualization API, нужно обработать его
             if (csvText.includes('google.visualization.Query.setResponse')) {
-                return parseGoogleVizResponse(csvText);
+                try {
+                    const jsonStart = csvText.indexOf('{');
+                    const jsonEnd = csvText.lastIndexOf('}') + 1;
+                    const jsonText = csvText.substring(jsonStart, jsonEnd);
+                    const data = JSON.parse(jsonText);
+                    
+                    const rows = [];
+                    if (data.table && data.table.cols && data.table.rows) {
+                        const headers = data.table.cols.map(col => col.label || '');
+                        rows.push(headers);
+                        
+                        data.table.rows.forEach(row => {
+                            const rowData = row.c.map(cell => cell ? cell.v || '' : '');
+                            rows.push(rowData);
+                        });
+                    }
+                    return rows;
+                } catch (error) {
+                    // Если не получилось распарсить JSON, продолжаем как обычный CSV
+                }
             }
             
             const rows = [];
@@ -861,46 +820,11 @@
             return rows;
         }
         
-        // Парсинг ответа от Google Visualization API
-        function parseGoogleVizResponse(responseText) {
-            try {
-                // Извлекаем JSON из ответа
-                const jsonStart = responseText.indexOf('{');
-                const jsonEnd = responseText.lastIndexOf('}') + 1;
-                const jsonText = responseText.substring(jsonStart, jsonEnd);
-                const data = JSON.parse(jsonText);
-                
-                const rows = [];
-                if (data.table && data.table.cols && data.table.rows) {
-                    // Создаем заголовки
-                    const headers = data.table.cols.map(col => col.label || '');
-                    rows.push(headers);
-                    
-                    // Добавляем данные
-                    data.table.rows.forEach(row => {
-                        const rowData = row.c.map(cell => cell ? cell.v || '' : '');
-                        rows.push(rowData);
-                    });
-                }
-                
-                logDebug('Данные Google Visualization API распарсены', { rows: rows.length });
-                return rows;
-                
-            } catch (error) {
-                logDebug('Ошибка парсинга Google Visualization API', { error: error.message });
-                return [];
-            }
-        }
-        
         // Обработка данных
         function processData(rows, source) {
-            if (rows.length < 2) {
-                logDebug(`Мало данных для ${source}`, { rows: rows.length });
-                return;
-            }
+            if (rows.length < 2) return;
             
             const headers = rows[0];
-            logDebug(`Заголовки ${source}`, headers);
             
             // Находим индексы столбцов
             const indices = {
@@ -912,15 +836,12 @@
                 completionDate: findColumnIndex(headers, ['Дата завершения работы', 'Дата завершения', 'Дата окончания', 'Completion Date'])
             };
             
-            logDebug(`Индексы столбцов для ${source}`, indices);
-            
             // Определяем текущий месяц и год
             const currentDate = new Date();
             const currentMonth = currentDate.getMonth();
             const currentYear = currentDate.getFullYear();
             
             // Обрабатываем строки
-            let processedCount = 0;
             for (let i = 1; i < rows.length; i++) {
                 const row = rows[i];
                 if (row.length === 0) continue;
@@ -940,36 +861,24 @@
                     };
                     
                     if (source === 'manager') {
-                        // Для менеджеров: только не завершенные
                         if (analysis.statusType !== 'completed' && analysis.statusType !== 'unknown') {
                             managerFilesForProcessing.push(fileData);
                             managerProductsToAdd += analysis.productsCount;
-                            processedCount++;
                         }
-                        // Считаем завершенные в текущем месяце
                         if (analysis.statusType === 'completed' && analysis.isCurrentMonth) {
                             productsAddedThisMonth += analysis.productsCount;
                         }
                     } else {
-                        // Для контента: только не завершенные
                         if (analysis.statusType !== 'completed' && analysis.statusType !== 'unknown') {
                             contentFilesForProcessing.push(fileData);
                             contentProductsToAdd += analysis.productsCount;
-                            processedCount++;
                         }
-                        // Считаем завершенные в текущем месяце
                         if (analysis.statusType === 'completed' && analysis.isCurrentMonth) {
                             productsAddedThisMonth += analysis.productsCount;
                         }
                     }
                 }
             }
-            
-            logDebug(`Обработка ${source} завершена`, {
-                processedRows: processedCount,
-                files: source === 'manager' ? managerFilesForProcessing.length : contentFilesForProcessing.length,
-                products: source === 'manager' ? managerProductsToAdd : contentProductsToAdd
-            });
         }
         
         // Поиск индекса столбца
@@ -980,9 +889,7 @@
                 const index = headers.findIndex(header => 
                     header && header.toString().toLowerCase().includes(columnName.toLowerCase())
                 );
-                if (index !== -1) {
-                    return index;
-                }
+                if (index !== -1) return index;
             }
             
             return -1;
@@ -1030,7 +937,7 @@
                 if (result.urgency === '') result.urgency = 'Не указана';
             }
             
-            // Дата завершения (для определения текущего месяца)
+            // Дата завершения
             if (indices.completionDate !== -1 && row[indices.completionDate]) {
                 const dateStr = row[indices.completionDate].toString().trim();
                 if (dateStr) {
@@ -1062,7 +969,6 @@
             
             const statusLower = status.toLowerCase();
             
-            // Сначала ищем эмоджи
             if (status.includes('✅') || status.includes('✔') || status.includes('✓') || 
                 status.includes('☑') || status.includes('🎯')) {
                 return 'completed';
@@ -1076,7 +982,6 @@
                 return 'available';
             }
             
-            // Затем проверяем текст
             if (statusLower.includes('заверш') || statusLower.includes('выполн') || 
                 statusLower.includes('готов') || statusLower.includes('сделан') ||
                 statusLower.includes('done') || statusLower.includes('completed') ||
@@ -1120,8 +1025,6 @@
             
             try {
                 const dateStr = dateString.trim();
-                
-                // Формат DD.MM.YYYY или DD/MM/YYYY
                 const parts = dateStr.split(/[\.\/-]/);
                 if (parts.length >= 3) {
                     const day = parseInt(parts[0], 10);
@@ -1134,7 +1037,6 @@
                     }
                 }
                 
-                // Пробуем стандартный парсинг
                 const parsedDate = new Date(dateStr);
                 if (!isNaN(parsedDate.getTime())) {
                     return parsedDate.toLocaleDateString('ru-RU');
@@ -1148,18 +1050,12 @@
         
         // Обновление отображения
         function updateDisplay() {
-            // Обновляем карточки
             document.getElementById('managerProductsToAdd').textContent = managerProductsToAdd;
             document.getElementById('contentProductsToAdd').textContent = contentProductsToAdd;
             document.getElementById('productsAddedThisMonth').textContent = productsAddedThisMonth;
             
-            // Обновляем таблицу менеджеров
             updateTable('managerFilesTableBody', managerFilesForProcessing, 'менеджеров');
-            
-            // Обновляем таблицу контента
             updateTable('contentFilesTableBody', contentFilesForProcessing, 'контента');
-            
-            logDebug('Отображение обновлено');
         }
         
         // Обновление таблицы
@@ -1206,47 +1102,15 @@
             }
         }
         
-        // Демо-данные
-        function showDemoData() {
-            const loading = document.getElementById('loading');
-            const statsSection = document.getElementById('statsSection');
-            const warningMessage = document.getElementById('warningMessage');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            errorMessage.style.display = 'none';
-            loading.style.display = 'none';
-            
-            managerProductsToAdd = 85;
-            contentProductsToAdd = 45;
-            productsAddedThisMonth = 42;
-            
-            managerFilesForProcessing = [
-                { filename: 'Каталог_менеджеров_1.xlsx', productsCount: 25, statusType: 'in_progress', 
-                  additionDate: '15.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high', source: 'manager' },
-                { filename: 'Каталог_менеджеров_2.xlsx', productsCount: 30, statusType: 'available', 
-                  additionDate: '22.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium', source: 'manager' }
-            ];
-            
-            contentFilesForProcessing = [
-                { filename: 'Контент_1.xlsx', productsCount: 15, statusType: 'in_progress', 
-                  additionDate: '10.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high', source: 'content' },
-                { filename: 'Контент_2.xlsx', productsCount: 20, statusType: 'available', 
-                  additionDate: '18.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium', source: 'content' }
-            ];
-            
-            updateDisplay();
-            
-            statsSection.style.display = 'block';
-            warningMessage.style.display = 'block';
-            warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Используются демо-данные. Нажмите "Загрузить реальные данные" для обновления.';
-            
-            logDebug('Показаны демо-данные');
-        }
-        
-        // Инициализация
+        // Инициализация - автоматическая загрузка при открытии страницы
         document.addEventListener('DOMContentLoaded', function() {
-            logDebug('Страница загружена');
-            showDemoData();
+            logDebug('Страница загружена, начинаем автоматическую загрузку данных...');
+            loadPublicData();
+            
+            // Также загружаем данные при нажатии F5 или Ctrl+R
+            window.addEventListener('beforeunload', function() {
+                logDebug('Страница обновляется...');
+            });
         });
     </script>
 </body>
