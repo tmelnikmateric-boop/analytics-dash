@@ -416,7 +416,7 @@
                             <i class="fas fa-user-tie"></i> Количество новых товаров менеджеров
                         </div>
                         <div class="summary-number" id="managerProductsToAdd">0</div>
-                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "👥 Рабочие группы КАМ"</div>
+                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "👥 Рабочие группы КАМ" (GID: 1367779997)</div>
                     </div>
                     
                     <div class="summary-card important-2">
@@ -440,6 +440,9 @@
                     <h2 class="section-title">
                         <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера (👥 Рабочие группы КАМ)
                     </h2>
+                    <div class="last-update" style="margin-bottom: 15px; text-align: center;">
+                        <i class="fas fa-info-circle"></i> Данные с листа GID: 1367779997 (только статусы "В работе" и "Доступно")
+                    </div>
                     
                     <table class="files-table">
                         <thead>
@@ -460,6 +463,9 @@
                     <h2 class="section-title">
                         <i class="fas fa-file-alt"></i> Загрузка ассортимента контента
                     </h2>
+                    <div class="last-update" style="margin-bottom: 15px; text-align: center;">
+                        <i class="fas fa-info-circle"></i> Данные с листа "Рабочие группы контента" (только статусы "В работе" и "Доступно")
+                    </div>
                     
                     <table class="files-table">
                         <thead>
@@ -496,10 +502,12 @@
     <script>
         // ID таблицы менеджеров
         const MANAGER_SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
-        const MANAGER_SHEET_GID = '1272115114';
+        const MANAGER_SHEET_GID = '1367779997'; // GID листа "👥 Рабочие группы КАМ"
         
-        // ID таблицы контента
+        // ID таблицы контента (ДОЛЖЕН БЫТЬ ДРУГОЙ!)
         const CONTENT_SPREADSHEET_ID = '2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O';
+        // Для контента пробуем разные GID
+        const CONTENT_SHEET_GIDS = ['0', '1367779997', '1272115114', '1234567890'];
         
         // Отладочная информация
         let debugLog = [];
@@ -542,8 +550,8 @@
                 managerFilesForProcessing = [];
                 contentFilesForProcessing = [];
                 
-                // Загружаем данные менеджеров
-                logDebug('Пробуем загрузить данные менеджеров');
+                // Загружаем данные менеджеров (лист 1367779997)
+                logDebug('Пробуем загрузить данные менеджеров с GID: 1367779997');
                 const managerData = await loadDataFromSheet(MANAGER_SPREADSHEET_ID, MANAGER_SHEET_GID, 'manager');
                 logDebug('Данные менеджеров получены', { rows: managerData.length });
                 
@@ -551,13 +559,25 @@
                     processData(managerData, 'manager');
                 }
                 
-                // Загружаем данные контента
-                logDebug('Пробуем загрузить данные контента');
-                const contentData = await loadDataFromSheet(CONTENT_SPREADSHEET_ID, null, 'content');
-                logDebug('Данные контента получены', { rows: contentData.length });
+                // Загружаем данные контента (пробуем разные GID)
+                let contentData = [];
+                for (const gid of CONTENT_SHEET_GIDS) {
+                    logDebug(`Пробуем загрузить данные контента с GID: ${gid}`);
+                    try {
+                        contentData = await loadDataFromSheet(CONTENT_SPREADSHEET_ID, gid, 'content');
+                        if (contentData.length > 1) { // Есть данные помимо заголовков
+                            logDebug(`Нашли данные контента с GID: ${gid}`, { rows: contentData.length });
+                            break;
+                        }
+                    } catch (e) {
+                        logDebug(`Не удалось загрузить с GID ${gid}:`, { error: e.message });
+                    }
+                }
                 
                 if (contentData.length > 0) {
                     processData(contentData, 'content');
+                } else {
+                    logDebug('Не удалось загрузить данные контента');
                 }
                 
                 // Обновляем отображение
@@ -586,7 +606,7 @@
             try {
                 let url;
                 
-                if (source === 'manager') {
+                if (gid) {
                     url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
                 } else {
                     url = `https://docs.google.com/spreadsheets/d/e/${spreadsheetId}/pub?output=csv`;
@@ -665,7 +685,7 @@
             const headers = rows[0];
             logDebug(`Заголовки ${source}`, headers);
             
-            // Находим индексы столбцов на основе вашей структуры данных
+            // Находим индексы столбцов
             const indices = {
                 status: findColumnIndex(headers, ['Статус группы', 'Статус', 'Состояние']),
                 products: findColumnIndex(headers, ['Количество товаров', 'Количество', 'Товары']),
@@ -688,12 +708,6 @@
                 if (row.length === 0) continue;
                 
                 const analysis = analyzeRow(row, indices, currentMonth, currentYear);
-                logDebug(`Анализ строки ${i} (${source})`, {
-                    filename: analysis.filename,
-                    status: analysis.status,
-                    statusType: analysis.statusType,
-                    productsCount: analysis.productsCount
-                });
                 
                 if (analysis.filename) {
                     const fileData = {
@@ -707,18 +721,22 @@
                     };
                     
                     if (source === 'manager') {
+                        // Для менеджеров: только не завершенные
                         if (analysis.statusType !== 'completed') {
                             managerFilesForProcessing.push(fileData);
                             managerProductsToAdd += analysis.productsCount;
                         }
+                        // Считаем завершенные в текущем месяце
                         if (analysis.statusType === 'completed' && analysis.isCurrentMonth) {
                             productsAddedThisMonth += analysis.productsCount;
                         }
                     } else {
+                        // Для контента: только не завершенные
                         if (analysis.statusType !== 'completed') {
                             contentFilesForProcessing.push(fileData);
                             contentProductsToAdd += analysis.productsCount;
                         }
+                        // Считаем завершенные в текущем месяце
                         if (analysis.statusType === 'completed' && analysis.isCurrentMonth) {
                             productsAddedThisMonth += analysis.productsCount;
                         }
@@ -728,7 +746,8 @@
             
             logDebug(`Обработано ${source}`, {
                 files: source === 'manager' ? managerFilesForProcessing.length : contentFilesForProcessing.length,
-                products: source === 'manager' ? managerProductsToAdd : contentProductsToAdd
+                products: source === 'manager' ? managerProductsToAdd : contentProductsToAdd,
+                completedThisMonth: productsAddedThisMonth
             });
         }
         
@@ -755,11 +774,10 @@
                 isCurrentMonth: false
             };
             
-            // Статус - теперь ищем эмоджи в статусе
+            // Статус
             if (indices.status !== -1 && row[indices.status]) {
                 result.status = row[indices.status].toString().trim();
                 result.statusType = determineStatusType(result.status);
-                logDebug(`Статус найден: "${result.status}" -> тип: ${result.statusType}`);
             }
             
             // Количество товаров
@@ -811,7 +829,7 @@
             return result;
         }
         
-        // Определение типа статуса - ОБНОВЛЕНО для работы с эмоджи
+        // Определение типа статуса
         function determineStatusType(status) {
             if (!status) return 'unknown';
             
@@ -903,7 +921,8 @@
                 managerFiles: managerFilesForProcessing.length,
                 contentFiles: contentFilesForProcessing.length,
                 managerProducts: managerProductsToAdd,
-                contentProducts: contentProductsToAdd
+                contentProducts: contentProductsToAdd,
+                completedThisMonth: productsAddedThisMonth
             });
         }
         
