@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Загрузка новых товаров на сайт</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ff8c00'/><path d='M50 25 L75 50 L50 75 L25 50 Z' fill='white'/></svg>">
     <style>
         * {
             margin: 0;
@@ -680,7 +679,7 @@
     <div id="infoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fas fa-info-circle"></i> Процесс работы отдела контента</h2>
+                <h2><i class="fas fa-info-circle"></i> Информация о системе</h2>
                 <button class="close-modal" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -775,7 +774,14 @@
         <header>
             <h1><i class="fas fa-chart-pie"></i> Загрузка новых товаров на сайт</h1>
             <div class="subtitle">Очередь загрузки товаров</div>
-                        
+            <div class="data-source-info">
+                <i class="fas fa-database"></i> Источник данных: 
+                <a href="https://docs.google.com/spreadsheets/d/1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek/edit" 
+                   target="_blank" style="color: #17a2b8; font-weight: 600;">
+                   Таблица рабочих групп
+                </a>
+            </div>
+            
             <div class="header-buttons">
                 <button onclick="openModal()" class="btn-rules">
                     <i class="fas fa-info-circle"></i> Информация о системе
@@ -804,25 +810,39 @@
                         <div class="summary-label">
                             <i class="fas fa-user-tie"></i> Количество новых товаров менеджеров
                         </div>
-                        
+                        <div class="summary-number" id="managerProductsToAdd">0</div>
+                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "👥 Рабочие группы КАМ" (GID: 1367779997)</div>
+                    </div>
                     
                     <div class="summary-card important-2">
                         <div class="summary-label">
                             <i class="fas fa-file-alt"></i> Количество новых товаров контента
                         </div>
-                        
+                        <div class="summary-number" id="contentProductsToAdd">0</div>
+                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "Рабочие группы контента" (GID: 33531424)</div>
+                    </div>
                     
                     <div class="summary-card important-3">
                         <div class="summary-label">
                             <i class="fas fa-check-circle"></i> Добавлено в текущем месяце
                         </div>
+                        <div class="summary-number" id="productsAddedThisMonth">0</div>
+                        <div class="summary-subtitle">Сумма товаров со статусом "Завершено" из обоих листов в текущем месяце</div>
                     </div>
+                </div>
                 
                 <div class="files-table-container">
                     <h2 class="section-title">
                         <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера (👥 Рабочие группы КАМ)
                     </h2>
-                    
+                    <div class="data-source-info">
+                        <i class="fas fa-info-circle"></i> Источник: 
+                        <a href="https://docs.google.com/spreadsheets/d/1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek/edit?gid=1367779997" 
+                           target="_blank" style="color: #17a2b8;">
+                           Лист "👥 Рабочие группы КАМ" (GID: 1367779997)
+                        </a>
+                        | Только статусы "В работе" и "Доступно"
+                    </div>
                     
                     <table class="files-table">
                         <thead>
@@ -843,7 +863,14 @@
                     <h2 class="section-title">
                         <i class="fas fa-file-alt"></i> Загрузка ассортимента контента
                     </h2>
-                   
+                    <div class="data-source-info">
+                        <i class="fas fa-info-circle"></i> Источник: 
+                        <a href="https://docs.google.com/spreadsheets/d/1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek/edit?gid=33531424" 
+                           target="_blank" style="color: #17a2b8;">
+                           Лист "Рабочие группы контента" (GID: 33531424)
+                        </a>
+                        | Только статусы "В работе" и "Доступно"
+                    </div>
                     
                     <table class="files-table">
                         <thead>
@@ -865,7 +892,10 @@
                     <h2 class="chart-title">
                         <i class="fas fa-chart-bar"></i> Завершенные товары по месяцам
                     </h2>
-                                        
+                    <div class="data-source-info">
+                        <i class="fas fa-info-circle"></i> Сумма товаров со статусом "Завершено" из обоих листов, сгруппированная по месяцам
+                    </div>
+                    
                     <div class="chart-controls">
                         <button class="chart-btn active" onclick="changeChartType('monthly')" id="btnMonthly">
                             <i class="fas fa-calendar-alt"></i> По месяцам
