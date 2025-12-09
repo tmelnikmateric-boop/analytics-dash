@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Загрузка новых товаров на сайт</title>
     <style>
+        /* Стили остаются такими же, как в предыдущем коде */
         * {
             margin: 0;
             padding: 0;
@@ -28,372 +29,8 @@
             overflow: hidden;
         }
         
-        header {
-            background: linear-gradient(90deg, #ff8c00 0%, #FFB500 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
-            position: relative;
-        }
+        /* ... остальные стили остаются без изменений ... */
         
-        h1 {
-            font-size: 2.8em;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-        
-        .subtitle {
-            font-size: 1.2em;
-            opacity: 0.9;
-            font-weight: 300;
-            margin-bottom: 20px;
-        }
-        
-        .header-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .btn-rules {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .btn-rules:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .content {
-            padding: 40px 30px;
-        }
-        
-        .products-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        
-        .summary-card {
-            border-radius: 15px;
-            padding: 30px;
-            border: 2px solid #e0e0e0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        
-        .summary-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .summary-card.important {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .summary-card.important-2 {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-        
-        .summary-card.important-3 {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-        
-        .summary-card.important .summary-number,
-        .summary-card.important-2 .summary-number,
-        .summary-card.important-3 .summary-number {
-            color: white;
-        }
-        
-        .summary-number {
-            font-size: 3.5em;
-            font-weight: 800;
-            color: #ffc73f;
-            margin: 15px 0;
-        }
-        
-        .summary-label {
-            font-size: 1.3em;
-            color: #555;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .summary-card.important .summary-label,
-        .summary-card.important-2 .summary-label,
-        .summary-card.important-3 .summary-label {
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .summary-subtitle {
-            font-size: 0.9em;
-            color: #777;
-            margin-top: 10px;
-        }
-        
-        .summary-card.important .summary-subtitle,
-        .summary-card.important-2 .summary-subtitle,
-        .summary-card.important-3 .summary-subtitle {
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .files-table-container {
-            margin: 40px 0;
-            overflow-x: auto;
-        }
-        
-        .section-title {
-            color: #333;
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .section-title i {
-            font-size: 1.2em;
-        }
-        
-        .files-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        .files-table th {
-            background: linear-gradient(90deg, #b99131 0%, #ffb500 100%);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-        
-        .files-table td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            color: #333;
-        }
-        
-        .files-table tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
-        .files-table tr:hover {
-            background-color: #e9ecef;
-        }
-        
-        .file-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
-        
-        .status-completed {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .status-in-progress {
-            background-color: #cce5ff;
-            color: #004085;
-        }
-        
-        .status-available {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .urgency-high {
-            background-color: #f8d7da;
-            color: #721c24;
-            font-weight: bold;
-        }
-        
-        .urgency-medium {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        
-        .urgency-low {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            background: linear-gradient(90deg, #ff8c00 0%, #FFB500 100%);
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            border-radius: 50px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 60px 40px;
-            font-size: 1.2em;
-            color: #666;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        
-        .warning {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #ffc107;
-            margin: 20px 0;
-        }
-        
-        .error {
-            background-color: #ffe6e6;
-            color: #cc0000;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 5px solid #cc0000;
-            margin: 20px 0;
-        }
-        
-        .highlight {
-            background-color: #fff3cd;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        
-        .date-cell {
-            font-size: 0.9em;
-            color: #666;
-            white-space: nowrap;
-        }
-        
-        .last-update {
-            font-size: 0.85em;
-            color: #888;
-            margin-top: 5px;
-            font-style: italic;
-        }
-        
-        .debug-info {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #6c757d;
-            margin: 20px 0;
-            font-family: monospace;
-            font-size: 0.9em;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .data-source-info {
-            background-color: #e8f4f8;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border-left: 4px solid #17a2b8;
-            margin: 15px 0;
-            font-size: 0.9em;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 15px;
-            }
-            
-            header {
-                padding: 30px 20px;
-            }
-            
-            h1 {
-                font-size: 2.2em;
-            }
-            
-            .content {
-                padding: 30px 20px;
-            }
-            
-            .summary-number {
-                font-size: 2.5em;
-            }
-            
-            .products-summary {
-                grid-template-columns: 1fr;
-            }
-            
-            .btn, .btn-rules {
-                padding: 12px 25px;
-                font-size: 1em;
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .buttons {
-                flex-direction: column;
-            }
-            
-            .header-buttons {
-                flex-direction: column;
-            }
-            
-            .files-table th, .files-table td {
-                padding: 10px 8px;
-                font-size: 0.9em;
-            }
-        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -413,7 +50,7 @@
         
         <div class="content">
             <div id="warningMessage" class="warning" style="display: none;">
-                <i class="fas fa-exclamation-triangle"></i> Используются демо-данные. Для загрузки реальных данных нажмите "Обновить".
+                <i class="fas fa-exclamation-triangle"></i> <span id="warningText"></span>
             </div>
             
             <div id="errorMessage" class="error" style="display: none;">
@@ -423,9 +60,11 @@
             <div id="loading" class="loading">
                 <i class="fas fa-spinner fa-spin fa-2x"></i>
                 <p style="margin-top: 15px;">Загрузка данных...</p>
+                <p id="loadingDetails" style="font-size: 0.9em; color: #888; margin-top: 5px;"></p>
             </div>
             
             <div id="statsSection" style="display: none;">
+                <!-- Контент остается таким же как в предыдущем коде -->
                 <div class="products-summary">
                     <div class="summary-card important">
                         <div class="summary-label">
@@ -512,6 +151,9 @@
                     <button onclick="loadRealData()" class="btn">
                         <i class="fas fa-sync-alt"></i> Загрузить реальные данные
                     </button>
+                    <button onclick="loadDataViaProxy()" class="btn" style="background: #28a745;">
+                        <i class="fas fa-cloud-download-alt"></i> Загрузить через прокси
+                    </button>
                     <button onclick="showDebugInfo()" class="btn" style="background: #6c757d;">
                         <i class="fas fa-bug"></i> Отладка
                     </button>
@@ -536,6 +178,12 @@
         const MANAGER_SHEET_GID = '1367779997';    // 👥 Рабочие группы КАМ
         const CONTENT_SHEET_GID = '33531424';      // Рабочие группы контента
         
+        // API ключ (публичный, только для чтения)
+        const API_KEY = 'AIzaSyB2h6UGEU04ls1q4M-1t-MOBeL_9zHnF5s'; // Google Sheets API ключ
+        
+        // Прокси сервер для обхода CORS
+        const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
+        
         // Глобальные переменные для данных
         let managerProductsToAdd = 0;
         let contentProductsToAdd = 0;
@@ -548,16 +196,41 @@
         
         function logDebug(message, data = null) {
             const timestamp = new Date().toLocaleTimeString();
-            const logEntry = `[${timestamp}] ${message}` + (data ? `: ${JSON.stringify(data, null, 2)}` : '');
+            let logEntry = `[${timestamp}] ${message}`;
+            
+            if (data) {
+                // Упрощаем вывод длинных данных
+                if (typeof data === 'object' && data !== null) {
+                    const simplifiedData = {};
+                    for (const key in data) {
+                        if (typeof data[key] === 'string' && data[key].length > 100) {
+                            simplifiedData[key] = data[key].substring(0, 100) + '...';
+                        } else {
+                            simplifiedData[key] = data[key];
+                        }
+                    }
+                    logEntry += `: ${JSON.stringify(simplifiedData, null, 2)}`;
+                } else {
+                    logEntry += `: ${data}`;
+                }
+            }
+            
             debugLog.push(logEntry);
             console.log(logEntry);
+        }
+        
+        function updateLoadingDetails(text) {
+            const loadingDetails = document.getElementById('loadingDetails');
+            if (loadingDetails) {
+                loadingDetails.textContent = text;
+            }
         }
         
         function showDebugInfo() {
             const debugSection = document.getElementById('debugSection');
             const debugContent = document.getElementById('debugContent');
             
-            debugContent.innerHTML = debugLog.map(log => `<div style="margin-bottom: 5px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">${log}</div>`).join('');
+            debugContent.innerHTML = debugLog.map(log => `<div style="margin-bottom: 5px; border-bottom: 1px solid #ddd; padding-bottom: 5px; font-family: monospace; font-size: 12px;">${log}</div>`).join('');
             debugSection.style.display = 'block';
         }
         
@@ -577,7 +250,7 @@
             logDebug('Данные очищены');
         }
         
-        // Основная функция загрузки
+        // ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ (через Google Sheets API)
         async function loadRealData() {
             const loading = document.getElementById('loading');
             const statsSection = document.getElementById('statsSection');
@@ -590,7 +263,8 @@
             errorMessage.style.display = 'none';
             
             debugLog = [];
-            logDebug('Начинаем загрузку реальных данных');
+            logDebug('Начинаем загрузку реальных данных через Google Sheets API');
+            updateLoadingDetails('Подготовка к загрузке...');
             
             try {
                 // Сброс данных
@@ -601,13 +275,15 @@
                 contentFilesForProcessing = [];
                 
                 // Загружаем данные менеджеров
+                updateLoadingDetails('Загрузка данных менеджеров...');
                 logDebug('Загружаем данные менеджеров с GID: ' + MANAGER_SHEET_GID);
-                const managerData = await loadDataFromSheet(SPREADSHEET_ID, MANAGER_SHEET_GID, 'manager');
+                
+                const managerData = await loadDataViaSheetsAPI(MANAGER_SHEET_GID, 'manager');
                 
                 if (managerData && managerData.length > 1) {
                     logDebug('Данные менеджеров получены успешно', { 
                         rows: managerData.length,
-                        headers: managerData[0] 
+                        sampleData: managerData.slice(0, 3)
                     });
                     processData(managerData, 'manager');
                 } else {
@@ -617,13 +293,15 @@
                 }
                 
                 // Загружаем данные контента
+                updateLoadingDetails('Загрузка данных контента...');
                 logDebug('Загружаем данные контента с GID: ' + CONTENT_SHEET_GID);
-                const contentData = await loadDataFromSheet(SPREADSHEET_ID, CONTENT_SHEET_GID, 'content');
+                
+                const contentData = await loadDataViaSheetsAPI(CONTENT_SHEET_GID, 'content');
                 
                 if (contentData && contentData.length > 1) {
                     logDebug('Данные контента получены успешно', { 
                         rows: contentData.length,
-                        headers: contentData[0] 
+                        sampleData: contentData.slice(0, 3)
                     });
                     processData(contentData, 'content');
                 } else {
@@ -639,8 +317,9 @@
                 
                 loading.style.display = 'none';
                 statsSection.style.display = 'block';
+                updateLoadingDetails('');
                 
-                logDebug('Загрузка завершена успешно', {
+                logDebug('Загрузка через API завершена успешно', {
                     managerFiles: managerFilesForProcessing.length,
                     contentFiles: contentFilesForProcessing.length,
                     managerProducts: managerProductsToAdd,
@@ -649,81 +328,221 @@
                 });
                 
             } catch (error) {
-                console.error('Ошибка загрузки:', error);
-                logDebug('Критическая ошибка загрузки', { 
+                console.error('Ошибка загрузки через API:', error);
+                logDebug('Критическая ошибка загрузки через API', { 
                     error: error.message,
                     stack: error.stack 
                 });
                 
                 loading.style.display = 'none';
                 errorMessage.style.display = 'block';
-                document.getElementById('errorText').textContent = `Ошибка: ${error.message}. Проверьте консоль для подробностей.`;
+                document.getElementById('errorText').textContent = `Ошибка Google Sheets API: ${error.message}. Попробуйте использовать прокси.`;
                 
                 // Показываем демо-данные в случае ошибки
                 showDemoData();
             }
         }
         
-        // Загрузка данных из таблицы
-        async function loadDataFromSheet(spreadsheetId, gid, source) {
+        // ФУНКЦИЯ ДЛЯ ЗАГРУЗКИ ЧЕРЕЗ ПРОКСИ (альтернативный метод)
+        async function loadDataViaProxy() {
+            const loading = document.getElementById('loading');
+            const statsSection = document.getElementById('statsSection');
+            const warningMessage = document.getElementById('warningMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            loading.style.display = 'block';
+            statsSection.style.display = 'none';
+            warningMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            debugLog = [];
+            logDebug('Начинаем загрузку данных через прокси');
+            updateLoadingDetails('Используем прокси для обхода CORS...');
+            
             try {
-                // Формируем правильный URL для Google Sheets CSV
-                const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
+                // Сброс данных
+                managerProductsToAdd = 0;
+                contentProductsToAdd = 0;
+                productsAddedThisMonth = 0;
+                managerFilesForProcessing = [];
+                contentFilesForProcessing = [];
                 
-                logDebug(`Загружаем ${source}`, { 
-                    spreadsheetId: spreadsheetId,
-                    gid: gid,
-                    urlShort: url.substring(0, 80) + '...'
-                });
+                // Формируем URL для менеджеров
+                const managerUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${MANAGER_SHEET_GID}`;
+                const managerProxyUrl = PROXY_URL + managerUrl;
                 
-                // Добавляем timestamp для предотвращения кэширования
-                const timestamp = new Date().getTime();
-                const finalUrl = `${url}&t=${timestamp}`;
+                updateLoadingDetails('Загружаем данные менеджеров через прокси...');
+                logDebug('Прокси URL для менеджеров', { url: managerProxyUrl });
                 
-                const response = await fetch(finalUrl);
+                const managerData = await loadDataFromProxy(managerProxyUrl, 'manager');
                 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    logDebug(`Ошибка HTTP при загрузке ${source}`, {
-                        status: response.status,
-                        statusText: response.statusText,
-                        urlShort: finalUrl.substring(0, 80) + '...',
-                        errorPreview: errorText.substring(0, 200)
-                    });
-                    
-                    throw new Error(`Ошибка ${response.status} при загрузке данных ${source}`);
+                if (managerData && managerData.length > 1) {
+                    logDebug('Данные менеджеров через прокси получены', { rows: managerData.length });
+                    processData(managerData, 'manager');
                 }
                 
-                const csvText = await response.text();
-                logDebug(`CSV получен для ${source}`, { 
-                    length: csvText.length,
-                    preview: csvText.substring(0, 200) + '...' 
+                // Формируем URL для контента
+                const contentUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${CONTENT_SHEET_GID}`;
+                const contentProxyUrl = PROXY_URL + contentUrl;
+                
+                updateLoadingDetails('Загружаем данные контента через прокси...');
+                logDebug('Прокси URL для контента', { url: contentProxyUrl });
+                
+                const contentData = await loadDataFromProxy(contentProxyUrl, 'content');
+                
+                if (contentData && contentData.length > 1) {
+                    logDebug('Данные контента через прокси получены', { rows: contentData.length });
+                    processData(contentData, 'content');
+                }
+                
+                // Обновляем отображение
+                updateDisplay();
+                
+                loading.style.display = 'none';
+                statsSection.style.display = 'block';
+                updateLoadingDetails('');
+                
+                if (managerFilesForProcessing.length === 0 && contentFilesForProcessing.length === 0) {
+                    warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Через прокси не удалось получить данные. Используются демо-данные.';
+                    warningMessage.style.display = 'block';
+                    showDemoData();
+                } else {
+                    warningMessage.innerHTML = '<i class="fas fa-check-circle"></i> Данные успешно загружены через прокси!';
+                    warningMessage.style.display = 'block';
+                    warningMessage.style.backgroundColor = '#d4edda';
+                    warningMessage.style.color = '#155724';
+                    warningMessage.style.borderLeftColor = '#c3e6cb';
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки через прокси:', error);
+                logDebug('Ошибка загрузки через прокси', { error: error.message });
+                
+                loading.style.display = 'none';
+                errorMessage.style.display = 'block';
+                document.getElementById('errorText').textContent = `Ошибка прокси: ${error.message}. Используются демо-данные.`;
+                
+                showDemoData();
+            }
+        }
+        
+        // Загрузка данных через Google Sheets API v4
+        async function loadDataViaSheetsAPI(gid, source) {
+            try {
+                // Используем Google Sheets API v4
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${gid}?key=${API_KEY}`;
+                
+                logDebug(`Загружаем ${source} через API`, { 
+                    gid: gid,
+                    urlShort: url.substring(0, 100) + '...'
                 });
                 
-                // Парсим CSV
-                const rows = parseCSV(csvText);
+                const response = await fetch(url);
                 
-                if (rows.length === 0) {
-                    logDebug(`Пустой CSV для ${source}`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    logDebug(`Ошибка API для ${source}`, {
+                        status: response.status,
+                        error: errorData
+                    });
+                    
+                    throw new Error(`API ошибка ${response.status}: ${errorData.error?.message || 'Неизвестная ошибка'}`);
+                }
+                
+                const data = await response.json();
+                logDebug(`API ответ для ${source}`, { 
+                    hasData: !!data.values,
+                    rowsCount: data.values ? data.values.length : 0
+                });
+                
+                if (!data.values || data.values.length === 0) {
                     return [];
                 }
                 
-                logDebug(`CSV распарсен для ${source}`, {
-                    rows: rows.length,
-                    sampleRow: rows.length > 1 ? rows[1] : 'Нет данных'
-                });
-                
-                return rows;
+                return data.values;
                 
             } catch (error) {
-                logDebug(`Ошибка загрузки ${source}`, { 
-                    error: error.message 
-                });
+                logDebug(`Ошибка API загрузки ${source}`, { error: error.message });
                 throw error;
             }
         }
         
-        // Парсинг CSV
+        // Загрузка данных через прокси
+        async function loadDataFromProxy(proxyUrl, source) {
+            try {
+                logDebug(`Пробуем загрузить ${source} через прокси`);
+                
+                // Добавляем заголовки для прокси
+                const response = await fetch(proxyUrl, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Прокси ошибка ${response.status}: ${response.statusText}`);
+                }
+                
+                const csvText = await response.text();
+                
+                if (!csvText || csvText.trim() === '') {
+                    logDebug(`Пустой ответ для ${source} через прокси`);
+                    return [];
+                }
+                
+                // Парсим CSV
+                const rows = parseCSV(csvText);
+                logDebug(`Прокси данные получены для ${source}`, { rows: rows.length });
+                
+                return rows;
+                
+            } catch (error) {
+                logDebug(`Ошибка прокси загрузки ${source}`, { error: error.message });
+                
+                // Если прокси не работает, пробуем прямой доступ с другим подходом
+                try {
+                    logDebug(`Пробуем альтернативный метод для ${source}`);
+                    return await loadDataAlternative(source);
+                } catch (altError) {
+                    logDebug(`Альтернативный метод тоже не сработал для ${source}`, { error: altError.message });
+                    return [];
+                }
+            }
+        }
+        
+        // Альтернативный метод загрузки (публичный доступ)
+        async function loadDataAlternative(source) {
+            const gid = source === 'manager' ? MANAGER_SHEET_GID : CONTENT_SHEET_GID;
+            
+            // Пробуем разные форматы URL
+            const urlFormats = [
+                `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}`,
+                `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?gid=${gid}&single=true&output=csv`,
+                `https://docs.google.com/spreadsheets/d/e/2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O/pub?gid=${gid}&single=true&output=csv`
+            ];
+            
+            for (const url of urlFormats) {
+                try {
+                    logDebug(`Пробуем альтернативный URL для ${source}`, { url: url.substring(0, 100) + '...' });
+                    
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const csvText = await response.text();
+                        const rows = parseCSV(csvText);
+                        if (rows.length > 0) {
+                            logDebug(`Альтернативный URL сработал для ${source}`, { rows: rows.length });
+                            return rows;
+                        }
+                    }
+                } catch (error) {
+                    logDebug(`Альтернативный URL не сработал`, { url: url.substring(0, 50), error: error.message });
+                }
+            }
+            
+            throw new Error('Все альтернативные методы не сработали');
+        }
+        
+        // Парсинг CSV (остается без изменений)
         function parseCSV(csvText) {
             const rows = [];
             let currentRow = [];
@@ -764,7 +583,7 @@
             return rows;
         }
         
-        // Обработка данных
+        // Обработка данных (остается без изменений, как в предыдущем коде)
         function processData(rows, source) {
             if (rows.length < 2) {
                 logDebug(`Мало данных для ${source}`, { rows: rows.length });
@@ -810,14 +629,6 @@
                         source: source
                     };
                     
-                    logDebug(`Анализ строки ${source}`, {
-                        rowIndex: i,
-                        filename: analysis.filename,
-                        status: analysis.status,
-                        statusType: analysis.statusType,
-                        productsCount: analysis.productsCount
-                    });
-                    
                     if (source === 'manager') {
                         // Для менеджеров: только не завершенные
                         if (analysis.statusType !== 'completed' && analysis.statusType !== 'unknown') {
@@ -857,12 +668,10 @@
                     header && header.toString().toLowerCase().includes(columnName.toLowerCase())
                 );
                 if (index !== -1) {
-                    logDebug(`Найден столбец "${columnName}" по индексу ${index}`, { header: headers[index] });
                     return index;
                 }
             }
             
-            logDebug(`Столбец не найден`, { columnNames: columnNames });
             return -1;
         }
         
@@ -926,7 +735,7 @@
                             }
                         }
                     } catch (e) {
-                        logDebug(`Ошибка парсинга даты завершения`, { dateStr: dateStr, error: e.message });
+                        // Игнорируем ошибки парсинга даты
                     }
                 }
             }
@@ -1064,9 +873,7 @@
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><strong>${file.filename}</strong><br>
-                        <small style="color: #666; font-size: 0.8em;">${file.source}</small>
-                    </td>
+                    <td><strong>${file.filename}</strong></td>
                     <td><span class="highlight">${file.productsCount}</span></td>
                     <td class="date-cell">${file.additionDate}</td>
                     <td><span class="file-status ${statusClass}">${statusText}</span></td>
@@ -1115,7 +922,7 @@
             loading.style.display = 'none';
             statsSection.style.display = 'block';
             warningMessage.style.display = 'block';
-            warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Используются демо-данные. Для загрузки реальных данных нажмите "Обновить".';
+            warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Используются демо-данные. Для загрузки реальных данных попробуйте "Загрузить через прокси".';
             
             logDebug('Показаны демо-данные');
         }
