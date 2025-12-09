@@ -643,7 +643,7 @@
                 
                 <div class="files-table-container">
                     <h2 class="section-title">
-                        <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера
+                        <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера (👥 Рабочие группы КАМ)
                     </h2>
                     
                     <table class="files-table">
@@ -729,10 +729,11 @@
     <script>
         // ID Google Таблиц
         const MANAGER_SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
-        const MANAGER_SHEET_NAME = '👥 Рабочие группы КАМ';
+        const MANAGER_SHEET_GID = '1272115114'; // GID листа "👥 Рабочие группы КАМ"
         
-        const CONTENT_SPREADSHEET_ID = '2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O';
-        const CONTENT_SHEET_NAME = 'Рабочие группы контента';
+        // Для таблицы контента - это другой spreadsheet!
+        const CONTENT_SPREADSHEET_ID = '1YVahdKMZm3J1J8kyvqK-4DUULsNxN25f59AN9A0lQoI'; // Нужен реальный ID таблицы контента
+        const CONTENT_SHEET_GID = '0'; // GID листа "Рабочие группы контента"
         
         // Названия столбцов для анализа
         const STATUS_COLUMN_NAMES = ['Статус группы', 'Статус', 'Статус файла', 'Состояние'];
@@ -742,7 +743,6 @@
         const ADDITION_DATE_COLUMN_NAMES = ['Дата добавления файла', 'Дата добавления', 'Дата загрузки', 'Upload date', 'Дата создания'];
         const URGENCY_COLUMN_NAMES = ['Срочность', 'Срочно', 'Приоритет', 'Urgency'];
         
-        // Эмоджи для статусов
         const EMOJI_STATUSES = {
             '🆕': 'available',
             '✅': 'completed',
@@ -752,16 +752,13 @@
         const MONTH_NAMES_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
                                'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
         
-        // Переменные для данных
         let monthlyChart = null;
         let currentMonth, currentYear;
         
-        // Основные показатели
         let managerProductsToAdd = 0;
         let contentProductsToAdd = 0;
         let productsAddedThisMonth = 0;
         
-        // Массивы для файлов
         let managerFilesForProcessing = [];
         let contentFilesForProcessing = [];
         let monthlyData = [];
@@ -804,9 +801,16 @@
                 
                 const monthlyTotals = {};
                 
-                // Загружаем данные из обеих таблиц
-                await loadManagerData(monthlyTotals);
-                await loadContentData(monthlyTotals);
+                // Загружаем данные из ОБЕИХ таблиц
+                console.log('Начинаем загрузку данных...');
+                
+                // Загружаем данные менеджеров с GID
+                await loadDataFromSheet(MANAGER_SPREADSHEET_ID, MANAGER_SHEET_GID, monthlyTotals, 'manager');
+                console.log('Данные менеджеров загружены');
+                
+                // Загружаем данные контента с GID
+                await loadDataFromSheet(CONTENT_SPREADSHEET_ID, CONTENT_SHEET_GID, monthlyTotals, 'content');
+                console.log('Данные контента загружены');
                 
                 // Формируем данные для графика
                 prepareMonthlyData(monthlyTotals);
@@ -833,89 +837,69 @@
             monthlyData = [];
         }
         
-        // Загрузка данных менеджеров
-        async function loadManagerData(monthlyTotals) {
+        // Общая функция загрузки данных из таблицы
+        async function loadDataFromSheet(spreadsheetId, sheetGid, monthlyTotals, source) {
             try {
-                console.log('Загрузка данных менеджеров с листа:', MANAGER_SHEET_NAME);
+                console.log(`Загрузка данных ${source} из таблицы ${spreadsheetId}, лист ${sheetGid}`);
                 
-                // Для Google Sheets API v4
-                const apiKey = 'AIzaSyDyJppAwJkyLm-Mt8cYqy5xPJt6jiI1oJo';
-                const range = encodeURIComponent(MANAGER_SHEET_NAME);
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${MANAGER_SPREADSHEET_ID}/values/${range}?key=${apiKey}`;
+                // Пробуем несколько методов загрузки
+                const urls = [
+                    `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${sheetGid}`,
+                    `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=${sheetGid}`,
+                    `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${sheetGid}`
+                ];
                 
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки менеджеров: ${response.status}`);
+                let response;
+                let csvText = '';
+                
+                for (const url of urls) {
+                    try {
+                        console.log(`Попытка загрузки по URL: ${url}`);
+                        response = await fetch(url);
+                        if (response.ok) {
+                            csvText = await response.text();
+                            console.log(`Успешная загрузка ${source}, длина данных: ${csvText.length}`);
+                            break;
+                        }
+                    } catch (error) {
+                        console.log(`Ошибка загрузки по URL ${url}:`, error.message);
+                        continue;
+                    }
                 }
                 
-                const data = await response.json();
-                if (!data.values || data.values.length === 0) {
-                    throw new Error('Таблица менеджеров пуста');
+                if (!csvText) {
+                    throw new Error(`Не удалось загрузить данные ${source}`);
                 }
                 
-                const rows = data.values;
-                const headers = rows[0];
-                
-                // Находим индексы столбцов
-                const columnIndices = findColumnIndices(headers);
-                
-                // Обрабатываем строки
-                for (let i = 1; i < rows.length; i++) {
-                    const rowData = rows[i];
-                    if (rowData.length === 0) continue;
-                    
-                    processRowData(rowData, columnIndices, monthlyTotals, 'manager');
-                }
-                
-                console.log('Данные менеджеров загружены:', {
-                    filesCount: managerFilesForProcessing.length,
-                    productsToAdd: managerProductsToAdd
-                });
-                
-            } catch (error) {
-                console.error('Ошибка загрузки данных менеджеров:', error);
-                // Продолжаем работу
-            }
-        }
-        
-        // Загрузка данных контента
-        async function loadContentData(monthlyTotals) {
-            try {
-                console.log('Загрузка данных контента...');
-                
-                // Для публичных таблиц используем CSV экспорт
-                const csvUrl = `https://docs.google.com/spreadsheets/d/e/${CONTENT_SPREADSHEET_ID}/pub?output=csv`;
-                
-                const response = await fetch(csvUrl);
-                if (!response.ok) throw new Error(`Ошибка загрузки контента: ${response.status}`);
-                
-                const csvText = await response.text();
                 const rows = csvText.split('\n').filter(row => row.trim() !== '');
                 
-                if (rows.length < 2) {
-                    console.log('Таблица контента пуста');
+                if (rows.length === 0) {
+                    console.log(`Таблица ${source} пуста`);
                     return;
                 }
                 
                 const headers = parseCSVRow(rows[0]);
+                console.log(`Заголовки ${source}:`, headers);
+                
                 const columnIndices = findColumnIndices(headers);
+                console.log(`Индексы столбцов ${source}:`, columnIndices);
                 
                 // Обрабатываем строки
                 for (let i = 1; i < rows.length; i++) {
                     const rowData = parseCSVRow(rows[i]);
                     if (rowData.length === 0) continue;
                     
-                    processRowData(rowData, columnIndices, monthlyTotals, 'content');
+                    processRowData(rowData, columnIndices, monthlyTotals, source);
                 }
                 
-                console.log('Данные контента загружены:', {
-                    filesCount: contentFilesForProcessing.length,
-                    productsToAdd: contentProductsToAdd
+                console.log(`Данные ${source} загружены:`, {
+                    filesCount: source === 'manager' ? managerFilesForProcessing.length : contentFilesForProcessing.length,
+                    productsToAdd: source === 'manager' ? managerProductsToAdd : contentProductsToAdd
                 });
                 
             } catch (error) {
-                console.error('Ошибка загрузки данных контента:', error);
-                // Продолжаем работу
+                console.error(`Ошибка загрузки данных ${source}:`, error);
+                throw error;
             }
         }
         
@@ -935,7 +919,7 @@
         function findColumnIndex(headers, columnNames) {
             for (const columnName of columnNames) {
                 const index = headers.findIndex(header => 
-                    header && header.trim().toLowerCase().includes(columnName.toLowerCase())
+                    header && header.toString().trim().toLowerCase().includes(columnName.toLowerCase())
                 );
                 
                 if (index !== -1) return index;
@@ -1052,7 +1036,7 @@
                             }
                         }
                     } catch (e) {
-                        console.warn('Не удалось распарсить дату:', dateStr, e);
+                        console.warn('Не удалось распарсить дату:', dateStr);
                     }
                 }
             }
@@ -1064,7 +1048,6 @@
         function determineStatusType(status) {
             if (!status) return 'unknown';
             
-            // Проверяем эмоджи
             const emoji = getFirstEmoji(status);
             if (emoji && emoji in EMOJI_STATUSES) {
                 return EMOJI_STATUSES[emoji];
@@ -1198,12 +1181,14 @@
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-info-circle"></i> Нет файлов для обработки от менеджеров
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки от менеджеров (лист "👥 Рабочие группы КАМ")
                         </td>
                     </tr>
                 `;
                 return;
             }
+            
+            console.log('Отображаем файлы менеджеров:', managerFilesForProcessing.length);
             
             managerFilesForProcessing.forEach(file => {
                 const statusClass = `status-${file.statusType}`;
@@ -1232,12 +1217,14 @@
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-info-circle"></i> Нет файлов для обработки контента
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки контента (лист "Рабочие группы контента")
                         </td>
                     </tr>
                 `;
                 return;
             }
+            
+            console.log('Отображаем файлы контента:', contentFilesForProcessing.length);
             
             contentFilesForProcessing.forEach(file => {
                 const statusClass = `status-${file.statusType}`;
@@ -1314,7 +1301,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `Товаров: ${context.parsed.y.toLocaleString('ru-RU')}`;
+                                    return `Товаров: ${context.parsed.y}`;
                                 }
                             }
                         }
@@ -1390,6 +1377,7 @@
             contentProductsToAdd = 45;
             productsAddedThisMonth = 42;
             
+            // ДЕМО-данные менеджеров
             managerFilesForProcessing = [
                 { filename: 'Каталог_менеджеров_1.xlsx', productsCount: 25, statusType: 'in_progress', 
                   additionDate: '15.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high' },
@@ -1399,6 +1387,7 @@
                   additionDate: '28.03.2024', urgency: 'Низкая', urgencyClass: 'urgency-low' }
             ];
             
+            // ДЕМО-данные контента (ДРУГИЕ данные!)
             contentFilesForProcessing = [
                 { filename: 'Контент_1.xlsx', productsCount: 15, statusType: 'in_progress', 
                   additionDate: '10.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high' },
