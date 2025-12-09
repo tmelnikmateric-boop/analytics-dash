@@ -339,6 +339,15 @@
             overflow-y: auto;
         }
         
+        .data-source-info {
+            background-color: #e8f4f8;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -393,6 +402,13 @@
         <header>
             <h1><i class="fas fa-chart-pie"></i> Загрузка новых товаров на сайт</h1>
             <div class="subtitle">Очередь загрузки товаров</div>
+            <div class="data-source-info">
+                <i class="fas fa-database"></i> Источник данных: 
+                <a href="https://docs.google.com/spreadsheets/d/1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek/edit" 
+                   target="_blank" style="color: #17a2b8; font-weight: 600;">
+                   Таблица рабочих групп
+                </a>
+            </div>
         </header>
         
         <div class="content">
@@ -424,7 +440,7 @@
                             <i class="fas fa-file-alt"></i> Количество новых товаров контента
                         </div>
                         <div class="summary-number" id="contentProductsToAdd">0</div>
-                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "Рабочие группы контента"</div>
+                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "Рабочие группы контента" (GID: 33531424)</div>
                     </div>
                     
                     <div class="summary-card important-3">
@@ -440,8 +456,13 @@
                     <h2 class="section-title">
                         <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера (👥 Рабочие группы КАМ)
                     </h2>
-                    <div class="last-update" style="margin-bottom: 15px; text-align: center;">
-                        <i class="fas fa-info-circle"></i> Данные с листа GID: 1367779997 (только статусы "В работе" и "Доступно")
+                    <div class="data-source-info">
+                        <i class="fas fa-info-circle"></i> Источник: 
+                        <a href="https://docs.google.com/spreadsheets/d/1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek/edit?gid=1367779997" 
+                           target="_blank" style="color: #17a2b8;">
+                           Лист "👥 Рабочие группы КАМ" (GID: 1367779997)
+                        </a>
+                        | Только статусы "В работе" и "Доступно"
                     </div>
                     
                     <table class="files-table">
@@ -463,8 +484,13 @@
                     <h2 class="section-title">
                         <i class="fas fa-file-alt"></i> Загрузка ассортимента контента
                     </h2>
-                    <div class="last-update" style="margin-bottom: 15px; text-align: center;">
-                        <i class="fas fa-info-circle"></i> Данные с листа "Рабочие группы контента" (только статусы "В работе" и "Доступно")
+                    <div class="data-source-info">
+                        <i class="fas fa-info-circle"></i> Источник: 
+                        <a href="https://docs.google.com/spreadsheets/d/1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek/edit?gid=33531424" 
+                           target="_blank" style="color: #17a2b8;">
+                           Лист "Рабочие группы контента" (GID: 33531424)
+                        </a>
+                        | Только статусы "В работе" и "Доступно"
                     </div>
                     
                     <table class="files-table">
@@ -489,6 +515,9 @@
                     <button onclick="showDebugInfo()" class="btn" style="background: #6c757d;">
                         <i class="fas fa-bug"></i> Отладка
                     </button>
+                    <button onclick="clearData()" class="btn" style="background: #dc3545;">
+                        <i class="fas fa-trash-alt"></i> Очистить данные
+                    </button>
                 </div>
                 
                 <div id="debugSection" class="debug-info" style="display: none;">
@@ -500,21 +529,26 @@
     </div>
 
     <script>
-        // ID таблицы менеджеров
-        const MANAGER_SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
-        const MANAGER_SHEET_GID = '1367779997'; // GID листа "👥 Рабочие группы КАМ"
+        // КОНСТАНТЫ ДЛЯ ТАБЛИЦЫ
+        const SPREADSHEET_ID = '1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek'; // Основной ID таблицы
         
-        // ID таблицы контента (ДОЛЖЕН БЫТЬ ДРУГОЙ!)
-        const CONTENT_SPREADSHEET_ID = '2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O';
-        // Для контента пробуем разные GID
-        const CONTENT_SHEET_GIDS = ['0', '1367779997', '1272115114', '1234567890'];
+        // GID листов
+        const MANAGER_SHEET_GID = '1367779997';    // 👥 Рабочие группы КАМ
+        const CONTENT_SHEET_GID = '33531424';      // Рабочие группы контента
+        
+        // Глобальные переменные для данных
+        let managerProductsToAdd = 0;
+        let contentProductsToAdd = 0;
+        let productsAddedThisMonth = 0;
+        let managerFilesForProcessing = [];
+        let contentFilesForProcessing = [];
         
         // Отладочная информация
         let debugLog = [];
         
         function logDebug(message, data = null) {
             const timestamp = new Date().toLocaleTimeString();
-            const logEntry = `[${timestamp}] ${message}` + (data ? `: ${JSON.stringify(data)}` : '');
+            const logEntry = `[${timestamp}] ${message}` + (data ? `: ${JSON.stringify(data, null, 2)}` : '');
             debugLog.push(logEntry);
             console.log(logEntry);
         }
@@ -523,8 +557,24 @@
             const debugSection = document.getElementById('debugSection');
             const debugContent = document.getElementById('debugContent');
             
-            debugContent.innerHTML = debugLog.map(log => `<div>${log}</div>`).join('');
+            debugContent.innerHTML = debugLog.map(log => `<div style="margin-bottom: 5px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">${log}</div>`).join('');
             debugSection.style.display = 'block';
+        }
+        
+        function clearData() {
+            managerProductsToAdd = 0;
+            contentProductsToAdd = 0;
+            productsAddedThisMonth = 0;
+            managerFilesForProcessing = [];
+            contentFilesForProcessing = [];
+            
+            updateDisplay();
+            
+            const warningMessage = document.getElementById('warningMessage');
+            warningMessage.style.display = 'block';
+            warningMessage.innerHTML = '<i class="fas fa-info-circle"></i> Данные очищены. Нажмите "Загрузить реальные данные" для обновления.';
+            
+            logDebug('Данные очищены');
         }
         
         // Основная функция загрузки
@@ -550,34 +600,38 @@
                 managerFilesForProcessing = [];
                 contentFilesForProcessing = [];
                 
-                // Загружаем данные менеджеров (лист 1367779997)
-                logDebug('Пробуем загрузить данные менеджеров с GID: 1367779997');
-                const managerData = await loadDataFromSheet(MANAGER_SPREADSHEET_ID, MANAGER_SHEET_GID, 'manager');
-                logDebug('Данные менеджеров получены', { rows: managerData.length });
+                // Загружаем данные менеджеров
+                logDebug('Загружаем данные менеджеров с GID: ' + MANAGER_SHEET_GID);
+                const managerData = await loadDataFromSheet(SPREADSHEET_ID, MANAGER_SHEET_GID, 'manager');
                 
-                if (managerData.length > 0) {
+                if (managerData && managerData.length > 1) {
+                    logDebug('Данные менеджеров получены успешно', { 
+                        rows: managerData.length,
+                        headers: managerData[0] 
+                    });
                     processData(managerData, 'manager');
+                } else {
+                    logDebug('Нет данных менеджеров или только заголовки');
+                    warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Нет данных менеджеров для обработки. Проверьте таблицу.';
+                    warningMessage.style.display = 'block';
                 }
                 
-                // Загружаем данные контента (пробуем разные GID)
-                let contentData = [];
-                for (const gid of CONTENT_SHEET_GIDS) {
-                    logDebug(`Пробуем загрузить данные контента с GID: ${gid}`);
-                    try {
-                        contentData = await loadDataFromSheet(CONTENT_SPREADSHEET_ID, gid, 'content');
-                        if (contentData.length > 1) { // Есть данные помимо заголовков
-                            logDebug(`Нашли данные контента с GID: ${gid}`, { rows: contentData.length });
-                            break;
-                        }
-                    } catch (e) {
-                        logDebug(`Не удалось загрузить с GID ${gid}:`, { error: e.message });
-                    }
-                }
+                // Загружаем данные контента
+                logDebug('Загружаем данные контента с GID: ' + CONTENT_SHEET_GID);
+                const contentData = await loadDataFromSheet(SPREADSHEET_ID, CONTENT_SHEET_GID, 'content');
                 
-                if (contentData.length > 0) {
+                if (contentData && contentData.length > 1) {
+                    logDebug('Данные контента получены успешно', { 
+                        rows: contentData.length,
+                        headers: contentData[0] 
+                    });
                     processData(contentData, 'content');
                 } else {
-                    logDebug('Не удалось загрузить данные контента');
+                    logDebug('Нет данных контента или только заголовки');
+                    if (!warningMessage.style.display || warningMessage.style.display === 'none') {
+                        warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Нет данных контента для обработки. Проверьте таблицу.';
+                        warningMessage.style.display = 'block';
+                    }
                 }
                 
                 // Обновляем отображение
@@ -586,51 +640,86 @@
                 loading.style.display = 'none';
                 statsSection.style.display = 'block';
                 
-                if (managerFilesForProcessing.length === 0 && contentFilesForProcessing.length === 0) {
-                    warningMessage.style.display = 'block';
-                }
+                logDebug('Загрузка завершена успешно', {
+                    managerFiles: managerFilesForProcessing.length,
+                    contentFiles: contentFilesForProcessing.length,
+                    managerProducts: managerProductsToAdd,
+                    contentProducts: contentProductsToAdd,
+                    completedThisMonth: productsAddedThisMonth
+                });
                 
             } catch (error) {
-                console.error('Ошибка:', error);
-                logDebug('Ошибка загрузки', { error: error.message });
+                console.error('Ошибка загрузки:', error);
+                logDebug('Критическая ошибка загрузки', { 
+                    error: error.message,
+                    stack: error.stack 
+                });
                 
                 loading.style.display = 'none';
                 errorMessage.style.display = 'block';
                 document.getElementById('errorText').textContent = `Ошибка: ${error.message}. Проверьте консоль для подробностей.`;
-                warningMessage.style.display = 'block';
+                
+                // Показываем демо-данные в случае ошибки
+                showDemoData();
             }
         }
         
         // Загрузка данных из таблицы
         async function loadDataFromSheet(spreadsheetId, gid, source) {
             try {
-                let url;
+                // Формируем правильный URL для Google Sheets CSV
+                const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
                 
-                if (gid) {
-                    url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
-                } else {
-                    url = `https://docs.google.com/spreadsheets/d/e/${spreadsheetId}/pub?output=csv`;
-                }
+                logDebug(`Загружаем ${source}`, { 
+                    spreadsheetId: spreadsheetId,
+                    gid: gid,
+                    urlShort: url.substring(0, 80) + '...'
+                });
                 
-                logDebug(`Загружаем ${source} по URL`, { url });
+                // Добавляем timestamp для предотвращения кэширования
+                const timestamp = new Date().getTime();
+                const finalUrl = `${url}&t=${timestamp}`;
                 
-                const response = await fetch(url);
+                const response = await fetch(finalUrl);
                 
                 if (!response.ok) {
-                    throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+                    const errorText = await response.text();
+                    logDebug(`Ошибка HTTP при загрузке ${source}`, {
+                        status: response.status,
+                        statusText: response.statusText,
+                        urlShort: finalUrl.substring(0, 80) + '...',
+                        errorPreview: errorText.substring(0, 200)
+                    });
+                    
+                    throw new Error(`Ошибка ${response.status} при загрузке данных ${source}`);
                 }
                 
                 const csvText = await response.text();
-                logDebug(`CSV получен (${source})`, { length: csvText.length });
+                logDebug(`CSV получен для ${source}`, { 
+                    length: csvText.length,
+                    preview: csvText.substring(0, 200) + '...' 
+                });
                 
+                // Парсим CSV
                 const rows = parseCSV(csvText);
-                logDebug(`Распарсено строк (${source})`, { count: rows.length });
+                
+                if (rows.length === 0) {
+                    logDebug(`Пустой CSV для ${source}`);
+                    return [];
+                }
+                
+                logDebug(`CSV распарсен для ${source}`, {
+                    rows: rows.length,
+                    sampleRow: rows.length > 1 ? rows[1] : 'Нет данных'
+                });
                 
                 return rows;
                 
             } catch (error) {
-                logDebug(`Ошибка загрузки ${source}`, { error: error.message });
-                return [];
+                logDebug(`Ошибка загрузки ${source}`, { 
+                    error: error.message 
+                });
+                throw error;
             }
         }
         
@@ -687,15 +776,15 @@
             
             // Находим индексы столбцов
             const indices = {
-                status: findColumnIndex(headers, ['Статус группы', 'Статус', 'Состояние']),
-                products: findColumnIndex(headers, ['Количество товаров', 'Количество', 'Товары']),
-                filename: findColumnIndex(headers, ['Имя файла', 'Файл', 'Название']),
-                date: findColumnIndex(headers, ['Дата взятия', 'Дата добавления файла', 'Дата']),
-                urgency: findColumnIndex(headers, ['Срочность', 'Приоритет']),
-                completionDate: findColumnIndex(headers, ['Дата завершения работы', 'Дата завершения'])
+                status: findColumnIndex(headers, ['Статус группы', 'Статус', 'Состояние', 'Статус группы']),
+                products: findColumnIndex(headers, ['Количество товаров', 'Количество', 'Товары', 'Кол-во товаров']),
+                filename: findColumnIndex(headers, ['Имя файла', 'Файл', 'Название', 'Название файла']),
+                date: findColumnIndex(headers, ['Дата взятия', 'Дата добавления файла', 'Дата', 'Дата создания']),
+                urgency: findColumnIndex(headers, ['Срочность', 'Приоритет', 'Важность']),
+                completionDate: findColumnIndex(headers, ['Дата завершения работы', 'Дата завершения', 'Дата окончания'])
             };
             
-            logDebug(`Индексы столбцов ${source}`, indices);
+            logDebug(`Индексы столбцов для ${source}`, indices);
             
             // Определяем текущий месяц и год
             const currentDate = new Date();
@@ -709,7 +798,7 @@
                 
                 const analysis = analyzeRow(row, indices, currentMonth, currentYear);
                 
-                if (analysis.filename) {
+                if (analysis.filename && analysis.filename !== '') {
                     const fileData = {
                         filename: analysis.filename,
                         productsCount: analysis.productsCount,
@@ -717,12 +806,21 @@
                         statusType: analysis.statusType,
                         additionDate: analysis.additionDate,
                         urgency: analysis.urgency,
-                        urgencyClass: getUrgencyClass(analysis.urgency)
+                        urgencyClass: getUrgencyClass(analysis.urgency),
+                        source: source
                     };
+                    
+                    logDebug(`Анализ строки ${source}`, {
+                        rowIndex: i,
+                        filename: analysis.filename,
+                        status: analysis.status,
+                        statusType: analysis.statusType,
+                        productsCount: analysis.productsCount
+                    });
                     
                     if (source === 'manager') {
                         // Для менеджеров: только не завершенные
-                        if (analysis.statusType !== 'completed') {
+                        if (analysis.statusType !== 'completed' && analysis.statusType !== 'unknown') {
                             managerFilesForProcessing.push(fileData);
                             managerProductsToAdd += analysis.productsCount;
                         }
@@ -732,7 +830,7 @@
                         }
                     } else {
                         // Для контента: только не завершенные
-                        if (analysis.statusType !== 'completed') {
+                        if (analysis.statusType !== 'completed' && analysis.statusType !== 'unknown') {
                             contentFilesForProcessing.push(fileData);
                             contentProductsToAdd += analysis.productsCount;
                         }
@@ -744,21 +842,27 @@
                 }
             }
             
-            logDebug(`Обработано ${source}`, {
+            logDebug(`Обработка ${source} завершена`, {
                 files: source === 'manager' ? managerFilesForProcessing.length : contentFilesForProcessing.length,
-                products: source === 'manager' ? managerProductsToAdd : contentProductsToAdd,
-                completedThisMonth: productsAddedThisMonth
+                products: source === 'manager' ? managerProductsToAdd : contentProductsToAdd
             });
         }
         
         // Поиск индекса столбца
         function findColumnIndex(headers, columnNames) {
+            if (!headers) return -1;
+            
             for (const columnName of columnNames) {
                 const index = headers.findIndex(header => 
                     header && header.toString().toLowerCase().includes(columnName.toLowerCase())
                 );
-                if (index !== -1) return index;
+                if (index !== -1) {
+                    logDebug(`Найден столбец "${columnName}" по индексу ${index}`, { header: headers[index] });
+                    return index;
+                }
             }
+            
+            logDebug(`Столбец не найден`, { columnNames: columnNames });
             return -1;
         }
         
@@ -784,7 +888,7 @@
             if (indices.products !== -1 && row[indices.products]) {
                 const str = row[indices.products].toString().trim();
                 const num = parseFloat(str.replace(/[^\d.,]/g, '').replace(',', '.'));
-                result.productsCount = isNaN(num) ? 0 : num;
+                result.productsCount = isNaN(num) ? 0 : Math.round(num);
             }
             
             // Имя файла
@@ -801,6 +905,7 @@
             // Срочность
             if (indices.urgency !== -1 && row[indices.urgency]) {
                 result.urgency = row[indices.urgency].toString().trim();
+                if (result.urgency === '') result.urgency = 'Не указана';
             }
             
             // Дата завершения (для определения текущего месяца)
@@ -809,19 +914,19 @@
                 if (dateStr) {
                     try {
                         const dateOnly = dateStr.split(' ')[0];
-                        const parts = dateOnly.split('.');
+                        const parts = dateOnly.split(/[\.\/-]/);
                         
                         if (parts.length === 3) {
                             const day = parseInt(parts[0], 10);
                             const month = parseInt(parts[1], 10) - 1;
-                            const year = parseInt(parts[2], 10);
+                            const year = parts[2].length === 2 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10);
                             
                             if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
                                 result.isCurrentMonth = (month === currentMonth && year === currentYear);
                             }
                         }
                     } catch (e) {
-                        // Игнорируем ошибки парсинга даты
+                        logDebug(`Ошибка парсинга даты завершения`, { dateStr: dateStr, error: e.message });
                     }
                 }
             }
@@ -833,27 +938,35 @@
         function determineStatusType(status) {
             if (!status) return 'unknown';
             
+            const statusLower = status.toLowerCase();
+            
             // Сначала ищем эмоджи
-            if (status.includes('✅') || status.includes('✔') || status.includes('✓')) {
+            if (status.includes('✅') || status.includes('✔') || status.includes('✓') || 
+                status.includes('☑') || status.includes('🎯')) {
                 return 'completed';
             }
-            if (status.includes('🔄') || status.includes('⚙️') || status.includes('⏳')) {
+            if (status.includes('🔄') || status.includes('⚙️') || status.includes('⏳') || 
+                status.includes('📊') || status.includes('👨‍💻')) {
                 return 'in_progress';
             }
-            if (status.includes('🆕') || status.includes('📄') || status.includes('📋')) {
+            if (status.includes('🆕') || status.includes('📄') || status.includes('📋') || 
+                status.includes('📁') || status.includes('📂')) {
                 return 'available';
             }
             
             // Затем проверяем текст
-            const statusLower = status.toLowerCase();
             if (statusLower.includes('заверш') || statusLower.includes('выполн') || 
-                statusLower.includes('готов') || statusLower.includes('сделан')) {
+                statusLower.includes('готов') || statusLower.includes('сделан') ||
+                statusLower.includes('done') || statusLower.includes('completed') ||
+                statusLower.includes('готово') || statusLower.includes('закрыт')) {
                 return 'completed';
             } else if (statusLower.includes('доступ') || statusLower.includes('нов') || 
-                      statusLower.includes('ожидан')) {
+                      statusLower.includes('ожидан') || statusLower.includes('available') ||
+                      statusLower.includes('новая') || statusLower.includes('ожидает')) {
                 return 'available';
             } else if (statusLower.includes('работ') || statusLower.includes('в проц') || 
-                      statusLower.includes('обработ')) {
+                      statusLower.includes('обработ') || statusLower.includes('in progress') ||
+                      statusLower.includes('выполняется') || statusLower.includes('актив')) {
                 return 'in_progress';
             }
             
@@ -866,10 +979,11 @@
             
             const urgencyLower = urgencyText.toLowerCase();
             if (urgencyLower.includes('высок') || urgencyLower.includes('срочн') || 
-                urgencyLower.includes('urgent') || urgencyLower.includes('high')) {
+                urgencyLower.includes('urgent') || urgencyLower.includes('high') ||
+                urgencyLower.includes('критич') || urgencyLower.includes('важн')) {
                 return 'urgency-high';
-            } else if (urgencyLower.includes('сезон') || urgencyLower.includes('medium') || 
-                      urgencyLower.includes('norm')) {
+            } else if (urgencyLower.includes('серед') || urgencyLower.includes('medium') || 
+                      urgencyLower.includes('norm') || urgencyLower.includes('обыч')) {
                 return 'urgency-medium';
             } else {
                 return 'urgency-low';
@@ -885,17 +999,23 @@
             try {
                 const dateStr = dateString.trim();
                 
-                // Формат DD.MM.YYYY
-                const parts = dateStr.split('.');
+                // Формат DD.MM.YYYY или DD/MM/YYYY
+                const parts = dateStr.split(/[\.\/-]/);
                 if (parts.length >= 3) {
                     const day = parseInt(parts[0], 10);
                     const month = parseInt(parts[1], 10) - 1;
-                    const year = parseInt(parts[2].split(' ')[0], 10);
+                    const year = parts[2].length === 2 ? 2000 + parseInt(parts[2], 10) : parseInt(parts[2], 10);
                     
                     if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
                         const date = new Date(year, month, day);
                         return date.toLocaleDateString('ru-RU');
                     }
+                }
+                
+                // Пробуем стандартный парсинг
+                const parsedDate = new Date(dateStr);
+                if (!isNaN(parsedDate.getTime())) {
+                    return parsedDate.toLocaleDateString('ru-RU');
                 }
                 
                 return dateStr;
@@ -917,13 +1037,7 @@
             // Обновляем таблицу контента
             updateTable('contentFilesTableBody', contentFilesForProcessing, 'контента');
             
-            logDebug('Отображение обновлено', {
-                managerFiles: managerFilesForProcessing.length,
-                contentFiles: contentFilesForProcessing.length,
-                managerProducts: managerProductsToAdd,
-                contentProducts: contentProductsToAdd,
-                completedThisMonth: productsAddedThisMonth
-            });
+            logDebug('Отображение обновлено');
         }
         
         // Обновление таблицы
@@ -943,14 +1057,16 @@
             }
             
             files.forEach(file => {
-                const statusClass = `status-${file.statusType}`;
+                const statusClass = `status-${file.statusType.replace('_', '-')}`;
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
                 const urgencyText = file.urgency || 'Не указана';
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><strong>${file.filename}</strong></td>
+                    <td><strong>${file.filename}</strong><br>
+                        <small style="color: #666; font-size: 0.8em;">${file.source}</small>
+                    </td>
                     <td><span class="highlight">${file.productsCount}</span></td>
                     <td class="date-cell">${file.additionDate}</td>
                     <td><span class="file-status ${statusClass}">${statusText}</span></td>
@@ -966,15 +1082,9 @@
                 case 'in_progress': return '🔄 В работе';
                 case 'available': return '🆕 Доступно';
                 case 'completed': return '✅ Завершено';
-                default: return `❓ ${statusType}`;
+                default: return '❓ Неизвестно';
             }
         }
-        
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function() {
-            logDebug('Страница загружена');
-            showDemoData();
-        });
         
         // Демо-данные
         function showDemoData() {
@@ -988,16 +1098,16 @@
             
             managerFilesForProcessing = [
                 { filename: 'Каталог_менеджеров_1.xlsx', productsCount: 25, statusType: 'in_progress', 
-                  additionDate: '15.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high' },
+                  additionDate: '15.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high', source: 'manager' },
                 { filename: 'Каталог_менеджеров_2.xlsx', productsCount: 30, statusType: 'available', 
-                  additionDate: '22.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium' }
+                  additionDate: '22.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium', source: 'manager' }
             ];
             
             contentFilesForProcessing = [
                 { filename: 'Контент_1.xlsx', productsCount: 15, statusType: 'in_progress', 
-                  additionDate: '10.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high' },
+                  additionDate: '10.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high', source: 'content' },
                 { filename: 'Контент_2.xlsx', productsCount: 20, statusType: 'available', 
-                  additionDate: '18.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium' }
+                  additionDate: '18.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium', source: 'content' }
             ];
             
             updateDisplay();
@@ -1005,9 +1115,16 @@
             loading.style.display = 'none';
             statsSection.style.display = 'block';
             warningMessage.style.display = 'block';
+            warningMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Используются демо-данные. Для загрузки реальных данных нажмите "Обновить".';
             
             logDebug('Показаны демо-данные');
         }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            logDebug('Страница загружена');
+            showDemoData();
+        });
     </script>
 </body>
 </html>
