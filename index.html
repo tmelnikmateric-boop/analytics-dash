@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Загрузка новых товаров на сайт</title>
     <style>
-        /* Все стили остаются без изменений */
         * {
             margin: 0;
             padding: 0;
@@ -16,6 +15,7 @@
         body {
             min-height: 100vh;
             padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
         
         .container {
@@ -83,7 +83,6 @@
             padding: 40px 30px;
         }
         
-        /* Основные показатели товаров */
         .products-summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -160,7 +159,6 @@
             color: rgba(255,255,255,0.9);
         }
         
-        /* Таблицы файлов */
         .files-table-container {
             margin: 40px 0;
             overflow-x: auto;
@@ -237,7 +235,6 @@
             color: #0c5460;
         }
         
-        /* Стили для срочности */
         .urgency-high {
             background-color: #f8d7da;
             color: #721c24;
@@ -254,7 +251,6 @@
             color: #0c5460;
         }
         
-        /* Стили для графика */
         .chart-container {
             margin: 50px 0;
             padding: 30px;
@@ -313,20 +309,6 @@
             border-radius: 3px;
         }
         
-        .chart-tooltip {
-            position: absolute;
-            padding: 10px 15px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 5px;
-            font-size: 0.9em;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 100;
-        }
-        
-        /* Кнопки */
         .buttons {
             display: flex;
             gap: 15px;
@@ -356,16 +338,6 @@
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
         
-        .btn-secondary {
-            background: #6c757d;
-            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
-        }
-        
-        .btn-secondary:hover {
-            box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
-        }
-        
-        /* Остальные элементы */
         .loading {
             text-align: center;
             padding: 60px 40px;
@@ -425,7 +397,6 @@
             font-style: italic;
         }
         
-        /* Модальное окно */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -492,29 +463,6 @@
             padding: 30px;
             overflow-y: auto;
             max-height: calc(80vh - 100px);
-        }
-        
-        .rules-content {
-            line-height: 1.6;
-            color: #333;
-        }
-        
-        .rules-content h3 {
-            color: #667eea;
-            margin: 20px 0 10px 0;
-            font-size: 1.3em;
-        }
-        
-        .rules-content ul, .rules-content ol {
-            margin: 10px 0 10px 20px;
-        }
-        
-        .rules-content li {
-            margin: 5px 0;
-        }
-        
-        .rules-content p {
-            margin: 10px 0;
         }
         
         @keyframes fadeIn {
@@ -615,7 +563,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Модальное окно для правил работы -->
     <div id="rulesModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -628,12 +575,8 @@
             </div>
             <div class="modal-body">
                 <div class="rules-content">
-                    <h2>Порядок работы комерческого отдела и отдела электронной коммерции</h2>
-                    <h2><b></b>Вывод новых товаров на сайт</b></h2>
-                    
-                    <p></p>
-                    
-                                      
+                    <h2>Порядок работы коммерческого отдела и отдела электронной коммерции</h2>
+                    <h2><b>Вывод новых товаров на сайт</b></h2>
                     <p style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
                         <i class="fas fa-info-circle"></i> <strong>Важно:</strong> Данные обновляются автоматически при загрузке страницы. Для принудительного обновления используйте соответствующую кнопку.
                     </p>
@@ -645,9 +588,8 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-chart-pie"></i> Загрузка новых товаров на сайт</h1>
-            <div class="subtitle"> Очередь загрузки товаров</div>
+            <div class="subtitle">Очередь загрузки товаров</div>
         
-            <!-- Кнопка "Правила работы" -->
             <div class="header-buttons">
                 <button class="btn-rules" onclick="openRulesModal()">
                     <i class="fas fa-book"></i> Правила работы
@@ -666,21 +608,20 @@
             
             <div id="loading" class="loading">
                 <i class="fas fa-spinner fa-spin fa-2x pulse"></i>
-                <p style="margin-top: 15px;">Загрузка данных с листов "Рабочие группы от КАМ" и "Рабочие группы контента"...</p>
+                <p style="margin-top: 15px;">Загрузка данных с листов "👥 Рабочие группы КАМ" и "Рабочие группы контента"...</p>
                 <p style="margin-top: 10px; font-size: 0.9em; color: #888;">
                     <i class="fas fa-info-circle"></i> Анализ с учетом дат завершения работы
                 </p>
             </div>
             
             <div id="statsSection" style="display: none;">
-                <!-- Основные показатели товаров -->
                 <div class="products-summary">
                     <div class="summary-card important">
                         <div class="summary-label">
                             <i class="fas fa-user-tie"></i> Количество новых товаров менеджеров
                         </div>
                         <div class="summary-number" id="managerProductsToAdd">0</div>
-                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "Рабочие группы от КАМ"</div>
+                        <div class="summary-subtitle">Сумма товаров в статусе "В работе" и "Доступно" с листа "👥 Рабочие группы КАМ"</div>
                     </div>
                     
                     <div class="summary-card important-2">
@@ -700,7 +641,6 @@
                     </div>
                 </div>
                 
-                <!-- Таблица файлов от менеджеров -->
                 <div class="files-table-container">
                     <h2 class="section-title">
                         <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера
@@ -717,7 +657,6 @@
                             </tr>
                         </thead>
                         <tbody id="managerFilesTableBody">
-                            <!-- Данные будут загружены сюда -->
                         </tbody>
                     </table>
                     <div class="last-update" style="margin-top: 15px; text-align: center;">
@@ -725,7 +664,6 @@
                     </div>
                 </div>
                 
-                <!-- Таблица файлов контента -->
                 <div class="files-table-container">
                     <h2 class="section-title">
                         <i class="fas fa-file-alt"></i> Загрузка ассортимента контента
@@ -742,7 +680,6 @@
                             </tr>
                         </thead>
                         <tbody id="contentFilesTableBody">
-                            <!-- Данные будут загружены сюда -->
                         </tbody>
                     </table>
                     <div class="last-update" style="margin-top: 15px; text-align: center;">
@@ -750,7 +687,6 @@
                     </div>
                 </div>
                 
-                <!-- График по месяцам -->
                 <div class="chart-container">
                     <div class="chart-header">
                         <div>
@@ -769,11 +705,9 @@
                     
                     <div class="chart-wrapper">
                         <canvas id="monthlyChart"></canvas>
-                        <div id="chartTooltip" class="chart-tooltip"></div>
                     </div>
                     
                     <div class="chart-legend" id="chartLegend">
-                        <!-- Легенда будет сгенерирована динамически -->
                     </div>
                     
                     <div class="last-update" style="text-align: center; margin-top: 15px;">
@@ -781,7 +715,6 @@
                     </div>
                 </div>
                 
-                <!-- Кнопки управления -->
                 <div class="buttons">
                     <button onclick="loadData(true)" class="btn">
                         <i class="fas fa-sync-alt"></i> Обновить данные
@@ -791,16 +724,15 @@
         </div>
     </div>
 
-    <!-- Подключаем Chart.js для графиков -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
         // ID Google Таблиц
         const MANAGER_SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
-        const MANAGER_SHEET_GID = '1272115114';
+        const MANAGER_SHEET_NAME = '👥 Рабочие группы КАМ';
         
-        // ID для таблицы контента (из URL: /d/e/2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O/pubhtml)
         const CONTENT_SPREADSHEET_ID = '2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O';
+        const CONTENT_SHEET_NAME = 'Рабочие группы контента';
         
         // Названия столбцов для анализа
         const STATUS_COLUMN_NAMES = ['Статус группы', 'Статус', 'Статус файла', 'Состояние'];
@@ -812,17 +744,15 @@
         
         // Эмоджи для статусов
         const EMOJI_STATUSES = {
-            '🆕': 'available',     // Доступна
-            '✅': 'completed',     // Завершена
-            '🔄': 'in_progress'    // В работе
+            '🆕': 'available',
+            '✅': 'completed',
+            '🔄': 'in_progress'
         };
         
-        // Русские названия месяцев
         const MONTH_NAMES_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
                                'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
         
         // Переменные для данных
-        let isDemoData = false;
         let monthlyChart = null;
         let currentMonth, currentYear;
         
@@ -875,15 +805,12 @@
                 const monthlyTotals = {};
                 
                 // Загружаем данные из обеих таблиц
-                await Promise.all([
-                    loadManagerData(monthlyTotals),
-                    loadContentData(monthlyTotals)
-                ]);
+                await loadManagerData(monthlyTotals);
+                await loadContentData(monthlyTotals);
                 
                 // Формируем данные для графика
                 prepareMonthlyData(monthlyTotals);
                 
-                isDemoData = false;
                 updateDisplay();
                 
                 loading.style.display = 'none';
@@ -909,35 +836,32 @@
         // Загрузка данных менеджеров
         async function loadManagerData(monthlyTotals) {
             try {
-                console.log('Загрузка данных менеджеров...');
+                console.log('Загрузка данных менеджеров с листа:', MANAGER_SHEET_NAME);
                 
-                const csvUrl = `https://docs.google.com/spreadsheets/d/${MANAGER_SPREADSHEET_ID}/export?format=csv&gid=${MANAGER_SHEET_GID}`;
-                const altCsvUrl = `https://docs.google.com/spreadsheets/d/${MANAGER_SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${MANAGER_SHEET_GID}`;
+                // Для Google Sheets API v4
+                const apiKey = 'AIzaSyDyJppAwJkyLm-Mt8cYqy5xPJt6jiI1oJo';
+                const range = encodeURIComponent(MANAGER_SHEET_NAME);
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${MANAGER_SPREADSHEET_ID}/values/${range}?key=${apiKey}`;
                 
-                let response;
-                
-                try {
-                    response = await fetch(csvUrl);
-                    if (!response.ok) throw new Error(`Метод 1: ${response.status}`);
-                } catch (error) {
-                    console.log('Попытка альтернативного метода загрузки...');
-                    response = await fetch(altCsvUrl);
-                    if (!response.ok) throw new Error(`Метод 2: ${response.status}`);
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Ошибка загрузки менеджеров: ${response.status}`);
                 }
                 
-                const csvText = await response.text();
-                const rows = csvText.split('\n').filter(row => row.trim() !== '');
+                const data = await response.json();
+                if (!data.values || data.values.length === 0) {
+                    throw new Error('Таблица менеджеров пуста');
+                }
                 
-                if (rows.length === 0) throw new Error('Таблица менеджеров пуста');
-                
-                const tableHeaders = parseCSVRow(rows[0]);
+                const rows = data.values;
+                const headers = rows[0];
                 
                 // Находим индексы столбцов
-                const columnIndices = findColumnIndices(tableHeaders);
+                const columnIndices = findColumnIndices(headers);
                 
                 // Обрабатываем строки
                 for (let i = 1; i < rows.length; i++) {
-                    const rowData = parseCSVRow(rows[i]);
+                    const rowData = rows[i];
                     if (rowData.length === 0) continue;
                     
                     processRowData(rowData, columnIndices, monthlyTotals, 'manager');
@@ -950,7 +874,7 @@
                 
             } catch (error) {
                 console.error('Ошибка загрузки данных менеджеров:', error);
-                throw error;
+                // Продолжаем работу
             }
         }
         
@@ -963,7 +887,7 @@
                 const csvUrl = `https://docs.google.com/spreadsheets/d/e/${CONTENT_SPREADSHEET_ID}/pub?output=csv`;
                 
                 const response = await fetch(csvUrl);
-                if (!response.ok) throw new Error(`Ошибка загрузки: ${response.status}`);
+                if (!response.ok) throw new Error(`Ошибка загрузки контента: ${response.status}`);
                 
                 const csvText = await response.text();
                 const rows = csvText.split('\n').filter(row => row.trim() !== '');
@@ -973,8 +897,8 @@
                     return;
                 }
                 
-                const tableHeaders = parseCSVRow(rows[0]);
-                const columnIndices = findColumnIndices(tableHeaders);
+                const headers = parseCSVRow(rows[0]);
+                const columnIndices = findColumnIndices(headers);
                 
                 // Обрабатываем строки
                 for (let i = 1; i < rows.length; i++) {
@@ -991,7 +915,7 @@
                 
             } catch (error) {
                 console.error('Ошибка загрузки данных контента:', error);
-                // Продолжаем работу без данных контента
+                // Продолжаем работу
             }
         }
         
@@ -1010,15 +934,9 @@
         // Поиск индекса столбца
         function findColumnIndex(headers, columnNames) {
             for (const columnName of columnNames) {
-                let index = headers.findIndex(header => 
-                    header && header.trim().toLowerCase() === columnName.toLowerCase()
+                const index = headers.findIndex(header => 
+                    header && header.trim().toLowerCase().includes(columnName.toLowerCase())
                 );
-                
-                if (index === -1) {
-                    index = headers.findIndex(header => 
-                        header && header.toLowerCase().includes(columnName.toLowerCase())
-                    );
-                }
                 
                 if (index !== -1) return index;
             }
@@ -1029,15 +947,16 @@
         function processRowData(rowData, columnIndices, monthlyTotals, source) {
             const analysis = analyzeRow(rowData, columnIndices);
             
+            if (!analysis.filename) return;
+            
             // Добавляем в массив файлов для обработки, если не "завершено"
-            if (analysis.statusType !== 'completed' && analysis.filename) {
+            if (analysis.statusType !== 'completed') {
                 const fileData = {
                     filename: analysis.filename,
                     productsCount: analysis.productsCount,
                     status: analysis.status,
                     statusType: analysis.statusType,
                     additionDate: analysis.additionDateFormatted,
-                    additionDateOriginal: analysis.additionDateOriginal,
                     urgency: analysis.urgency,
                     urgencyClass: getUrgencyClass(analysis.urgency)
                 };
@@ -1078,7 +997,6 @@
                 productsCount: 0,
                 filename: '',
                 completionMonth: null,
-                additionDateOriginal: '',
                 additionDateFormatted: '',
                 urgency: '',
                 isCurrentMonth: false
@@ -1086,13 +1004,13 @@
             
             // Статус
             if (columnIndices.status !== -1 && rowData[columnIndices.status]) {
-                result.status = rowData[columnIndices.status].trim();
+                result.status = rowData[columnIndices.status].toString().trim();
                 result.statusType = determineStatusType(result.status);
             }
             
             // Количество товаров
             if (columnIndices.products !== -1 && rowData[columnIndices.products]) {
-                const productsStr = rowData[columnIndices.products].trim();
+                const productsStr = rowData[columnIndices.products].toString().trim();
                 const cleanedStr = productsStr.replace(/[^\d.,]/g, '');
                 const normalizedStr = cleanedStr.replace(',', '.');
                 result.productsCount = parseFloat(normalizedStr) || 0;
@@ -1100,23 +1018,23 @@
             
             // Имя файла
             if (columnIndices.filename !== -1 && rowData[columnIndices.filename]) {
-                result.filename = rowData[columnIndices.filename].trim();
+                result.filename = rowData[columnIndices.filename].toString().trim();
             }
             
             // Дата добавления
             if (columnIndices.additionDate !== -1 && rowData[columnIndices.additionDate]) {
-                result.additionDateOriginal = rowData[columnIndices.additionDate].trim();
-                result.additionDateFormatted = formatDate(result.additionDateOriginal);
+                const dateStr = rowData[columnIndices.additionDate].toString().trim();
+                result.additionDateFormatted = formatDate(dateStr);
             }
             
             // Срочность
             if (columnIndices.urgency !== -1 && rowData[columnIndices.urgency]) {
-                result.urgency = rowData[columnIndices.urgency].trim();
+                result.urgency = rowData[columnIndices.urgency].toString().trim();
             }
             
             // Дата завершения
             if (columnIndices.completionDate !== -1 && rowData[columnIndices.completionDate]) {
-                const dateStr = rowData[columnIndices.completionDate].trim();
+                const dateStr = rowData[columnIndices.completionDate].toString().trim();
                 if (dateStr) {
                     try {
                         const dateOnly = dateStr.split(' ')[0];
@@ -1134,7 +1052,7 @@
                             }
                         }
                     } catch (e) {
-                        console.warn(`Не удалось распарсить дату: ${dateStr}`, e);
+                        console.warn('Не удалось распарсить дату:', dateStr, e);
                     }
                 }
             }
@@ -1146,6 +1064,7 @@
         function determineStatusType(status) {
             if (!status) return 'unknown';
             
+            // Проверяем эмоджи
             const emoji = getFirstEmoji(status);
             if (emoji && emoji in EMOJI_STATUSES) {
                 return EMOJI_STATUSES[emoji];
@@ -1168,7 +1087,7 @@
             if (!text) return '';
             const emojiRegex = /[\p{Emoji}]/u;
             const match = text.match(emojiRegex);
-            return (match && match[0] in EMOJI_STATUSES) ? match[0] : '';
+            return match ? match[0] : '';
         }
         
         // Класс срочности
@@ -1232,7 +1151,6 @@
                 
                 return dateStr;
             } catch (e) {
-                console.warn(`Не удалось отформатировать дату: ${dateString}`, e);
                 return dateString;
             }
         }
@@ -1287,12 +1205,7 @@
                 return;
             }
             
-            const sortedFiles = [...managerFilesForProcessing].sort((a, b) => {
-                if (!a.additionDateOriginal || !b.additionDateOriginal) return 0;
-                return new Date(b.additionDateOriginal) - new Date(a.additionDateOriginal);
-            });
-            
-            sortedFiles.forEach(file => {
+            managerFilesForProcessing.forEach(file => {
                 const statusClass = `status-${file.statusType}`;
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
@@ -1302,7 +1215,7 @@
                 row.innerHTML = `
                     <td><strong>${file.filename || 'Без имени'}</strong></td>
                     <td><span class="highlight">${file.productsCount}</span> товаров</td>
-                    <td class="date-cell">${file.additionDate || 'Не указана'}</td>
+                    <td class="date-cell">${file.additionDate}</td>
                     <td><span class="file-status ${statusClass}">${statusText}</span></td>
                     <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
                 `;
@@ -1326,12 +1239,7 @@
                 return;
             }
             
-            const sortedFiles = [...contentFilesForProcessing].sort((a, b) => {
-                if (!a.additionDateOriginal || !b.additionDateOriginal) return 0;
-                return new Date(b.additionDateOriginal) - new Date(a.additionDateOriginal);
-            });
-            
-            sortedFiles.forEach(file => {
+            contentFilesForProcessing.forEach(file => {
                 const statusClass = `status-${file.statusType}`;
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
@@ -1341,7 +1249,7 @@
                 row.innerHTML = `
                     <td><strong>${file.filename || 'Без имени'}</strong></td>
                     <td><span class="highlight">${file.productsCount}</span> товаров</td>
-                    <td class="date-cell">${file.additionDate || 'Не указана'}</td>
+                    <td class="date-cell">${file.additionDate}</td>
                     <td><span class="file-status ${statusClass}">${statusText}</span></td>
                     <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
                 `;
@@ -1418,11 +1326,6 @@
                                 display: true,
                                 text: 'Количество товаров',
                                 font: { size: 14, weight: 'bold' }
-                            },
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString('ru-RU');
-                                }
                             }
                         },
                         x: {
@@ -1456,7 +1359,7 @@
                 legendHTML += `
                     <div class="legend-item">
                         <div class="legend-color" style="background-color: ${color};"></div>
-                        <span>${item.month}: <strong>${item.total.toLocaleString('ru-RU')}</strong> товаров</span>
+                        <span>${item.month}: <strong>${item.total}</strong> товаров</span>
                     </div>
                 `;
             });
@@ -1488,27 +1391,24 @@
             productsAddedThisMonth = 42;
             
             managerFilesForProcessing = [
-                { filename: 'Каталог_товаров_1.xlsx', productsCount: 25, statusType: 'in_progress', 
+                { filename: 'Каталог_менеджеров_1.xlsx', productsCount: 25, statusType: 'in_progress', 
                   additionDate: '15.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high' },
-                { filename: 'Каталог_товаров_2.xlsx', productsCount: 30, statusType: 'available', 
+                { filename: 'Каталог_менеджеров_2.xlsx', productsCount: 30, statusType: 'available', 
                   additionDate: '22.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium' },
-                { filename: 'Каталог_товаров_3.xlsx', productsCount: 20, statusType: 'in_progress', 
-                  additionDate: '28.03.2024', urgency: 'Низкая', urgencyClass: 'urgency-low' },
-                { filename: 'Каталог_товаров_4.xlsx', productsCount: 10, statusType: 'available', 
-                  additionDate: '05.04.2024', urgency: '', urgencyClass: 'urgency-low' }
+                { filename: 'Каталог_менеджеров_3.xlsx', productsCount: 20, statusType: 'in_progress', 
+                  additionDate: '28.03.2024', urgency: 'Низкая', urgencyClass: 'urgency-low' }
             ];
             
             contentFilesForProcessing = [
-                { filename: 'Контент_товаров_1.xlsx', productsCount: 15, statusType: 'in_progress', 
+                { filename: 'Контент_1.xlsx', productsCount: 15, statusType: 'in_progress', 
                   additionDate: '10.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high' },
-                { filename: 'Контент_товаров_2.xlsx', productsCount: 20, statusType: 'available', 
+                { filename: 'Контент_2.xlsx', productsCount: 20, statusType: 'available', 
                   additionDate: '18.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium' },
-                { filename: 'Контент_товаров_3.xlsx', productsCount: 10, statusType: 'in_progress', 
+                { filename: 'Контент_3.xlsx', productsCount: 10, statusType: 'in_progress', 
                   additionDate: '25.03.2024', urgency: 'Низкая', urgencyClass: 'urgency-low' }
             ];
             
             monthlyData = [
-                { month: 'Ноябрь 2024', total: 65 },
                 { month: 'Декабрь 2024', total: 88 },
                 { month: 'Январь 2025', total: 72 },
                 { month: 'Февраль 2025', total: 109 },
@@ -1516,7 +1416,6 @@
                 { month: `${MONTH_NAMES_RU[currentMonth]} ${currentYear}`, total: productsAddedThisMonth }
             ];
             
-            isDemoData = true;
             updateDisplay();
             
             loading.style.display = 'none';
