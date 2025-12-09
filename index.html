@@ -251,64 +251,6 @@
             color: #0c5460;
         }
         
-        .chart-container {
-            margin: 50px 0;
-            padding: 30px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: 15px;
-            border: 2px solid #e0e0e0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .chart-title {
-            color: #333;
-            font-size: 1.5em;
-            font-weight: 600;
-        }
-        
-        .chart-subtitle {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        
-        .chart-wrapper {
-            position: relative;
-            height: 400px;
-            width: 100%;
-        }
-        
-        .chart-legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9em;
-            color: #555;
-        }
-        
-        .legend-color {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
-        }
-        
         .buttons {
             display: flex;
             gap: 15px;
@@ -330,12 +272,11 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
         
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
         
         .loading {
@@ -355,17 +296,6 @@
             border-radius: 8px;
             border-left: 5px solid #ffc107;
             margin: 20px 0;
-        }
-        
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #28a745;
-            margin: 20px 0;
-            display: none;
-            animation: fadeIn 0.5s;
         }
         
         .error {
@@ -397,98 +327,16 @@
             font-style: italic;
         }
         
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s;
-        }
-        
-        .modal-content {
-            background: white;
-            width: 90%;
-            max-width: 700px;
-            max-height: 80vh;
-            border-radius: 15px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            overflow: hidden;
-            animation: slideUp 0.4s ease;
-        }
-        
-        .modal-header {
-            background: linear-gradient(90deg, #667eea 0%, #FFB500 100%);
-            color: white;
-            padding: 25px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .modal-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.5em;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
-        }
-        
-        .modal-body {
-            padding: 30px;
+        .debug-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #6c757d;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+            max-height: 200px;
             overflow-y: auto;
-            max-height: calc(80vh - 100px);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
         }
         
         @media (max-width: 768px) {
@@ -517,10 +365,6 @@
                 grid-template-columns: 1fr;
             }
             
-            .chart-wrapper {
-                height: 300px;
-            }
-            
             .btn, .btn-rules {
                 padding: 12px 25px;
                 font-size: 1em;
@@ -540,61 +384,15 @@
                 padding: 10px 8px;
                 font-size: 0.9em;
             }
-            
-            .modal-content {
-                width: 95%;
-                max-height: 90vh;
-            }
-            
-            .modal-header {
-                padding: 20px;
-            }
-            
-            .modal-title {
-                font-size: 1.5em;
-            }
-            
-            .modal-body {
-                padding: 20px;
-                max-height: calc(90vh - 80px);
-            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div id="rulesModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <i class="fas fa-book"></i> Порядок работы
-                </div>
-                <button class="modal-close" onclick="closeRulesModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="rules-content">
-                    <h2>Порядок работы коммерческого отдела и отдела электронной коммерции</h2>
-                    <h2><b>Вывод новых товаров на сайт</b></h2>
-                    <p style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
-                        <i class="fas fa-info-circle"></i> <strong>Важно:</strong> Данные обновляются автоматически при загрузке страницы. Для принудительного обновления используйте соответствующую кнопку.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
         <header>
             <h1><i class="fas fa-chart-pie"></i> Загрузка новых товаров на сайт</h1>
             <div class="subtitle">Очередь загрузки товаров</div>
-        
-            <div class="header-buttons">
-                <button class="btn-rules" onclick="openRulesModal()">
-                    <i class="fas fa-book"></i> Правила работы
-                </button>
-            </div>
         </header>
         
         <div class="content">
@@ -602,16 +400,13 @@
                 <i class="fas fa-exclamation-triangle"></i> Используются демо-данные. Для загрузки реальных данных нажмите "Обновить".
             </div>
             
-            <div id="successMessage" class="success-message">
-                <i class="fas fa-check-circle"></i> Данные успешно обновлены!
+            <div id="errorMessage" class="error" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
             </div>
             
             <div id="loading" class="loading">
-                <i class="fas fa-spinner fa-spin fa-2x pulse"></i>
-                <p style="margin-top: 15px;">Загрузка данных с листов "👥 Рабочие группы КАМ" и "Рабочие группы контента"...</p>
-                <p style="margin-top: 10px; font-size: 0.9em; color: #888;">
-                    <i class="fas fa-info-circle"></i> Анализ с учетом дат завершения работы
-                </p>
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                <p style="margin-top: 15px;">Загрузка данных...</p>
             </div>
             
             <div id="statsSection" style="display: none;">
@@ -650,8 +445,8 @@
                         <thead>
                             <tr>
                                 <th><i class="fas fa-file"></i> Название файла</th>
-                                <th><i class="fas fa-boxes"></i> Количество товаров из файла</th>
-                                <th><i class="fas fa-calendar-plus"></i> Дата принятия файла от менеджера</th>
+                                <th><i class="fas fa-boxes"></i> Количество товаров</th>
+                                <th><i class="fas fa-calendar-plus"></i> Дата принятия</th>
                                 <th><i class="fas fa-info-circle"></i> Статус</th>
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
@@ -659,9 +454,6 @@
                         <tbody id="managerFilesTableBody">
                         </tbody>
                     </table>
-                    <div class="last-update" style="margin-top: 15px; text-align: center;">
-                        <i class="fas fa-info-circle"></i> Показаны только файлы со статусами "В работе" и "Доступно". Завершенные файлы скрыты.
-                    </div>
                 </div>
                 
                 <div class="files-table-container">
@@ -673,8 +465,8 @@
                         <thead>
                             <tr>
                                 <th><i class="fas fa-file"></i> Название файла</th>
-                                <th><i class="fas fa-boxes"></i> Количество товаров из файла</th>
-                                <th><i class="fas fa-calendar-plus"></i> Дата принятия файла от менеджера</th>
+                                <th><i class="fas fa-boxes"></i> Количество товаров</th>
+                                <th><i class="fas fa-calendar-plus"></i> Дата принятия</th>
                                 <th><i class="fas fa-info-circle"></i> Статус</th>
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
@@ -682,363 +474,316 @@
                         <tbody id="contentFilesTableBody">
                         </tbody>
                     </table>
-                    <div class="last-update" style="margin-top: 15px; text-align: center;">
-                        <i class="fas fa-info-circle"></i> Показаны только файлы со статусами "В работе" и "Доступно". Завершенные файлы скрыты.
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">
-                                <i class="fas fa-chart-bar"></i> Динамика добавления товаров по месяцам
-                            </div>
-                            <div class="chart-subtitle">
-                                Сумма товаров в статусе "Выполнено" по месяцам из обоих листов
-                            </div>
-                        </div>
-                        <div style="color: #666; font-size: 0.9em;">
-                            <i class="fas fa-calendar-alt"></i> 
-                            <span id="chartPeriod">Загружается...</span>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-wrapper">
-                        <canvas id="monthlyChart"></canvas>
-                    </div>
-                    
-                    <div class="chart-legend" id="chartLegend">
-                    </div>
-                    
-                    <div class="last-update" style="text-align: center; margin-top: 15px;">
-                        <i class="fas fa-info-circle"></i> Данные обновлены: <span id="chartUpdateTime">-</span>
-                    </div>
                 </div>
                 
                 <div class="buttons">
-                    <button onclick="loadData(true)" class="btn">
-                        <i class="fas fa-sync-alt"></i> Обновить данные
+                    <button onclick="loadRealData()" class="btn">
+                        <i class="fas fa-sync-alt"></i> Загрузить реальные данные
                     </button>
+                    <button onclick="showDebugInfo()" class="btn" style="background: #6c757d;">
+                        <i class="fas fa-bug"></i> Отладка
+                    </button>
+                </div>
+                
+                <div id="debugSection" class="debug-info" style="display: none;">
+                    <h4><i class="fas fa-bug"></i> Информация для отладки:</h4>
+                    <div id="debugContent"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <script>
-        // ID Google Таблиц
+        // ID таблицы менеджеров
         const MANAGER_SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
-        const MANAGER_SHEET_GID = '1272115114'; // GID листа "👥 Рабочие группы КАМ"
+        const MANAGER_SHEET_GID = '1272115114';
         
-        // Для таблицы контента - это другой spreadsheet!
-        const CONTENT_SPREADSHEET_ID = '2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O'; // Нужен реальный ID таблицы контента
-        const CONTENT_SHEET_GID = '1367779997'; // GID листа "Рабочие группы контента"
+        // ID таблицы контента (из публичной ссылки)
+        const CONTENT_SPREADSHEET_ID = '2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O';
         
-        // Названия столбцов для анализа
-        const STATUS_COLUMN_NAMES = ['Статус группы', 'Статус', 'Статус файла', 'Состояние'];
-        const PRODUCTS_COLUMN_NAMES = ['Количество товаров', 'Товары', 'Кол-во товаров', 'Количество'];
-        const FILENAME_COLUMN_NAMES = ['Имя файла', 'Файл', 'Название файла', 'File name'];
-        const COMPLETION_DATE_COLUMN_NAMES = ['Дата завершения работы', 'Дата завершения', 'Дата окончания', 'Completion date'];
-        const ADDITION_DATE_COLUMN_NAMES = ['Дата добавления файла', 'Дата добавления', 'Дата загрузки', 'Upload date', 'Дата создания'];
-        const URGENCY_COLUMN_NAMES = ['Срочность', 'Срочно', 'Приоритет', 'Urgency'];
-        
-        const EMOJI_STATUSES = {
-            '🆕': 'available',
-            '✅': 'completed',
-            '🔄': 'in_progress'
-        };
-        
-        const MONTH_NAMES_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-                               'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-        
-        let monthlyChart = null;
-        let currentMonth, currentYear;
-        
+        // Переменные для данных
         let managerProductsToAdd = 0;
         let contentProductsToAdd = 0;
         let productsAddedThisMonth = 0;
-        
         let managerFilesForProcessing = [];
         let contentFilesForProcessing = [];
-        let monthlyData = [];
         
-        // Функции для модального окна
-        function openRulesModal() {
-            document.getElementById('rulesModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+        // Отладочная информация
+        let debugLog = [];
+        
+        function logDebug(message, data = null) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}` + (data ? `: ${JSON.stringify(data)}` : '');
+            debugLog.push(logEntry);
+            console.log(logEntry);
         }
         
-        function closeRulesModal() {
-            document.getElementById('rulesModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
+        function showDebugInfo() {
+            const debugSection = document.getElementById('debugSection');
+            const debugContent = document.getElementById('debugContent');
+            
+            debugContent.innerHTML = debugLog.map(log => `<div>${log}</div>`).join('');
+            debugSection.style.display = 'block';
         }
         
-        document.getElementById('rulesModal').addEventListener('click', function(e) {
-            if (e.target === this) closeRulesModal();
-        });
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeRulesModal();
-        });
-        
-        // Основная функция загрузки данных
-        async function loadData(forceLoad = false) {
+        // Основная функция загрузки
+        async function loadRealData() {
             const loading = document.getElementById('loading');
             const statsSection = document.getElementById('statsSection');
+            const warningMessage = document.getElementById('warningMessage');
+            const errorMessage = document.getElementById('errorMessage');
             
             loading.style.display = 'block';
             statsSection.style.display = 'none';
+            warningMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            debugLog = [];
+            logDebug('Начинаем загрузку реальных данных');
             
             try {
                 // Сброс данных
-                resetData();
+                managerProductsToAdd = 0;
+                contentProductsToAdd = 0;
+                productsAddedThisMonth = 0;
+                managerFilesForProcessing = [];
+                contentFilesForProcessing = [];
                 
                 // Определяем текущий месяц и год
                 const currentDate = new Date();
-                currentMonth = currentDate.getMonth();
-                currentYear = currentDate.getFullYear();
+                const currentMonth = currentDate.getMonth();
+                const currentYear = currentDate.getFullYear();
                 
-                const monthlyTotals = {};
+                // Загружаем данные менеджеров
+                logDebug('Пробуем загрузить данные менеджеров');
+                const managerData = await loadDataFromSheet(MANAGER_SPREADSHEET_ID, MANAGER_SHEET_GID, 'manager');
+                logDebug('Данные менеджеров получены', { rows: managerData.length });
                 
-                // Загружаем данные из ОБЕИХ таблиц
-                console.log('Начинаем загрузку данных...');
+                if (managerData.length > 0) {
+                    processData(managerData, 'manager', currentMonth, currentYear);
+                }
                 
-                // Загружаем данные менеджеров с GID
-                await loadDataFromSheet(MANAGER_SPREADSHEET_ID, MANAGER_SHEET_GID, monthlyTotals, 'manager');
-                console.log('Данные менеджеров загружены');
+                // Загружаем данные контента
+                logDebug('Пробуем загрузить данные контента');
+                const contentData = await loadDataFromSheet(CONTENT_SPREADSHEET_ID, null, 'content');
+                logDebug('Данные контента получены', { rows: contentData.length });
                 
-                // Загружаем данные контента с GID
-                await loadDataFromSheet(CONTENT_SPREADSHEET_ID, CONTENT_SHEET_GID, monthlyTotals, 'content');
-                console.log('Данные контента загружены');
+                if (contentData.length > 0) {
+                    processData(contentData, 'content', currentMonth, currentYear);
+                }
                 
-                // Формируем данные для графика
-                prepareMonthlyData(monthlyTotals);
-                
+                // Обновляем отображение
                 updateDisplay();
                 
                 loading.style.display = 'none';
                 statsSection.style.display = 'block';
                 
+                if (managerData.length === 0 && contentData.length === 0) {
+                    warningMessage.style.display = 'block';
+                }
+                
             } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
+                console.error('Ошибка:', error);
+                logDebug('Ошибка загрузки', { error: error.message });
+                
                 loading.style.display = 'none';
-                showDemoData();
+                errorMessage.style.display = 'block';
+                document.getElementById('errorText').textContent = `Ошибка: ${error.message}. Проверьте консоль для подробностей.`;
+                warningMessage.style.display = 'block';
             }
         }
         
-        // Сброс данных
-        function resetData() {
-            managerProductsToAdd = 0;
-            contentProductsToAdd = 0;
-            productsAddedThisMonth = 0;
-            managerFilesForProcessing = [];
-            contentFilesForProcessing = [];
-            monthlyData = [];
+        // Загрузка данных из таблицы
+        async function loadDataFromSheet(spreadsheetId, gid, source) {
+            try {
+                let url;
+                
+                if (source === 'manager') {
+                    // Для менеджеров используем GID
+                    url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
+                } else {
+                    // Для контента используем публичную ссылку
+                    url = `https://docs.google.com/spreadsheets/d/e/${spreadsheetId}/pub?output=csv`;
+                }
+                
+                logDebug(`Загружаем ${source} по URL`, { url });
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+                }
+                
+                const csvText = await response.text();
+                logDebug(`CSV получен (${source})`, { length: csvText.length });
+                
+                const rows = parseCSV(csvText);
+                logDebug(`Распарсено строк (${source})`, { count: rows.length });
+                
+                return rows;
+                
+            } catch (error) {
+                logDebug(`Ошибка загрузки ${source}`, { error: error.message });
+                return [];
+            }
         }
         
-        // Общая функция загрузки данных из таблицы
-        async function loadDataFromSheet(spreadsheetId, sheetGid, monthlyTotals, source) {
-            try {
-                console.log(`Загрузка данных ${source} из таблицы ${spreadsheetId}, лист ${sheetGid}`);
+        // Парсинг CSV
+        function parseCSV(csvText) {
+            const rows = [];
+            let currentRow = [];
+            let currentField = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < csvText.length; i++) {
+                const char = csvText[i];
+                const nextChar = csvText[i + 1];
                 
-                // Пробуем несколько методов загрузки
-                const urls = [
-                    `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${sheetGid}`,
-                    `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=${sheetGid}`,
-                    `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${sheetGid}`
-                ];
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        currentField += '"';
+                        i++; // Пропускаем следующую кавычку
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    currentRow.push(currentField.trim());
+                    currentField = '';
+                } else if (char === '\n' && !inQuotes) {
+                    currentRow.push(currentField.trim());
+                    rows.push(currentRow);
+                    currentRow = [];
+                    currentField = '';
+                } else if (char === '\r') {
+                    // Игнорируем carriage return
+                    continue;
+                } else {
+                    currentField += char;
+                }
+            }
+            
+            // Добавляем последнюю строку
+            if (currentField !== '' || currentRow.length > 0) {
+                currentRow.push(currentField.trim());
+                rows.push(currentRow);
+            }
+            
+            return rows;
+        }
+        
+        // Обработка данных
+        function processData(rows, source, currentMonth, currentYear) {
+            if (rows.length < 2) {
+                logDebug(`Мало данных для ${source}`, { rows: rows.length });
+                return;
+            }
+            
+            const headers = rows[0];
+            logDebug(`Заголовки ${source}`, headers);
+            
+            // Находим индексы столбцов
+            const indices = {
+                status: findColumnIndex(headers, ['Статус', 'Состояние', 'Статус файла']),
+                products: findColumnIndex(headers, ['Количество', 'Товары', 'Кол-во']),
+                filename: findColumnIndex(headers, ['Файл', 'Имя файла', 'Название']),
+                date: findColumnIndex(headers, ['Дата', 'Дата добавления', 'Дата загрузки']),
+                urgency: findColumnIndex(headers, ['Срочность', 'Приоритет', 'Срочно'])
+            };
+            
+            logDebug(`Индексы столбцов ${source}`, indices);
+            
+            // Обрабатываем строки
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                if (row.length === 0) continue;
                 
-                let response;
-                let csvText = '';
+                const analysis = analyzeRow(row, indices, currentMonth, currentYear);
                 
-                for (const url of urls) {
-                    try {
-                        console.log(`Попытка загрузки по URL: ${url}`);
-                        response = await fetch(url);
-                        if (response.ok) {
-                            csvText = await response.text();
-                            console.log(`Успешная загрузка ${source}, длина данных: ${csvText.length}`);
-                            break;
+                if (analysis.filename && analysis.statusType !== 'completed') {
+                    const fileData = {
+                        filename: analysis.filename,
+                        productsCount: analysis.productsCount,
+                        status: analysis.status,
+                        statusType: analysis.statusType,
+                        additionDate: analysis.additionDate,
+                        urgency: analysis.urgency,
+                        urgencyClass: getUrgencyClass(analysis.urgency)
+                    };
+                    
+                    if (source === 'manager') {
+                        managerFilesForProcessing.push(fileData);
+                        if (analysis.statusType !== 'completed') {
+                            managerProductsToAdd += analysis.productsCount;
                         }
-                    } catch (error) {
-                        console.log(`Ошибка загрузки по URL ${url}:`, error.message);
-                        continue;
+                    } else {
+                        contentFilesForProcessing.push(fileData);
+                        if (analysis.statusType !== 'completed') {
+                            contentProductsToAdd += analysis.productsCount;
+                        }
                     }
                 }
                 
-                if (!csvText) {
-                    throw new Error(`Не удалось загрузить данные ${source}`);
+                if (analysis.statusType === 'completed' && analysis.isCurrentMonth) {
+                    productsAddedThisMonth += analysis.productsCount;
                 }
-                
-                const rows = csvText.split('\n').filter(row => row.trim() !== '');
-                
-                if (rows.length === 0) {
-                    console.log(`Таблица ${source} пуста`);
-                    return;
-                }
-                
-                const headers = parseCSVRow(rows[0]);
-                console.log(`Заголовки ${source}:`, headers);
-                
-                const columnIndices = findColumnIndices(headers);
-                console.log(`Индексы столбцов ${source}:`, columnIndices);
-                
-                // Обрабатываем строки
-                for (let i = 1; i < rows.length; i++) {
-                    const rowData = parseCSVRow(rows[i]);
-                    if (rowData.length === 0) continue;
-                    
-                    processRowData(rowData, columnIndices, monthlyTotals, source);
-                }
-                
-                console.log(`Данные ${source} загружены:`, {
-                    filesCount: source === 'manager' ? managerFilesForProcessing.length : contentFilesForProcessing.length,
-                    productsToAdd: source === 'manager' ? managerProductsToAdd : contentProductsToAdd
-                });
-                
-            } catch (error) {
-                console.error(`Ошибка загрузки данных ${source}:`, error);
-                throw error;
             }
-        }
-        
-        // Поиск индексов столбцов
-        function findColumnIndices(headers) {
-            return {
-                status: findColumnIndex(headers, STATUS_COLUMN_NAMES),
-                products: findColumnIndex(headers, PRODUCTS_COLUMN_NAMES),
-                filename: findColumnIndex(headers, FILENAME_COLUMN_NAMES),
-                completionDate: findColumnIndex(headers, COMPLETION_DATE_COLUMN_NAMES),
-                additionDate: findColumnIndex(headers, ADDITION_DATE_COLUMN_NAMES),
-                urgency: findColumnIndex(headers, URGENCY_COLUMN_NAMES)
-            };
+            
+            logDebug(`Обработано ${source}`, {
+                files: source === 'manager' ? managerFilesForProcessing.length : contentFilesForProcessing.length,
+                products: source === 'manager' ? managerProductsToAdd : contentProductsToAdd
+            });
         }
         
         // Поиск индекса столбца
         function findColumnIndex(headers, columnNames) {
             for (const columnName of columnNames) {
                 const index = headers.findIndex(header => 
-                    header && header.toString().trim().toLowerCase().includes(columnName.toLowerCase())
+                    header && header.toString().toLowerCase().includes(columnName.toLowerCase())
                 );
-                
                 if (index !== -1) return index;
             }
             return -1;
         }
         
-        // Обработка строки данных
-        function processRowData(rowData, columnIndices, monthlyTotals, source) {
-            const analysis = analyzeRow(rowData, columnIndices);
-            
-            if (!analysis.filename) return;
-            
-            // Добавляем в массив файлов для обработки, если не "завершено"
-            if (analysis.statusType !== 'completed') {
-                const fileData = {
-                    filename: analysis.filename,
-                    productsCount: analysis.productsCount,
-                    status: analysis.status,
-                    statusType: analysis.statusType,
-                    additionDate: analysis.additionDateFormatted,
-                    urgency: analysis.urgency,
-                    urgencyClass: getUrgencyClass(analysis.urgency)
-                };
-                
-                if (source === 'manager') {
-                    managerFilesForProcessing.push(fileData);
-                } else {
-                    contentFilesForProcessing.push(fileData);
-                }
-            }
-            
-            // Считаем товары для показателей
-            if (analysis.statusType === 'completed') {
-                if (analysis.isCurrentMonth) {
-                    productsAddedThisMonth += analysis.productsCount;
-                }
-                
-                if (analysis.completionMonth) {
-                    if (!monthlyTotals[analysis.completionMonth]) {
-                        monthlyTotals[analysis.completionMonth] = 0;
-                    }
-                    monthlyTotals[analysis.completionMonth] += analysis.productsCount;
-                }
-            } else {
-                if (source === 'manager') {
-                    managerProductsToAdd += analysis.productsCount;
-                } else {
-                    contentProductsToAdd += analysis.productsCount;
-                }
-            }
-        }
-        
         // Анализ строки
-        function analyzeRow(rowData, columnIndices) {
+        function analyzeRow(row, indices, currentMonth, currentYear) {
             const result = {
                 status: '',
                 statusType: 'unknown',
                 productsCount: 0,
                 filename: '',
-                completionMonth: null,
-                additionDateFormatted: '',
+                additionDate: 'Не указана',
                 urgency: '',
                 isCurrentMonth: false
             };
             
             // Статус
-            if (columnIndices.status !== -1 && rowData[columnIndices.status]) {
-                result.status = rowData[columnIndices.status].toString().trim();
+            if (indices.status !== -1 && row[indices.status]) {
+                result.status = row[indices.status].toString().trim();
                 result.statusType = determineStatusType(result.status);
             }
             
             // Количество товаров
-            if (columnIndices.products !== -1 && rowData[columnIndices.products]) {
-                const productsStr = rowData[columnIndices.products].toString().trim();
-                const cleanedStr = productsStr.replace(/[^\d.,]/g, '');
-                const normalizedStr = cleanedStr.replace(',', '.');
-                result.productsCount = parseFloat(normalizedStr) || 0;
+            if (indices.products !== -1 && row[indices.products]) {
+                const str = row[indices.products].toString().trim();
+                const num = parseFloat(str.replace(/[^\d.,]/g, '').replace(',', '.'));
+                result.productsCount = isNaN(num) ? 0 : num;
             }
             
             // Имя файла
-            if (columnIndices.filename !== -1 && rowData[columnIndices.filename]) {
-                result.filename = rowData[columnIndices.filename].toString().trim();
+            if (indices.filename !== -1 && row[indices.filename]) {
+                result.filename = row[indices.filename].toString().trim();
             }
             
-            // Дата добавления
-            if (columnIndices.additionDate !== -1 && rowData[columnIndices.additionDate]) {
-                const dateStr = rowData[columnIndices.additionDate].toString().trim();
-                result.additionDateFormatted = formatDate(dateStr);
+            // Дата
+            if (indices.date !== -1 && row[indices.date]) {
+                const dateStr = row[indices.date].toString().trim();
+                result.additionDate = formatDate(dateStr);
             }
             
             // Срочность
-            if (columnIndices.urgency !== -1 && rowData[columnIndices.urgency]) {
-                result.urgency = rowData[columnIndices.urgency].toString().trim();
-            }
-            
-            // Дата завершения
-            if (columnIndices.completionDate !== -1 && rowData[columnIndices.completionDate]) {
-                const dateStr = rowData[columnIndices.completionDate].toString().trim();
-                if (dateStr) {
-                    try {
-                        const dateOnly = dateStr.split(' ')[0];
-                        const parts = dateOnly.split('.');
-                        
-                        if (parts.length === 3) {
-                            const day = parseInt(parts[0], 10);
-                            const month = parseInt(parts[1], 10) - 1;
-                            const year = parseInt(parts[2], 10);
-                            
-                            if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                                result.isCurrentMonth = (month === currentMonth && year === currentYear);
-                                const monthName = MONTH_NAMES_RU[month];
-                                result.completionMonth = `${monthName} ${year}`;
-                            }
-                        }
-                    } catch (e) {
-                        console.warn('Не удалось распарсить дату:', dateStr);
-                    }
-                }
+            if (indices.urgency !== -1 && row[indices.urgency]) {
+                result.urgency = row[indices.urgency].toString().trim();
             }
             
             return result;
@@ -1047,11 +792,6 @@
         // Определение типа статуса
         function determineStatusType(status) {
             if (!status) return 'unknown';
-            
-            const emoji = getFirstEmoji(status);
-            if (emoji && emoji in EMOJI_STATUSES) {
-                return EMOJI_STATUSES[emoji];
-            }
             
             const statusLower = status.toLowerCase();
             if (statusLower.includes('заверш') || statusLower.includes('выполн') || statusLower.includes('готов')) {
@@ -1062,15 +802,12 @@
                 return 'in_progress';
             }
             
+            // Проверяем эмоджи
+            if (status.includes('🆕')) return 'available';
+            if (status.includes('✅')) return 'completed';
+            if (status.includes('🔄')) return 'in_progress';
+            
             return 'unknown';
-        }
-        
-        // Получение первого эмоджи
-        function getFirstEmoji(text) {
-            if (!text) return '';
-            const emojiRegex = /[\p{Emoji}]/u;
-            const match = text.match(emojiRegex);
-            return match ? match[0] : '';
         }
         
         // Класс срочности
@@ -1078,10 +815,9 @@
             if (!urgencyText) return 'urgency-low';
             
             const urgencyLower = urgencyText.toLowerCase();
-            
-            if (urgencyLower.includes('высок') || urgencyLower.includes('срочн') || urgencyLower.includes('urgent') || urgencyLower.includes('high')) {
+            if (urgencyLower.includes('высок') || urgencyLower.includes('срочн') || urgencyLower.includes('urgent')) {
                 return 'urgency-high';
-            } else if (urgencyLower.includes('сезон') || urgencyLower.includes('medium') || urgencyLower.includes('normal')) {
+            } else if (urgencyLower.includes('сезон') || urgencyLower.includes('medium')) {
                 return 'urgency-medium';
             } else {
                 return 'urgency-low';
@@ -1098,37 +834,15 @@
                 const dateStr = dateString.trim();
                 
                 // Формат DD.MM.YYYY
-                const parts1 = dateStr.split('.');
-                if (parts1.length >= 3) {
-                    const day = parseInt(parts1[0], 10);
-                    const month = parseInt(parts1[1], 10) - 1;
-                    const yearPart = parts1[2].split(' ')[0];
-                    const year = parseInt(yearPart, 10);
+                const parts = dateStr.split('.');
+                if (parts.length >= 3) {
+                    const day = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const year = parseInt(parts[2].split(' ')[0], 10);
                     
                     if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
                         const date = new Date(year, month, day);
-                        return date.toLocaleDateString('ru-RU', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
-                    }
-                }
-                
-                // Формат YYYY-MM-DD
-                const parts2 = dateStr.split('-');
-                if (parts2.length >= 3) {
-                    const year = parseInt(parts2[0], 10);
-                    const month = parseInt(parts2[1], 10) - 1;
-                    const day = parseInt(parts2[2].split(' ')[0], 10);
-                    
-                    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                        const date = new Date(year, month, day);
-                        return date.toLocaleDateString('ru-RU', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
+                        return date.toLocaleDateString('ru-RU');
                     }
                 }
                 
@@ -1138,59 +852,37 @@
             }
         }
         
-        // Подготовка данных для графика
-        function prepareMonthlyData(monthlyTotals) {
-            monthlyData = Object.keys(monthlyTotals)
-                .map(monthKey => ({
-                    month: monthKey,
-                    total: monthlyTotals[monthKey]
-                }))
-                .sort((a, b) => {
-                    const parseMonth = (str) => {
-                        const [monthStr, yearStr] = str.split(' ');
-                        const monthIndex = MONTH_NAMES_RU.indexOf(monthStr);
-                        const year = parseInt(yearStr);
-                        return new Date(year, monthIndex);
-                    };
-                    return parseMonth(a.month) - parseMonth(b.month);
-                });
-        }
-        
         // Обновление отображения
         function updateDisplay() {
-            updateSummaryCards();
-            updateManagerFilesTable();
-            updateContentFilesTable();
-            updateChart();
-            animateNumbers();
-        }
-        
-        // Обновление карточек
-        function updateSummaryCards() {
+            // Обновляем карточки
             document.getElementById('managerProductsToAdd').textContent = managerProductsToAdd;
             document.getElementById('contentProductsToAdd').textContent = contentProductsToAdd;
             document.getElementById('productsAddedThisMonth').textContent = productsAddedThisMonth;
+            
+            // Обновляем таблицу менеджеров
+            updateTable('managerFilesTableBody', managerFilesForProcessing);
+            
+            // Обновляем таблицу контента
+            updateTable('contentFilesTableBody', contentFilesForProcessing);
         }
         
-        // Обновление таблицы менеджеров
-        function updateManagerFilesTable() {
-            const tableBody = document.getElementById('managerFilesTableBody');
+        // Обновление таблицы
+        function updateTable(tableId, files) {
+            const tableBody = document.getElementById(tableId);
             tableBody.innerHTML = '';
             
-            if (managerFilesForProcessing.length === 0) {
+            if (files.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-info-circle"></i> Нет файлов для обработки от менеджеров (лист "👥 Рабочие группы КАМ")
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки
                         </td>
                     </tr>
                 `;
                 return;
             }
             
-            console.log('Отображаем файлы менеджеров:', managerFilesForProcessing.length);
-            
-            managerFilesForProcessing.forEach(file => {
+            files.forEach(file => {
                 const statusClass = `status-${file.statusType}`;
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
@@ -1198,44 +890,8 @@
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><strong>${file.filename || 'Без имени'}</strong></td>
-                    <td><span class="highlight">${file.productsCount}</span> товаров</td>
-                    <td class="date-cell">${file.additionDate}</td>
-                    <td><span class="file-status ${statusClass}">${statusText}</span></td>
-                    <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-        
-        // Обновление таблицы контента
-        function updateContentFilesTable() {
-            const tableBody = document.getElementById('contentFilesTableBody');
-            tableBody.innerHTML = '';
-            
-            if (contentFilesForProcessing.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-info-circle"></i> Нет файлов для обработки контента (лист "Рабочие группы контента")
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            console.log('Отображаем файлы контента:', contentFilesForProcessing.length);
-            
-            contentFilesForProcessing.forEach(file => {
-                const statusClass = `status-${file.statusType}`;
-                const statusText = getStatusText(file.statusType);
-                const urgencyClass = file.urgencyClass || 'urgency-low';
-                const urgencyText = file.urgency || 'Не указана';
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${file.filename || 'Без имени'}</strong></td>
-                    <td><span class="highlight">${file.productsCount}</span> товаров</td>
+                    <td><strong>${file.filename}</strong></td>
+                    <td><span class="highlight">${file.productsCount}</span></td>
                     <td class="date-cell">${file.additionDate}</td>
                     <td><span class="file-status ${statusClass}">${statusText}</span></td>
                     <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
@@ -1254,114 +910,12 @@
             }
         }
         
-        // Обновление графика
-        function updateChart() {
-            const ctx = document.getElementById('monthlyChart').getContext('2d');
-            
-            if (monthlyChart) {
-                monthlyChart.destroy();
-            }
-            
-            const labels = monthlyData.map(item => item.month);
-            const data = monthlyData.map(item => item.total);
-            
-            const chartPeriod = document.getElementById('chartPeriod');
-            if (labels.length > 0) {
-                chartPeriod.textContent = `Период: ${labels[0]} - ${labels[labels.length - 1]}`;
-            } else {
-                chartPeriod.textContent = 'Нет данных за выбранный период';
-            }
-            
-            document.getElementById('chartUpdateTime').textContent = new Date().toLocaleString('ru-RU');
-            
-            monthlyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Товаров добавлено',
-                        data: data,
-                        backgroundColor: labels.map((_, index) => {
-                            const hue = 200 + (index * 30) % 155;
-                            return `hsla(${hue}, 70%, 60%, 0.8)`;
-                        }),
-                        borderColor: labels.map((_, index) => {
-                            const hue = 200 + (index * 30) % 155;
-                            return `hsla(${hue}, 70%, 50%, 1)`;
-                        }),
-                        borderWidth: 2,
-                        borderRadius: 5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Товаров: ${context.parsed.y}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Количество товаров',
-                                font: { size: 14, weight: 'bold' }
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Месяц и год',
-                                font: { size: 14, weight: 'bold' }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            updateChartLegend();
-        }
-        
-        // Обновление легенды графика
-        function updateChartLegend() {
-            const legendContainer = document.getElementById('chartLegend');
-            
-            if (monthlyData.length === 0) {
-                legendContainer.innerHTML = '<div class="legend-item"><i class="fas fa-info-circle"></i> Нет данных для отображения</div>';
-                return;
-            }
-            
-            let legendHTML = '';
-            monthlyData.forEach((item, index) => {
-                const hue = 200 + (index * 30) % 155;
-                const color = `hsl(${hue}, 70%, 60%)`;
-                
-                legendHTML += `
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: ${color};"></div>
-                        <span>${item.month}: <strong>${item.total}</strong> товаров</span>
-                    </div>
-                `;
-            });
-            
-            legendContainer.innerHTML = legendHTML;
-        }
-        
-        // Анимация чисел
-        function animateNumbers() {
-            const numbers = document.querySelectorAll('.summary-number');
-            numbers.forEach(number => {
-                number.classList.add('pulse');
-                setTimeout(() => number.classList.remove('pulse'), 1000);
-            });
-        }
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            logDebug('Страница загружена');
+            // Показываем демо-данные при первой загрузке
+            showDemoData();
+        });
         
         // Демо-данные
         function showDemoData() {
@@ -1369,40 +923,22 @@
             const statsSection = document.getElementById('statsSection');
             const warningMessage = document.getElementById('warningMessage');
             
-            const currentDate = new Date();
-            currentMonth = currentDate.getMonth();
-            currentYear = currentDate.getFullYear();
-            
             managerProductsToAdd = 85;
             contentProductsToAdd = 45;
             productsAddedThisMonth = 42;
             
-            // ДЕМО-данные менеджеров
             managerFilesForProcessing = [
                 { filename: 'Каталог_менеджеров_1.xlsx', productsCount: 25, statusType: 'in_progress', 
                   additionDate: '15.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high' },
                 { filename: 'Каталог_менеджеров_2.xlsx', productsCount: 30, statusType: 'available', 
-                  additionDate: '22.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium' },
-                { filename: 'Каталог_менеджеров_3.xlsx', productsCount: 20, statusType: 'in_progress', 
-                  additionDate: '28.03.2024', urgency: 'Низкая', urgencyClass: 'urgency-low' }
+                  additionDate: '22.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium' }
             ];
             
-            // ДЕМО-данные контента (ДРУГИЕ данные!)
             contentFilesForProcessing = [
                 { filename: 'Контент_1.xlsx', productsCount: 15, statusType: 'in_progress', 
                   additionDate: '10.03.2024', urgency: 'Высокая', urgencyClass: 'urgency-high' },
                 { filename: 'Контент_2.xlsx', productsCount: 20, statusType: 'available', 
-                  additionDate: '18.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium' },
-                { filename: 'Контент_3.xlsx', productsCount: 10, statusType: 'in_progress', 
-                  additionDate: '25.03.2024', urgency: 'Низкая', urgencyClass: 'urgency-low' }
-            ];
-            
-            monthlyData = [
-                { month: 'Декабрь 2024', total: 88 },
-                { month: 'Январь 2025', total: 72 },
-                { month: 'Февраль 2025', total: 109 },
-                { month: 'Март 2025', total: 96 },
-                { month: `${MONTH_NAMES_RU[currentMonth]} ${currentYear}`, total: productsAddedThisMonth }
+                  additionDate: '18.03.2024', urgency: 'Средняя', urgencyClass: 'urgency-medium' }
             ];
             
             updateDisplay();
@@ -1410,39 +946,9 @@
             loading.style.display = 'none';
             statsSection.style.display = 'block';
             warningMessage.style.display = 'block';
-        }
-        
-        // Парсинг CSV строки
-        function parseCSVRow(row) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
             
-            for (let i = 0; i < row.length; i++) {
-                const char = row[i];
-                const nextChar = row[i + 1];
-                
-                if (char === '"') {
-                    if (inQuotes && nextChar === '"') {
-                        current += '"';
-                        i++;
-                    } else {
-                        inQuotes = !inQuotes;
-                    }
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current);
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            
-            result.push(current);
-            return result.map(cell => cell.trim());
+            logDebug('Показаны демо-данные');
         }
-        
-        // Загрузка данных при загрузке страницы
-        document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
 </html>
