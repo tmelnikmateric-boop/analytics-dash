@@ -371,66 +371,6 @@
             border: 2px solid #e0e0e0;
         }
         
-        .chart-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            align-items: center;
-        }
-        
-        .chart-canvas-container {
-            flex: 1;
-            min-width: 300px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .chart-legend {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .chart-legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            transition: transform 0.2s;
-        }
-        
-        .chart-legend-item:hover {
-            transform: translateX(5px);
-            background-color: #e9ecef;
-        }
-        
-        .color-box {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-        
-        .legend-label {
-            flex: 1;
-            font-weight: 500;
-            color: #333;
-        }
-        
-        .legend-value {
-            font-weight: 700;
-            color: #ff8c00;
-            font-size: 1.1em;
-        }
-        
-        .legend-percentage {
-            font-size: 0.9em;
-            color: #666;
-            margin-left: 10px;
-        }
-        
         .chart-title {
             text-align: center;
             margin-bottom: 25px;
@@ -442,11 +382,74 @@
             gap: 10px;
         }
         
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin-top: 20px;
+        }
+        
         .no-data-message {
             text-align: center;
-            padding: 40px;
+            padding: 60px 40px;
             color: #666;
             font-style: italic;
+            font-size: 1.1em;
+        }
+        
+        .chart-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px 20px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #ff8c00;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .chart-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .chart-btn {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .chart-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .chart-btn.active {
+            background: #ff8c00;
+            color: white;
+            border-color: #ff8c00;
         }
         
         @media (max-width: 768px) {
@@ -496,11 +499,7 @@
             }
             
             .chart-wrapper {
-                flex-direction: column;
-            }
-            
-            .chart-canvas-container, .chart-legend {
-                min-width: 100%;
+                height: 300px;
             }
         }
     </style>
@@ -564,25 +563,6 @@
                     </div>
                 </div>
                 
-                <!-- Диаграмма по месяцам -->
-                <div class="chart-container">
-                    <h2 class="chart-title">
-                        <i class="fas fa-chart-pie"></i> Завершенные товары по месяцам
-                    </h2>
-                    <div class="data-source-info">
-                        <i class="fas fa-info-circle"></i> Сумма товаров со статусом "Завершено" из обоих листов, сгруппированная по месяцам
-                    </div>
-                    
-                    <div class="chart-wrapper">
-                        <div class="chart-canvas-container">
-                            <canvas id="monthlyChart"></canvas>
-                        </div>
-                        <div class="chart-legend" id="chartLegend">
-                            <!-- Легенда будет сгенерирована динамически -->
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="files-table-container">
                     <h2 class="section-title">
                         <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера (👥 Рабочие группы КАМ)
@@ -639,6 +619,55 @@
                     </table>
                 </div>
                 
+                <!-- Столбчатая диаграмма по месяцам -->
+                <div class="chart-container">
+                    <h2 class="chart-title">
+                        <i class="fas fa-chart-bar"></i> Завершенные товары по месяцам
+                    </h2>
+                    <div class="data-source-info">
+                        <i class="fas fa-info-circle"></i> Сумма товаров со статусом "Завершено" из обоих листов, сгруппированная по месяцам
+                    </div>
+                    
+                    <div class="chart-controls">
+                        <button class="chart-btn active" onclick="changeChartType('monthly')" id="btnMonthly">
+                            <i class="fas fa-calendar-alt"></i> По месяцам
+                        </button>
+                        <button class="chart-btn" onclick="changeChartType('quarterly')" id="btnQuarterly">
+                            <i class="fas fa-chart-line"></i> По кварталам
+                        </button>
+                        <button class="chart-btn" onclick="changeChartType('yearly')" id="btnYearly">
+                            <i class="fas fa-chart-area"></i> По годам
+                        </button>
+                    </div>
+                    
+                    <div class="chart-wrapper">
+                        <canvas id="monthlyChart"></canvas>
+                        <div id="noDataMessage" class="no-data-message" style="display: none;">
+                            <i class="fas fa-chart-line" style="font-size: 3em; color: #ccc; margin-bottom: 15px;"></i>
+                            <p>Нет данных о завершенных товарах</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="statTotal">0</div>
+                            <div class="stat-label">Всего завершено</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statAvg">0</div>
+                            <div class="stat-label">Среднее в месяц</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statMax">0</div>
+                            <div class="stat-label">Максимум в месяц</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statCurrent">0</div>
+                            <div class="stat-label">Текущий месяц</div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="buttons">
                     <button onclick="loadPublicData()" class="btn btn-success">
                         <i class="fas fa-sync-alt"></i> Обновить данные
@@ -671,14 +700,18 @@
         // Данные для диаграммы
         let monthlyCompletedData = {};
         let chart = null;
+        let currentChartType = 'monthly'; // 'monthly', 'quarterly', 'yearly'
         
-        // Цвета для диаграммы (12 месяцев)
-        const chartColors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40',
-            '#8AC926', '#1982C4', '#6A4C93', '#F15BB5', '#00BBF9', '#00F5D4',
-            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD',
-            '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8C471', '#82E0AA'
-        ];
+        // Цвета для диаграммы
+        const chartColors = {
+            primary: '#FF8C00',
+            secondary: '#36A2EB',
+            success: '#4BC0C0',
+            warning: '#FFCE56',
+            danger: '#FF6384',
+            info: '#9966FF',
+            light: '#C9CBCF'
+        };
         
         // Отладочная информация
         let debugLog = [];
@@ -723,6 +756,20 @@
             const timeString = now.toLocaleTimeString('ru-RU');
             const dateString = now.toLocaleDateString('ru-RU');
             document.getElementById('lastUpdateTime').textContent = `${dateString} ${timeString}`;
+        }
+        
+        // Изменение типа диаграммы
+        function changeChartType(type) {
+            currentChartType = type;
+            
+            // Обновляем активную кнопку
+            document.getElementById('btnMonthly').classList.remove('active');
+            document.getElementById('btnQuarterly').classList.remove('active');
+            document.getElementById('btnYearly').classList.remove('active');
+            document.getElementById('btn' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+            
+            // Обновляем диаграмму
+            updateChart();
         }
         
         // ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ
@@ -975,7 +1022,7 @@
                         }
                         // Собираем данные по месяцам для завершенных товаров
                         if (analysis.statusType === 'completed' && analysis.completionMonthYear) {
-                            addToMonthlyData(analysis.completionMonthYear, analysis.productsCount);
+                            addToMonthlyData(analysis.completionMonthYear, analysis.productsCount, analysis.completionYear, analysis.completionQuarter);
                             if (analysis.isCurrentMonth) {
                                 productsAddedThisMonth += analysis.productsCount;
                             }
@@ -987,7 +1034,7 @@
                         }
                         // Собираем данные по месяцам для завершенных товаров
                         if (analysis.statusType === 'completed' && analysis.completionMonthYear) {
-                            addToMonthlyData(analysis.completionMonthYear, analysis.productsCount);
+                            addToMonthlyData(analysis.completionMonthYear, analysis.productsCount, analysis.completionYear, analysis.completionQuarter);
                             if (analysis.isCurrentMonth) {
                                 productsAddedThisMonth += analysis.productsCount;
                             }
@@ -998,11 +1045,15 @@
         }
         
         // Добавление данных в месячную статистику
-        function addToMonthlyData(monthYear, count) {
+        function addToMonthlyData(monthYear, count, year, quarter) {
             if (!monthlyCompletedData[monthYear]) {
-                monthlyCompletedData[monthYear] = 0;
+                monthlyCompletedData[monthYear] = {
+                    count: 0,
+                    year: year,
+                    quarter: quarter
+                };
             }
-            monthlyCompletedData[monthYear] += count;
+            monthlyCompletedData[monthYear].count += count;
         }
         
         // Поиск индекса столбца
@@ -1033,6 +1084,8 @@
                 additionDate: 'Не указана',
                 urgency: '',
                 completionMonthYear: null,
+                completionYear: null,
+                completionQuarter: null,
                 isCurrentMonth: false
             };
             
@@ -1090,6 +1143,10 @@
                                 ];
                                 const monthName = monthNames[month];
                                 result.completionMonthYear = `${monthName} ${year}`;
+                                result.completionYear = year;
+                                
+                                // Определяем квартал
+                                result.completionQuarter = Math.floor(month / 3) + 1;
                             }
                         }
                     } catch (e) {
@@ -1240,16 +1297,20 @@
             }
         }
         
-        // Обновление диаграммы
-        function updateChart() {
-            const ctx = document.getElementById('monthlyChart').getContext('2d');
-            const legendContainer = document.getElementById('chartLegend');
+        // Подготовка данных для диаграммы
+        function prepareChartData() {
+            const entries = Object.entries(monthlyCompletedData);
             
-            // Сортируем данные по месяцам (от самого старого к самому новому)
-            const sortedEntries = Object.entries(monthlyCompletedData).sort((a, b) => {
-                // Сравниваем по году и месяцу
-                const [monthA, yearA] = a[0].split(' ');
-                const [monthB, yearB] = b[0].split(' ');
+            if (entries.length === 0) {
+                return { labels: [], data: [] };
+            }
+            
+            // Сортируем по году и месяцу
+            entries.sort((a, b) => {
+                const [monthYearA] = a;
+                const [monthYearB] = b;
+                const [monthA, yearA] = monthYearA.split(' ');
+                const [monthB, yearB] = monthYearB.split(' ');
                 
                 const monthOrder = {
                     'Январь': 1, 'Февраль': 2, 'Март': 3, 'Апрель': 4,
@@ -1263,76 +1324,143 @@
                 return monthOrder[monthA] - monthOrder[monthB];
             });
             
-            const labels = sortedEntries.map(entry => entry[0]);
-            const data = sortedEntries.map(entry => entry[1]);
-            const colors = chartColors.slice(0, labels.length);
+            let labels = [];
+            let data = [];
             
-            // Общая сумма для расчета процентов
-            const total = data.reduce((sum, value) => sum + value, 0);
-            
-            // Если нет данных для диаграммы
-            if (labels.length === 0 || total === 0) {
-                legendContainer.innerHTML = `
-                    <div class="no-data-message">
-                        <i class="fas fa-chart-line" style="font-size: 3em; color: #ccc; margin-bottom: 15px;"></i>
-                        <p>Нет данных о завершенных товарах по месяцам</p>
-                    </div>
-                `;
+            if (currentChartType === 'monthly') {
+                // По месяцам
+                labels = entries.map(entry => entry[0]);
+                data = entries.map(entry => entry[1].count);
+            } else if (currentChartType === 'quarterly') {
+                // По кварталам
+                const quarterlyData = {};
+                entries.forEach(([monthYear, info]) => {
+                    const quarterKey = `Q${info.quarter} ${info.year}`;
+                    if (!quarterlyData[quarterKey]) {
+                        quarterlyData[quarterKey] = 0;
+                    }
+                    quarterlyData[quarterKey] += info.count;
+                });
                 
-                // Скрываем или очищаем диаграмму
+                // Сортируем кварталы
+                const quarterEntries = Object.entries(quarterlyData).sort((a, b) => {
+                    const [quarterA, yearA] = a[0].split(' ');
+                    const [quarterB, yearB] = b[0].split(' ');
+                    
+                    if (parseInt(yearA) !== parseInt(yearB)) {
+                        return parseInt(yearA) - parseInt(yearB);
+                    }
+                    return parseInt(quarterA.substring(1)) - parseInt(quarterB.substring(1));
+                });
+                
+                labels = quarterEntries.map(entry => entry[0]);
+                data = quarterEntries.map(entry => entry[1]);
+            } else if (currentChartType === 'yearly') {
+                // По годам
+                const yearlyData = {};
+                entries.forEach(([monthYear, info]) => {
+                    const yearKey = `${info.year}`;
+                    if (!yearlyData[yearKey]) {
+                        yearlyData[yearKey] = 0;
+                    }
+                    yearlyData[yearKey] += info.count;
+                });
+                
+                // Сортируем годы
+                const yearEntries = Object.entries(yearlyData).sort((a, b) => 
+                    parseInt(a[0]) - parseInt(b[0])
+                );
+                
+                labels = yearEntries.map(entry => entry[0]);
+                data = yearEntries.map(entry => entry[1]);
+            }
+            
+            return { labels, data };
+        }
+        
+        // Обновление статистики
+        function updateStats(chartData) {
+            const { labels, data } = chartData;
+            
+            if (data.length === 0) {
+                document.getElementById('statTotal').textContent = '0';
+                document.getElementById('statAvg').textContent = '0';
+                document.getElementById('statMax').textContent = '0';
+                document.getElementById('statCurrent').textContent = '0';
+                return;
+            }
+            
+            const total = data.reduce((sum, value) => sum + value, 0);
+            const avg = Math.round(total / data.length);
+            const max = Math.max(...data);
+            
+            // Текущий месяц
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+            const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                               'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            const currentMonthYear = `${monthNames[currentMonth]} ${currentYear}`;
+            const currentMonthData = monthlyCompletedData[currentMonthYear] ? monthlyCompletedData[currentMonthYear].count : 0;
+            
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAvg').textContent = avg;
+            document.getElementById('statMax').textContent = max;
+            document.getElementById('statCurrent').textContent = currentMonthData;
+        }
+        
+        // Обновление диаграммы
+        function updateChart() {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            const noDataMessage = document.getElementById('noDataMessage');
+            
+            // Подготавливаем данные
+            const chartData = prepareChartData();
+            const { labels, data } = chartData;
+            
+            // Обновляем статистику
+            updateStats(chartData);
+            
+            // Если нет данных
+            if (labels.length === 0 || data.length === 0) {
+                noDataMessage.style.display = 'block';
                 if (chart) {
                     chart.destroy();
                     chart = null;
-                } else {
-                    // Создаем пустую диаграмму
-                    chart = new Chart(ctx, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Нет данных'],
-                            datasets: [{
-                                data: [1],
-                                backgroundColor: ['#f8f9fa'],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: true,
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-                                tooltip: {
-                                    enabled: false
-                                }
-                            }
-                        }
-                    });
                 }
                 return;
             }
+            
+            noDataMessage.style.display = 'none';
+            
+            // Создаем градиент для столбцов
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, chartColors.primary);
+            gradient.addColorStop(1, '#FFB500');
             
             // Создаем или обновляем диаграмму
             if (chart) {
                 chart.data.labels = labels;
                 chart.data.datasets[0].data = data;
-                chart.data.datasets[0].backgroundColor = colors;
                 chart.update();
             } else {
                 chart = new Chart(ctx, {
-                    type: 'pie',
+                    type: 'bar',
                     data: {
                         labels: labels,
                         datasets: [{
+                            label: 'Завершенные товары',
                             data: data,
-                            backgroundColor: colors,
+                            backgroundColor: gradient,
+                            borderColor: chartColors.primary,
                             borderWidth: 1,
-                            borderColor: '#fff'
+                            borderRadius: 5,
+                            hoverBackgroundColor: chartColors.secondary
                         }]
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: true,
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: {
                                 display: false
@@ -1340,63 +1468,34 @@
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.raw || 0;
-                                        const percentage = Math.round((value / total) * 100);
-                                        return `${label}: ${value} товаров (${percentage}%)`;
+                                        return `Количество: ${context.raw}`;
                                     }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toLocaleString('ru-RU');
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Количество товаров'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
                                 }
                             }
                         }
                     }
                 });
             }
-            
-            // Создаем легенду
-            legendContainer.innerHTML = '';
-            sortedEntries.forEach((entry, index) => {
-                const [monthYear, value] = entry;
-                const percentage = Math.round((value / total) * 100);
-                const color = colors[index];
-                
-                const legendItem = document.createElement('div');
-                legendItem.className = 'chart-legend-item';
-                legendItem.innerHTML = `
-                    <div class="color-box" style="background-color: ${color};"></div>
-                    <div class="legend-label">${monthYear}</div>
-                    <div class="legend-value">${value}</div>
-                    <div class="legend-percentage">(${percentage}%)</div>
-                `;
-                legendContainer.appendChild(legendItem);
-                
-                // Добавляем hover эффект
-                legendItem.addEventListener('mouseover', function() {
-                    if (chart) {
-                        chart.setActiveElements([{ datasetIndex: 0, index: index }]);
-                        chart.update();
-                    }
-                });
-                
-                legendItem.addEventListener('mouseout', function() {
-                    if (chart) {
-                        chart.setActiveElements([]);
-                        chart.update();
-                    }
-                });
-            });
-            
-            // Добавляем общую сумму
-            const totalItem = document.createElement('div');
-            totalItem.className = 'chart-legend-item';
-            totalItem.style.backgroundColor = '#e8f4f8';
-            totalItem.style.fontWeight = 'bold';
-            totalItem.innerHTML = `
-                <div class="color-box" style="background-color: #333;"></div>
-                <div class="legend-label">Всего завершено:</div>
-                <div class="legend-value">${total}</div>
-                <div class="legend-percentage">(100%)</div>
-            `;
-            legendContainer.appendChild(totalItem);
         }
         
         // Инициализация - автоматическая загрузка при открытии страницы
