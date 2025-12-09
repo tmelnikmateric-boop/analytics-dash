@@ -446,8 +446,8 @@
                             <tr>
                                 <th><i class="fas fa-file"></i> Название файла</th>
                                 <th><i class="fas fa-boxes"></i> Количество товаров</th>
-                                <th><i class="fas fa-calendar-plus"></i> Дата принятия</th>
-                                <th><i class="fas fa-info-circle"></i> Статус</th>
+                                <th><i class="fas fa-calendar-plus"></i> Дата взятия</th>
+                                <th><i class="fas fa-info-circle"></i> Статус группы</th>
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
                         </thead>
@@ -466,8 +466,8 @@
                             <tr>
                                 <th><i class="fas fa-file"></i> Название файла</th>
                                 <th><i class="fas fa-boxes"></i> Количество товаров</th>
-                                <th><i class="fas fa-calendar-plus"></i> Дата принятия</th>
-                                <th><i class="fas fa-info-circle"></i> Статус</th>
+                                <th><i class="fas fa-calendar-plus"></i> Дата взятия</th>
+                                <th><i class="fas fa-info-circle"></i> Статус группы</th>
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
                         </thead>
@@ -498,15 +498,8 @@
         const MANAGER_SPREADSHEET_ID = '120MzlbbGmHqroutPw5EtvfkTdDf4RMGbf72CV_K7IeE';
         const MANAGER_SHEET_GID = '1272115114';
         
-        // ID таблицы контента (из публичной ссылки)
+        // ID таблицы контента
         const CONTENT_SPREADSHEET_ID = '2PACX-1vT2AYh3Iqgf07HInfdc3bQwE_L3AweAonhdE7LlJlJtBHo_5rx3WVko0Pdm5eGjCvmcjTOWja8nP20O';
-        
-        // Переменные для данных
-        let managerProductsToAdd = 0;
-        let contentProductsToAdd = 0;
-        let productsAddedThisMonth = 0;
-        let managerFilesForProcessing = [];
-        let contentFilesForProcessing = [];
         
         // Отладочная информация
         let debugLog = [];
@@ -549,18 +542,13 @@
                 managerFilesForProcessing = [];
                 contentFilesForProcessing = [];
                 
-                // Определяем текущий месяц и год
-                const currentDate = new Date();
-                const currentMonth = currentDate.getMonth();
-                const currentYear = currentDate.getFullYear();
-                
                 // Загружаем данные менеджеров
                 logDebug('Пробуем загрузить данные менеджеров');
                 const managerData = await loadDataFromSheet(MANAGER_SPREADSHEET_ID, MANAGER_SHEET_GID, 'manager');
                 logDebug('Данные менеджеров получены', { rows: managerData.length });
                 
                 if (managerData.length > 0) {
-                    processData(managerData, 'manager', currentMonth, currentYear);
+                    processData(managerData, 'manager');
                 }
                 
                 // Загружаем данные контента
@@ -569,7 +557,7 @@
                 logDebug('Данные контента получены', { rows: contentData.length });
                 
                 if (contentData.length > 0) {
-                    processData(contentData, 'content', currentMonth, currentYear);
+                    processData(contentData, 'content');
                 }
                 
                 // Обновляем отображение
@@ -578,7 +566,7 @@
                 loading.style.display = 'none';
                 statsSection.style.display = 'block';
                 
-                if (managerData.length === 0 && contentData.length === 0) {
+                if (managerFilesForProcessing.length === 0 && contentFilesForProcessing.length === 0) {
                     warningMessage.style.display = 'block';
                 }
                 
@@ -599,10 +587,8 @@
                 let url;
                 
                 if (source === 'manager') {
-                    // Для менеджеров используем GID
                     url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
                 } else {
-                    // Для контента используем публичную ссылку
                     url = `https://docs.google.com/spreadsheets/d/e/${spreadsheetId}/pub?output=csv`;
                 }
                 
@@ -642,7 +628,7 @@
                 if (char === '"') {
                     if (inQuotes && nextChar === '"') {
                         currentField += '"';
-                        i++; // Пропускаем следующую кавычку
+                        i++;
                     } else {
                         inQuotes = !inQuotes;
                     }
@@ -655,14 +641,12 @@
                     currentRow = [];
                     currentField = '';
                 } else if (char === '\r') {
-                    // Игнорируем carriage return
                     continue;
                 } else {
                     currentField += char;
                 }
             }
             
-            // Добавляем последнюю строку
             if (currentField !== '' || currentRow.length > 0) {
                 currentRow.push(currentField.trim());
                 rows.push(currentRow);
@@ -672,7 +656,7 @@
         }
         
         // Обработка данных
-        function processData(rows, source, currentMonth, currentYear) {
+        function processData(rows, source) {
             if (rows.length < 2) {
                 logDebug(`Мало данных для ${source}`, { rows: rows.length });
                 return;
@@ -681,16 +665,22 @@
             const headers = rows[0];
             logDebug(`Заголовки ${source}`, headers);
             
-            // Находим индексы столбцов
+            // Находим индексы столбцов на основе вашей структуры данных
             const indices = {
-                status: findColumnIndex(headers, ['Статус', 'Состояние', 'Статус файла']),
-                products: findColumnIndex(headers, ['Количество', 'Товары', 'Кол-во']),
-                filename: findColumnIndex(headers, ['Файл', 'Имя файла', 'Название']),
-                date: findColumnIndex(headers, ['Дата', 'Дата добавления', 'Дата загрузки']),
-                urgency: findColumnIndex(headers, ['Срочность', 'Приоритет', 'Срочно'])
+                status: findColumnIndex(headers, ['Статус группы', 'Статус', 'Состояние']),
+                products: findColumnIndex(headers, ['Количество товаров', 'Количество', 'Товары']),
+                filename: findColumnIndex(headers, ['Имя файла', 'Файл', 'Название']),
+                date: findColumnIndex(headers, ['Дата взятия', 'Дата добавления файла', 'Дата']),
+                urgency: findColumnIndex(headers, ['Срочность', 'Приоритет']),
+                completionDate: findColumnIndex(headers, ['Дата завершения работы', 'Дата завершения'])
             };
             
             logDebug(`Индексы столбцов ${source}`, indices);
+            
+            // Определяем текущий месяц и год
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
             
             // Обрабатываем строки
             for (let i = 1; i < rows.length; i++) {
@@ -698,8 +688,14 @@
                 if (row.length === 0) continue;
                 
                 const analysis = analyzeRow(row, indices, currentMonth, currentYear);
+                logDebug(`Анализ строки ${i} (${source})`, {
+                    filename: analysis.filename,
+                    status: analysis.status,
+                    statusType: analysis.statusType,
+                    productsCount: analysis.productsCount
+                });
                 
-                if (analysis.filename && analysis.statusType !== 'completed') {
+                if (analysis.filename) {
                     const fileData = {
                         filename: analysis.filename,
                         productsCount: analysis.productsCount,
@@ -711,20 +707,22 @@
                     };
                     
                     if (source === 'manager') {
-                        managerFilesForProcessing.push(fileData);
                         if (analysis.statusType !== 'completed') {
+                            managerFilesForProcessing.push(fileData);
                             managerProductsToAdd += analysis.productsCount;
                         }
+                        if (analysis.statusType === 'completed' && analysis.isCurrentMonth) {
+                            productsAddedThisMonth += analysis.productsCount;
+                        }
                     } else {
-                        contentFilesForProcessing.push(fileData);
                         if (analysis.statusType !== 'completed') {
+                            contentFilesForProcessing.push(fileData);
                             contentProductsToAdd += analysis.productsCount;
                         }
+                        if (analysis.statusType === 'completed' && analysis.isCurrentMonth) {
+                            productsAddedThisMonth += analysis.productsCount;
+                        }
                     }
-                }
-                
-                if (analysis.statusType === 'completed' && analysis.isCurrentMonth) {
-                    productsAddedThisMonth += analysis.productsCount;
                 }
             }
             
@@ -757,10 +755,11 @@
                 isCurrentMonth: false
             };
             
-            // Статус
+            // Статус - теперь ищем эмоджи в статусе
             if (indices.status !== -1 && row[indices.status]) {
                 result.status = row[indices.status].toString().trim();
                 result.statusType = determineStatusType(result.status);
+                logDebug(`Статус найден: "${result.status}" -> тип: ${result.statusType}`);
             }
             
             // Количество товаров
@@ -775,7 +774,7 @@
                 result.filename = row[indices.filename].toString().trim();
             }
             
-            // Дата
+            // Дата взятия
             if (indices.date !== -1 && row[indices.date]) {
                 const dateStr = row[indices.date].toString().trim();
                 result.additionDate = formatDate(dateStr);
@@ -786,26 +785,59 @@
                 result.urgency = row[indices.urgency].toString().trim();
             }
             
+            // Дата завершения (для определения текущего месяца)
+            if (indices.completionDate !== -1 && row[indices.completionDate]) {
+                const dateStr = row[indices.completionDate].toString().trim();
+                if (dateStr) {
+                    try {
+                        const dateOnly = dateStr.split(' ')[0];
+                        const parts = dateOnly.split('.');
+                        
+                        if (parts.length === 3) {
+                            const day = parseInt(parts[0], 10);
+                            const month = parseInt(parts[1], 10) - 1;
+                            const year = parseInt(parts[2], 10);
+                            
+                            if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                                result.isCurrentMonth = (month === currentMonth && year === currentYear);
+                            }
+                        }
+                    } catch (e) {
+                        // Игнорируем ошибки парсинга даты
+                    }
+                }
+            }
+            
             return result;
         }
         
-        // Определение типа статуса
+        // Определение типа статуса - ОБНОВЛЕНО для работы с эмоджи
         function determineStatusType(status) {
             if (!status) return 'unknown';
             
-            const statusLower = status.toLowerCase();
-            if (statusLower.includes('заверш') || statusLower.includes('выполн') || statusLower.includes('готов')) {
+            // Сначала ищем эмоджи
+            if (status.includes('✅') || status.includes('✔') || status.includes('✓')) {
                 return 'completed';
-            } else if (statusLower.includes('доступ')) {
-                return 'available';
-            } else if (statusLower.includes('работ')) {
+            }
+            if (status.includes('🔄') || status.includes('⚙️') || status.includes('⏳')) {
                 return 'in_progress';
             }
+            if (status.includes('🆕') || status.includes('📄') || status.includes('📋')) {
+                return 'available';
+            }
             
-            // Проверяем эмоджи
-            if (status.includes('🆕')) return 'available';
-            if (status.includes('✅')) return 'completed';
-            if (status.includes('🔄')) return 'in_progress';
+            // Затем проверяем текст
+            const statusLower = status.toLowerCase();
+            if (statusLower.includes('заверш') || statusLower.includes('выполн') || 
+                statusLower.includes('готов') || statusLower.includes('сделан')) {
+                return 'completed';
+            } else if (statusLower.includes('доступ') || statusLower.includes('нов') || 
+                      statusLower.includes('ожидан')) {
+                return 'available';
+            } else if (statusLower.includes('работ') || statusLower.includes('в проц') || 
+                      statusLower.includes('обработ')) {
+                return 'in_progress';
+            }
             
             return 'unknown';
         }
@@ -815,9 +847,11 @@
             if (!urgencyText) return 'urgency-low';
             
             const urgencyLower = urgencyText.toLowerCase();
-            if (urgencyLower.includes('высок') || urgencyLower.includes('срочн') || urgencyLower.includes('urgent')) {
+            if (urgencyLower.includes('высок') || urgencyLower.includes('срочн') || 
+                urgencyLower.includes('urgent') || urgencyLower.includes('high')) {
                 return 'urgency-high';
-            } else if (urgencyLower.includes('сезон') || urgencyLower.includes('medium')) {
+            } else if (urgencyLower.includes('сезон') || urgencyLower.includes('medium') || 
+                      urgencyLower.includes('norm')) {
                 return 'urgency-medium';
             } else {
                 return 'urgency-low';
@@ -860,14 +894,21 @@
             document.getElementById('productsAddedThisMonth').textContent = productsAddedThisMonth;
             
             // Обновляем таблицу менеджеров
-            updateTable('managerFilesTableBody', managerFilesForProcessing);
+            updateTable('managerFilesTableBody', managerFilesForProcessing, 'менеджеров');
             
             // Обновляем таблицу контента
-            updateTable('contentFilesTableBody', contentFilesForProcessing);
+            updateTable('contentFilesTableBody', contentFilesForProcessing, 'контента');
+            
+            logDebug('Отображение обновлено', {
+                managerFiles: managerFilesForProcessing.length,
+                contentFiles: contentFilesForProcessing.length,
+                managerProducts: managerProductsToAdd,
+                contentProducts: contentProductsToAdd
+            });
         }
         
         // Обновление таблицы
-        function updateTable(tableId, files) {
+        function updateTable(tableId, files, source) {
             const tableBody = document.getElementById(tableId);
             tableBody.innerHTML = '';
             
@@ -875,7 +916,7 @@
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-info-circle"></i> Нет файлов для обработки
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки ${source}
                         </td>
                     </tr>
                 `;
@@ -906,14 +947,13 @@
                 case 'in_progress': return '🔄 В работе';
                 case 'available': return '🆕 Доступно';
                 case 'completed': return '✅ Завершено';
-                default: return '❓ Не определен';
+                default: return `❓ ${statusType}`;
             }
         }
         
         // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
             logDebug('Страница загружена');
-            // Показываем демо-данные при первой загрузке
             showDemoData();
         });
         
