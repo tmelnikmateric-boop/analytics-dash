@@ -452,6 +452,159 @@
             border-color: #ff8c00;
         }
         
+        /* Модальное окно стили */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background: linear-gradient(90deg, #ff8c00 0%, #FFB500 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .info-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-section h3 {
+            color: #ff8c00;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-section p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .info-section ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .info-section li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            color: #555;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .feature-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ff8c00;
+        }
+        
+        .feature-item h4 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        
+        .feature-item p {
+            font-size: 0.9em;
+            margin-bottom: 0;
+            color: #666;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -501,6 +654,20 @@
             .chart-wrapper {
                 height: 300px;
             }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+            
+            .modal-header {
+                padding: 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+                max-height: 60vh;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -508,6 +675,101 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <!-- Модальное окно -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-info-circle"></i> Информация о системе</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="info-section">
+                    <h3><i class="fas fa-rocket"></i> Назначение системы</h3>
+                    <p>Данная система предназначена для мониторинга и управления процессом загрузки новых товаров на сайт. Она автоматически собирает данные из Google таблиц и предоставляет наглядную статистику.</p>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-tasks"></i> Основные функции</h3>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <h4><i class="fas fa-sync-alt"></i> Автоматическая загрузка</h4>
+                            <p>Данные обновляются автоматически при открытии страницы</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4><i class="fas fa-chart-bar"></i> Визуализация данных</h4>
+                            <p>Столбчатые диаграммы показывают статистику по месяцам</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4><i class="fas fa-table"></i> Детальные таблицы</h4>
+                            <p>Подробный список файлов для обработки с сортировкой</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4><i class="fas fa-filter"></i> Группировка данных</h4>
+                            <p>Возможность просмотра статистики по месяцам, кварталам и годам</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-database"></i> Источники данных</h3>
+                    <p>Система использует данные из следующих Google таблиц:</p>
+                    <ul>
+                        <li><strong>👥 Рабочие группы КАМ</strong> (GID: 1367779997) - данные от менеджеров</li>
+                        <li><strong>Рабочие группы контента</strong> (GID: 33531424) - данные от контент-отдела</li>
+                    </ul>
+                    <p>Система учитывает только товары со статусами "В работе" и "Доступно".</p>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-chart-line"></i> Статистика</h3>
+                    <p>Система рассчитывает следующие показатели:</p>
+                    <ul>
+                        <li>Количество новых товаров от менеджеров</li>
+                        <li>Количество новых товаров от контент-отдела</li>
+                        <li>Добавлено в текущем месяце</li>
+                        <li>Динамика завершенных работ по периодам</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-tags"></i> Статусы товаров</h3>
+                    <p>
+                        <span class="status-indicator" style="background-color: #cce5ff; color: #004085;">
+                            <i class="fas fa-sync-alt"></i> В работе
+                        </span>
+                        <span class="status-indicator" style="background-color: #d1ecf1; color: #0c5460;">
+                            <i class="fas fa-plus-circle"></i> Доступно
+                        </span>
+                        <span class="status-indicator" style="background-color: #d4edda; color: #155724;">
+                            <i class="fas fa-check-circle"></i> Завершено
+                        </span>
+                    </p>
+                    <p>Система автоматически определяет статус по эмодзи или текстовому описанию.</p>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-clock"></i> Частота обновления</h3>
+                    <p>Данные обновляются:</p>
+                    <ul>
+                        <li>Автоматически при загрузке страницы</li>
+                        <li>При нажатии кнопки "Обновить данные"</li>
+                        <li>Время последнего обновления отображается внизу страницы</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-mobile-alt"></i> Адаптивность</h3>
+                    <p>Система полностью адаптирована для работы на:</p>
+                    <ul>
+                        <li>Компьютерах и ноутбуках</li>
+                        <li>Планшетах</li>
+                        <li>Мобильных телефонах</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <header>
             <h1><i class="fas fa-chart-pie"></i> Загрузка новых товаров на сайт</h1>
@@ -518,6 +780,12 @@
                    target="_blank" style="color: #17a2b8; font-weight: 600;">
                    Таблица рабочих групп
                 </a>
+            </div>
+            
+            <div class="header-buttons">
+                <button onclick="openModal()" class="btn-rules">
+                    <i class="fas fa-info-circle"></i> Информация о системе
+                </button>
             </div>
         </header>
         
@@ -715,6 +983,32 @@
         
         // Отладочная информация
         let debugLog = [];
+        
+        // Функции для модального окна
+        function openModal() {
+            document.getElementById('infoModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Запрещаем прокрутку страницы
+        }
+        
+        function closeModal() {
+            document.getElementById('infoModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Возвращаем прокрутку страницы
+        }
+        
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('infoModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+        // Закрытие модального окна клавишей ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
         
         function logDebug(message, data = null) {
             const timestamp = new Date().toLocaleTimeString();
