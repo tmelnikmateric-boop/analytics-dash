@@ -252,6 +252,34 @@
             color: #0c5460;
         }
         
+        .days-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 500;
+            background-color: #e8f4f8;
+            color: #0c5460;
+        }
+        
+        .days-high {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+        }
+        
+        .days-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .days-low {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
         .buttons {
             display: flex;
             gap: 15px;
@@ -857,6 +885,7 @@
                                 <th><i class="fas fa-calendar-plus"></i> Дата взятия</th>
                                 <th><i class="fas fa-calendar-check"></i> Дата прихода от менеджера</th>
                                 <th><i class="fas fa-info-circle"></i> Статус группы</th>
+                                <th><i class="fas fa-clock"></i> Дней на добавление</th>
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
                         </thead>
@@ -885,6 +914,7 @@
                                 <th><i class="fas fa-boxes"></i> Количество товаров</th>
                                 <th><i class="fas fa-calendar-plus"></i> Дата взятия</th>
                                 <th><i class="fas fa-info-circle"></i> Статус группы</th>
+                                <th><i class="fas fa-clock"></i> Дней на добавление</th>
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
                         </thead>
@@ -1070,6 +1100,20 @@
             
             // Обновляем диаграмму
             updateChart();
+        }
+        
+        // Вычисление дней на добавление
+        function calculateDaysToAdd(productsCount) {
+            if (productsCount <= 0) return 0;
+            // Округляем вверх до целого числа дней
+            return Math.ceil(productsCount / 50);
+        }
+        
+        // Получение класса для индикатора дней
+        function getDaysClass(days) {
+            if (days >= 10) return 'days-high';
+            if (days >= 5) return 'days-medium';
+            return 'days-low';
         }
         
         // ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ
@@ -1305,6 +1349,9 @@
                 const analysis = analyzeRow(row, indices, source);
                 
                 if (analysis.filename && analysis.filename !== '') {
+                    const daysToAdd = calculateDaysToAdd(analysis.productsCount);
+                    const daysClass = getDaysClass(daysToAdd);
+                    
                     const fileData = {
                         filename: analysis.filename,
                         productsCount: analysis.productsCount,
@@ -1314,6 +1361,8 @@
                         managerAdditionDate: analysis.managerAdditionDate || 'Не указана',
                         urgency: analysis.urgency,
                         urgencyClass: getUrgencyClass(analysis.urgency),
+                        daysToAdd: daysToAdd,
+                        daysClass: daysClass,
                         source: source
                     };
                     
@@ -1570,7 +1619,7 @@
             if (managerFilesForProcessing.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: #666;">
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
                             <i class="fas fa-info-circle"></i> Нет файлов для обработки менеджеров
                         </td>
                     </tr>
@@ -1583,6 +1632,7 @@
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
                 const urgencyText = file.urgency || 'Не указана';
+                const daysText = file.daysToAdd > 0 ? `${file.daysToAdd} дн.` : '0 дн.';
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -1591,6 +1641,7 @@
                     <td class="date-cell">${file.additionDate}</td>
                     <td class="date-cell">${file.managerAdditionDate}</td>
                     <td><span class="file-status ${statusClass}">${statusText}</span></td>
+                    <td><span class="file-status ${file.daysClass}">${daysText}</span></td>
                     <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
                 `;
                 tableBody.appendChild(row);
@@ -1605,7 +1656,7 @@
             if (contentFilesForProcessing.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #666;">
                             <i class="fas fa-info-circle"></i> Нет файлов для обработки контента
                         </td>
                     </tr>
@@ -1618,6 +1669,7 @@
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
                 const urgencyText = file.urgency || 'Не указана';
+                const daysText = file.daysToAdd > 0 ? `${file.daysToAdd} дн.` : '0 дн.';
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -1625,6 +1677,7 @@
                     <td><span class="highlight">${file.productsCount}</span></td>
                     <td class="date-cell">${file.additionDate}</td>
                     <td><span class="file-status ${statusClass}">${statusText}</span></td>
+                    <td><span class="file-status ${file.daysClass}">${daysText}</span></td>
                     <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
                 `;
                 tableBody.appendChild(row);
