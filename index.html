@@ -104,25 +104,11 @@
             transform: translateY(-5px);
         }
         
-        .summary-card.important {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .summary-card.important-2 {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-        
-        .summary-card.important-3 {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-        
+               
         .summary-card.important .summary-number,
         .summary-card.important-2 .summary-number,
         .summary-card.important-3 .summary-number {
-            color: white;
+            color: #7c7c7c;
         }
         
         .summary-number {
@@ -145,7 +131,7 @@
         .summary-card.important .summary-label,
         .summary-card.important-2 .summary-label,
         .summary-card.important-3 .summary-label {
-            color: rgba(255,255,255,0.9);
+            color: #7c7c7c;
         }
         
         .summary-subtitle {
@@ -157,7 +143,7 @@
         .summary-card.important .summary-subtitle,
         .summary-card.important-2 .summary-subtitle,
         .summary-card.important-3 .summary-subtitle {
-            color: rgba(255,255,255,0.9);
+            color: #7c7c7c;
         }
         
         .files-table-container {
@@ -1185,7 +1171,7 @@
             
             <div class="header-buttons">
                 <button onclick="openModal()" class="btn-rules">
-                    <i class="fas fa-info-circle"></i> Информация о системе
+                    <i class="fas fa-info-circle"></i> Процесс работы
                 </button>
             </div>
         </header>
@@ -1234,23 +1220,16 @@
                 
                 <div class="files-table-container">
                     <h2 class="section-title">
-                        <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера (👥 Рабочие группы КАМ)
+                        <i class="fas fa-user-tie"></i> Загрузка ассортимента от менеджера
                     </h2>
-                    <div class="data-source-info">
-                        <i class="fas fa-info-circle"></i> Источник: 
-                        <a href="https://docs.google.com/spreadsheets/d/1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek/edit?gid=1367779997" 
-                           target="_blank" style="color: #17a2b8;">
-                           Лист "👥 Рабочие группы КАМ" (GID: 1367779997)
-                        </a>
-                        | Только статусы "В работе" и "Доступно"
-                    </div>
+                    
                     
                     <table class="files-table">
                         <thead>
                             <tr>
                                 <th><i class="fas fa-file"></i> Название файла</th>
                                 <th><i class="fas fa-boxes"></i> Количество товаров</th>
-                                <th><i class="fas fa-calendar-plus"></i> Дата взятия</th>
+                                <th><i class="fas fa-calendar-plus"></i> Дата начала работы</th>
                                 <th><i class="fas fa-calendar-check"></i> Дата прихода от менеджера</th>
                                 <th><i class="fas fa-info-circle"></i> Статус группы</th>
                                 <th><i class="fas fa-clock"></i> Дней на добавление</th>
@@ -1266,21 +1245,13 @@
                     <h2 class="section-title">
                         <i class="fas fa-file-alt"></i> Загрузка ассортимента контента
                     </h2>
-                    <div class="data-source-info">
-                        <i class="fas fa-info-circle"></i> Источник: 
-                        <a href="https://docs.google.com/spreadsheets/d/1vCZQgzBPv8uahr8ckRI1f-TA_QS6Afz2B9NP_ZMj6ek/edit?gid=33531424" 
-                           target="_blank" style="color: #17a2b8;">
-                           Лист "Рабочие группы контента" (GID: 33531424)
-                        </a>
-                        | Только статусы "В работе" и "Доступно"
-                    </div>
-                    
+                                        
                     <table class="files-table">
                         <thead>
                             <tr>
                                 <th><i class="fas fa-file"></i> Название файла</th>
                                 <th><i class="fas fa-boxes"></i> Количество товаров</th>
-                                <th><i class="fas fa-calendar-plus"></i> Дата взятия</th>
+                                <th><i class="fas fa-calendar-plus"></i> Дата начала работы</th>
                                 <th><i class="fas fa-info-circle"></i> Статус группы</th>
                                 <th><i class="fas fa-clock"></i> Дней на добавление</th>
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
