@@ -855,6 +855,7 @@
                                 <th><i class="fas fa-file"></i> Название файла</th>
                                 <th><i class="fas fa-boxes"></i> Количество товаров</th>
                                 <th><i class="fas fa-calendar-plus"></i> Дата взятия</th>
+                                <th><i class="fas fa-calendar-check"></i> Дата прихода от менеджера</th>
                                 <th><i class="fas fa-info-circle"></i> Статус группы</th>
                                 <th><i class="fas fa-exclamation-triangle"></i> Срочность</th>
                             </tr>
@@ -1290,7 +1291,8 @@
                 status: findColumnIndex(headers, ['Статус группы', 'Статус', 'Состояние', 'Статус группы', 'Status']),
                 products: findColumnIndex(headers, ['Количество товаров', 'Количество', 'Товары', 'Кол-во товаров', 'Products', 'Count']),
                 filename: findColumnIndex(headers, ['Имя файла', 'Файл', 'Название', 'Название файла', 'File', 'Filename']),
-                date: findColumnIndex(headers, ['Дата взятия', 'Дата добавления файла', 'Дата', 'Дата создания', 'Date']),
+                date: findColumnIndex(headers, ['Дата взятия', 'Дата', 'Дата создания', 'Date']),
+                managerDate: findColumnIndex(headers, ['Дата добавления файла', 'Дата от менеджера', 'Дата прихода', 'Дата получения']),
                 urgency: findColumnIndex(headers, ['Срочность', 'Приоритет', 'Важность', 'Urgency', 'Priority']),
                 completionDate: findColumnIndex(headers, ['Дата завершения работы', 'Дата завершения', 'Дата окончания', 'Completion Date'])
             };
@@ -1300,7 +1302,7 @@
                 const row = rows[i];
                 if (row.length === 0) continue;
                 
-                const analysis = analyzeRow(row, indices);
+                const analysis = analyzeRow(row, indices, source);
                 
                 if (analysis.filename && analysis.filename !== '') {
                     const fileData = {
@@ -1309,6 +1311,7 @@
                         status: analysis.status,
                         statusType: analysis.statusType,
                         additionDate: analysis.additionDate,
+                        managerAdditionDate: analysis.managerAdditionDate || 'Не указана',
                         urgency: analysis.urgency,
                         urgencyClass: getUrgencyClass(analysis.urgency),
                         source: source
@@ -1370,7 +1373,7 @@
         }
         
         // Анализ строки
-        function analyzeRow(row, indices) {
+        function analyzeRow(row, indices, source) {
             const currentDate = new Date();
             const currentMonth = currentDate.getMonth();
             const currentYear = currentDate.getFullYear();
@@ -1381,6 +1384,7 @@
                 productsCount: 0,
                 filename: '',
                 additionDate: 'Не указана',
+                managerAdditionDate: 'Не указана',
                 urgency: '',
                 completionMonthYear: null,
                 completionYear: null,
@@ -1410,6 +1414,12 @@
             if (indices.date !== -1 && row[indices.date]) {
                 const dateStr = row[indices.date].toString().trim();
                 result.additionDate = formatDate(dateStr);
+            }
+            
+            // Дата прихода от менеджера (только для менеджеров)
+            if (source === 'manager' && indices.managerDate !== -1 && row[indices.managerDate]) {
+                const managerDateStr = row[indices.managerDate].toString().trim();
+                result.managerAdditionDate = formatDate(managerDateStr);
             }
             
             // Срочность
@@ -1548,27 +1558,62 @@
             document.getElementById('contentProductsToAdd').textContent = contentProductsToAdd;
             document.getElementById('productsAddedThisMonth').textContent = productsAddedThisMonth;
             
-            updateTable('managerFilesTableBody', managerFilesForProcessing, 'менеджеров');
-            updateTable('contentFilesTableBody', contentFilesForProcessing, 'контента');
+            updateManagerTable();
+            updateContentTable();
         }
         
-        // Обновление таблицы
-        function updateTable(tableId, files, source) {
-            const tableBody = document.getElementById(tableId);
+        // Обновление таблицы менеджеров
+        function updateManagerTable() {
+            const tableBody = document.getElementById('managerFilesTableBody');
             tableBody.innerHTML = '';
             
-            if (files.length === 0) {
+            if (managerFilesForProcessing.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
-                            <i class="fas fa-info-circle"></i> Нет файлов для обработки ${source}
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #666;">
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки менеджеров
                         </td>
                     </tr>
                 `;
                 return;
             }
             
-            files.forEach(file => {
+            managerFilesForProcessing.forEach(file => {
+                const statusClass = `status-${file.statusType.replace('_', '-')}`;
+                const statusText = getStatusText(file.statusType);
+                const urgencyClass = file.urgencyClass || 'urgency-low';
+                const urgencyText = file.urgency || 'Не указана';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${file.filename}</strong></td>
+                    <td><span class="highlight">${file.productsCount}</span></td>
+                    <td class="date-cell">${file.additionDate}</td>
+                    <td class="date-cell">${file.managerAdditionDate}</td>
+                    <td><span class="file-status ${statusClass}">${statusText}</span></td>
+                    <td><span class="file-status ${urgencyClass}">${urgencyText}</span></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Обновление таблицы контента
+        function updateContentTable() {
+            const tableBody = document.getElementById('contentFilesTableBody');
+            tableBody.innerHTML = '';
+            
+            if (contentFilesForProcessing.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
+                            <i class="fas fa-info-circle"></i> Нет файлов для обработки контента
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            contentFilesForProcessing.forEach(file => {
                 const statusClass = `status-${file.statusType.replace('_', '-')}`;
                 const statusText = getStatusText(file.statusType);
                 const urgencyClass = file.urgencyClass || 'urgency-low';
