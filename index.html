@@ -29,6 +29,7 @@
             --color-neutral-light: rgba(255, 255, 255, 0.2);
             --font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             --font-size-base: 16px;
+            --font-size-sm: 14px;
             --font-size-lg: 18px;
             --font-size-xl: 20px;
             --font-size-2xl: 28px;
@@ -602,7 +603,7 @@
         .completed-stats-table td {
             padding: var(--spacing-md);
             border-bottom: 1px solid var(--color-border-dashed);
-            vertical-align: top;
+            vertical-align: middle;
         }
 
         .completed-stats-table tr:hover {
@@ -626,19 +627,80 @@
             color: var(--color-success);
         }
 
-        .file-item {
-            margin-bottom: var(--spacing-xs);
-            padding: var(--spacing-xs);
-            background: var(--color-bg-tertiary);
+        .files-count-wrapper {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            position: relative;
+        }
+
+        .files-count {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-primary);
+        }
+
+        .info-icon {
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            transition: color 0.3s ease;
+        }
+
+        .info-icon:hover {
+            color: var(--color-primary);
+        }
+
+        .files-tooltip {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border-dashed);
             border-radius: var(--radius-small);
-            border-left: 3px solid var(--color-success);
-            font-size: 9px;
+            padding: var(--spacing-md);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            min-width: 300px;
+            max-width: 500px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: var(--font-size-sm);
+        }
+
+        .files-tooltip.show {
+            display: block;
+        }
+
+        .tooltip-title {
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-dark);
+            border-bottom: 1px solid var(--color-border-dashed);
+            padding-bottom: var(--spacing-xs);
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .file-item {
+            padding: var(--spacing-xs);
+            border-bottom: 1px dashed var(--color-border-dashed);
+            word-break: break-all;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
         }
 
         .file-item small {
             display: block;
             color: var(--color-text-tertiary);
-            font-size: var(--font-size-base);
+            font-size: var(--font-size-sm);
             margin-top: 2px;
         }
 
@@ -665,6 +727,7 @@
             border: 1px solid var(--color-border-dashed);
             background: var(--color-bg-primary);
             font-size: var(--font-size-base);
+            min-width: 200px;
         }
     </style>
 </head>
@@ -816,7 +879,7 @@
 
         <footer>
             <div class="footer-info">
-                Версия 1.2. Разработано отделом эл. коммерции.
+                Версия 1.3. Разработано отделом эл. коммерции.
                 Последнее обновление данных: <span id="lastUpdateTime">загружается</span>.
             </div>
         </footer>
@@ -897,7 +960,7 @@
                 <section>
                     <h3>Статистика завершённых товаров</h3>
                     <p style="margin-bottom: var(--spacing-lg); color: var(--color-text-secondary);">
-                        Завершённые товары по группе 3 за текущий месяц
+                        Завершённые товары по группе 3 за выбранный период
                     </p>
                     
                     <div class="month-selector">
@@ -953,6 +1016,10 @@
         function closeCompletedStatsModal() {
             document.getElementById('completedStatsModal').style.display = 'none';
             document.body.style.overflow = 'auto';
+            // Закрываем все открытые тултипы при закрытии модального окна
+            document.querySelectorAll('.files-tooltip.show').forEach(tooltip => {
+                tooltip.classList.remove('show');
+            });
         }
 
         // Обработчики кликов вне модальных окон
@@ -962,6 +1029,13 @@
             
             if (event.target == modal) closeModal();
             if (event.target == completedModal) closeCompletedStatsModal();
+            
+            // Закрываем тултипы при клике вне их
+            if (!event.target.closest('.files-count-wrapper')) {
+                document.querySelectorAll('.files-tooltip.show').forEach(tooltip => {
+                    tooltip.classList.remove('show');
+                });
+            }
         }
 
         // Обработчик клавиши Escape
@@ -1786,6 +1860,7 @@
                 // Группируем по группе 3
                 const groupedData = {};
                 let totalProducts = 0;
+                let totalFiles = 0;
 
                 filteredData.forEach(item => {
                     const groupKey = item.group3;
@@ -1793,11 +1868,13 @@
                         groupedData[groupKey] = {
                             name: item.group3,
                             totalProducts: 0,
+                            filesCount: 0,
                             files: []
                         };
                     }
                     
                     groupedData[groupKey].totalProducts += item.productsCount;
+                    groupedData[groupKey].filesCount++;
                     groupedData[groupKey].files.push({
                         filename: item.filename,
                         productsCount: item.productsCount,
@@ -1806,9 +1883,10 @@
                     });
                     
                     totalProducts += item.productsCount;
+                    totalFiles++;
                 });
 
-                // Сортируем группы
+                // Сортируем группы по убыванию количества товаров
                 const sortedGroups = Object.values(groupedData).sort((a, b) => 
                     b.totalProducts - a.totalProducts
                 );
@@ -1835,7 +1913,8 @@
                 let html = `
                     <div class="completed-stats-summary">
                         <div>
-                            <strong>Период:</strong> ${monthName} ${selectedYear}
+                            <strong>Период:</strong> ${monthName} ${selectedYear}<br>
+                            <small>Всего файлов: ${totalFiles}</small>
                         </div>
                         <div class="completed-stats-total">
                             Всего товаров: ${totalProducts.toLocaleString('ru-RU')}
@@ -1845,26 +1924,47 @@
                     <table class="completed-stats-table">
                         <thead>
                             <tr>
-                                <th width="40%">Группа 3</th>
-                                <th width="20%">Количество товаров</th>
-                                <th width="40%">Файлы</th>
+                                <th width="50%">Группа 3</th>
+                                <th width="25%">Количество товаров</th>
+                                <th width="25%">Количество файлов</th>
                             </tr>
                         </thead>
                         <tbody>
                 `;
                 
-                sortedGroups.forEach(group => {
-                    const filesList = group.files.map(file => 
+                sortedGroups.forEach((group, index) => {
+                    // Создаем список файлов для тултипа
+                    const filesList = group.files.map((file, fileIndex) => 
                         `<div class="file-item">
-                            <strong>${file.filename}</strong> (${file.source === 'manager' ? 'Кам' : 'Контент'})<br>
-                                                    </div>`
+                            ${fileIndex + 1}. ${file.filename}<br>
+                            <small>Товаров: ${file.productsCount}${file.completionDate ? ` | Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Кам' : 'Контент'}</small>
+                        </div>`
                     ).join('');
+                    
+                    // Создаем HTML для тултипа
+                    const tooltipId = `tooltip-${index}`;
+                    const tooltipHTML = `
+                        <div class="files-tooltip" id="${tooltipId}">
+                            <div class="tooltip-title">Файлы в группе "${group.name}"</div>
+                            <div class="file-list">
+                                ${filesList}
+                            </div>
+                        </div>
+                    `;
                     
                     html += `
                         <tr>
                             <td>${group.name}</td>
                             <td><strong>${group.totalProducts.toLocaleString('ru-RU')}</strong></td>
-                            <td>${filesList}</td>
+                            <td>
+                                <div class="files-count-wrapper">
+                                    <span class="files-count">${group.filesCount}</span>
+                                    <i class="fa fa-info-circle info-icon" 
+                                       onclick="toggleTooltip('${tooltipId}', this)"
+                                       title="Показать список файлов"></i>
+                                    ${tooltipHTML}
+                                </div>
+                            </td>
                         </tr>
                     `;
                 });
@@ -1883,6 +1983,37 @@
                         Ошибка загрузки данных. Попробуйте обновить страницу.
                     </div>
                 `;
+            }
+        }
+
+        // Функция для переключения тултипа
+        function toggleTooltip(tooltipId, iconElement) {
+            const tooltip = document.getElementById(tooltipId);
+            const isVisible = tooltip.classList.contains('show');
+            
+            // Закрываем все открытые тултипы
+            document.querySelectorAll('.files-tooltip.show').forEach(t => {
+                t.classList.remove('show');
+            });
+            
+            // Если текущий тултип не был виден, показываем его
+            if (!isVisible) {
+                tooltip.classList.add('show');
+                
+                // Позиционируем тултип
+                const rect = iconElement.getBoundingClientRect();
+                const modalContent = document.querySelector('.modal-content');
+                const modalRect = modalContent.getBoundingClientRect();
+                
+                // Проверяем, помещается ли тултип справа
+                if (rect.right + tooltip.offsetWidth <= modalRect.right) {
+                    tooltip.style.left = '0';
+                    tooltip.style.right = 'auto';
+                } else {
+                    // Если не помещается справа, показываем слева
+                    tooltip.style.left = 'auto';
+                    tooltip.style.right = '0';
+                }
             }
         }
 
@@ -2032,6 +2163,15 @@
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function () {
             loadPublicData();
+            
+            // Закрытие тултипов при клике вне их
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.files-count-wrapper')) {
+                    document.querySelectorAll('.files-tooltip.show').forEach(tooltip => {
+                        tooltip.classList.remove('show');
+                    });
+                }
+            });
         });
     </script>
 </body>
