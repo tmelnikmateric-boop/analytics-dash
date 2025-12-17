@@ -1907,10 +1907,8 @@
                             <td>${group.totalProducts.toLocaleString('ru-RU')}</td>
                             <td>
                                 <div class="files-count-wrapper">
-                                    <i class="fa fa-info-circle info-icon"
-                                       onclick="toggleTooltip('${tooltipId}', this)"
-                                       title="Показать список файлов"></i>
                                     ${group.filesCount}
+                                    <span onclick="toggleTooltip('${tooltipId}', this)">Показать файлы</span>
                                     ${tooltipHTML}
                                 </div>
                             </td>
