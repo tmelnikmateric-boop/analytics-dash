@@ -582,15 +582,14 @@
             justify-content: space-between;
             align-items: center;
             padding: var(--spacing-lg);
-            background: rgba(40, 167, 69, 0.1);
             border-radius: var(--radius-2xl);
-            border: 1px solid rgba(40, 167, 69, 0.3);
+            border: 1px dashed var(--color-border-dashed);
+            background: var(--color-bg-tertiary);
         }
 
         .completed-stats-total {
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-semibold);
-            color: var(--color-success);
         }
 
         .files-count-wrapper {
@@ -598,12 +597,6 @@
             align-items: center;
             gap: var(--spacing-xs);
             position: relative;
-        }
-
-        .files-count {
-            font-size: var(--font-size-lg);
-            font-weight: var(--font-weight-semibold);
-            color: var(--color-primary);
         }
 
         .info-icon {
@@ -1880,8 +1873,7 @@
                 let html = `
                     <div class="completed-stats-summary">
                         <div>
-                            <strong>Период:</strong> ${monthName} ${selectedYear}<br>
-                            Всего файлов: ${totalFiles}
+                            <b>Период:</b> ${monthName} ${selectedYear}. Всего файлов: ${totalFiles}
                         </div>
                         <div class="completed-stats-total">
                             Всего товаров: ${totalProducts.toLocaleString('ru-RU')}
@@ -1922,13 +1914,13 @@
                     html += `
                         <tr>
                             <td>${group.name}</td>
-                            <td><strong>${group.totalProducts.toLocaleString('ru-RU')}</strong></td>
+                            <td>${group.totalProducts.toLocaleString('ru-RU')}</td>
                             <td>
                                 <div class="files-count-wrapper">
-                                    <span class="files-count">${group.filesCount}</span>
-                                    <i class="fa fa-info-circle info-icon" 
+                                    <i class="fa fa-info-circle info-icon"
                                        onclick="toggleTooltip('${tooltipId}', this)"
                                        title="Показать список файлов"></i>
+                                    ${group.filesCount}
                                     ${tooltipHTML}
                                 </div>
                             </td>
