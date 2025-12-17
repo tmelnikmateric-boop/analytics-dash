@@ -657,6 +657,10 @@
             margin-top: 2px;
         }
 
+        .show-more {
+            border-bottom: 1px dashed inherit;
+        }
+
         .no-completed-data {
             text-align: center;
             padding: var(--spacing-4xl);
@@ -856,7 +860,8 @@
                         <div class="timeline-step">
                             <div class="timeline-step-marker">3</div>
                             <h4>Передача</h4>
-                            <p class="timeline-desc">Менеджер <a href="mailto:procontent@diy.by">передает</a>
+                            <p class="timeline-desc">Менеджер <a class="show-more"
+                                    href="mailto:procontent@diy.by">передает</a>
                                 подготовленный материал в отдел контента</p>
                         </div>
                         <div class="timeline-step">
@@ -1908,7 +1913,7 @@
                             <td>
                                 <div class="files-count-wrapper">
                                     ${group.filesCount}
-                                    <span onclick="toggleTooltip('${tooltipId}', this)">Показать файлы</span>
+                                    <span class="show-more" onclick="toggleTooltip('${tooltipId}', this)">Показать файлы</span>
                                     ${tooltipHTML}
                                 </div>
                             </td>
