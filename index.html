@@ -588,10 +588,6 @@
             background: var(--color-bg-tertiary);
         }
 
-        .completed-stats-total {
-            font-weight: var(--font-weight-semibold);
-        }
-
         .files-count-wrapper {
             display: flex;
             align-items: center;
@@ -1869,8 +1865,8 @@
                         <div>
                             <b>Период:</b> ${monthName} ${selectedYear}. Всего файлов: ${totalFiles}
                         </div>
-                        <div class="completed-stats-total">
-                            Всего товаров: ${totalProducts.toLocaleString('ru-RU')}
+                        <div>
+                            <b>Всего товаров:</b> ${totalProducts.toLocaleString('ru-RU')}
                         </div>
                     </div>
                     <div class="files-wrapper">
