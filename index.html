@@ -132,7 +132,7 @@
             border: 1px solid var(--color-neutral-dark);
             display: flex;
             align-items: center;
-            background: var(--color-bg-tertiary);
+            background: var(--color-bg-primary);
             padding: var(--spacing-sm) var(--spacing-lg);
             border-radius: var(--radius-small);
             cursor: pointer;
@@ -182,10 +182,6 @@
             background-color: var(--color-bg-tertiary);
         }
 
-        table tr:hover {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-
         ul {
             display: flex;
             flex-direction: column;
@@ -223,18 +219,14 @@
             color: var(--color-danger);
             padding: var(--spacing-lg);
             text-align: center;
-            background-color: rgba(220, 38, 38, 0.1);
-            border-radius: var(--radius-2xl);
-            border: 1px solid var(--color-danger);
+            font-size: var(--font-size-lg);
         }
 
         .main-warning {
-            color: #155724;
+            color: var(--color-success);
             padding: var(--spacing-lg);
             text-align: center;
-            background-color: rgba(40, 167, 69, 0.1);
-            border-radius: var(--radius-2xl);
-            border: 1px solid var(--color-success);
+            font-size: var(--font-size-lg);
         }
 
         .content {
@@ -426,7 +418,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: var(--font-size-lg);
+            font-size: var(--font-size-base);
             color: var(--color-text-tertiary);
         }
 
@@ -580,7 +572,6 @@
 
         .timeline-desc {
             color: var(--color-text-secondary);
-            line-height: 1.5;
         }
 
         .notice-content {
@@ -591,36 +582,18 @@
             margin-bottom: var(--spacing-xl);
         }
 
-        /* Стили для статистики завершённых товаров */
-        .completed-stats-table {
+        .status-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
             width: 100%;
-            border-collapse: collapse;
-            margin-top: var(--spacing-lg);
         }
 
-        .completed-stats-table th {
-            background: var(--color-bg-tertiary);
-            padding: var(--spacing-md);
-            font-weight: var(--font-weight-semibold);
-            text-align: left;
-            border-bottom: 2px dashed var(--color-border-dashed);
-        }
-
-        .completed-stats-table td {
-            padding: var(--spacing-md);
-            border-bottom: 1px dashed var(--color-border-dashed);
-            vertical-align: middle;
-        }
-
-        .completed-stats-table tr:hover {
-            background-color: rgba(40, 167, 69, 0.05);
-        }
-
+        /* Стили для статистики завершенных товаров */
         .completed-stats-summary {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--spacing-2xl);
             padding: var(--spacing-lg);
             background: rgba(40, 167, 69, 0.1);
             border-radius: var(--radius-2xl);
@@ -717,14 +690,16 @@
             font-size: var(--font-size-lg);
         }
 
+        .month-block {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
         .month-selector {
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-            padding: var(--spacing-md);
-            background: var(--color-bg-tertiary);
-            border-radius: var(--radius-2xl);
         }
 
         .month-selector select {
@@ -890,7 +865,6 @@
             </div>
         </footer>
 
-        <!-- Модальное окно информации о процессе -->
         <div id="infoModal" class="modal">
             <div class="modal-content">
                 <button class="close-modal" onclick="closeModal()">&times;</button>
@@ -960,26 +934,25 @@
             </div>
         </div>
 
-        <!-- Модальное окно статистики завершённых товаров -->
+        <!-- Модальное окно статистики завершенных товаров -->
         <div id="completedStatsModal" class="modal">
-            <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-content">
                 <button class="close-modal" onclick="closeCompletedStatsModal()">&times;</button>
                 <section>
                     <h3>Подробнее по завершенным группам</h3>
-                    <p style="margin-bottom: var(--spacing-lg); color: var(--color-text-secondary);">
-                        Количество добавленных товары по группе 3 за выбранный период
-                    </p>
 
-                    <div class="month-selector">
-                        <label for="monthSelect">Период:</label>
-                        <select id="monthSelect" onchange="loadCompletedStats()">
-                            <!-- Опции будут заполнены динамически -->
-                        </select>
+                    <div class="month-block">
+                        <p>
+                            Добавлено товаров по группе 3 за период:
+                        </p>
+                        <div class="month-selector">
+                            <select id="monthSelect" onchange="loadCompletedStats()"></select>
+                        </div>
                     </div>
 
-                    <div id="completedStatsContent">
+                    <div id="completedStatsContent" class="status-content">
                         <div class="no-completed-data">
-                            Данные загружаются...
+                            Данные загружаются…
                         </div>
                     </div>
                 </section>
@@ -1163,13 +1136,13 @@
                 contentFilesForProcessing = [];
                 monthlyCompletedData = {};
 
-                updateLoadingDetails('Загрузка данных менеджеров...');
+                updateLoadingDetails('Загрузка данных менеджеров…');
                 const managerData = await loadSheetData('manager');
                 if (managerData && managerData.length > 1) {
                     processData(managerData, 'manager');
                 }
 
-                updateLoadingDetails('Загрузка данных контента...');
+                updateLoadingDetails('Загрузка данных контента…');
                 const contentData = await loadSheetData('content');
                 if (contentData && contentData.length > 1) {
                     processData(contentData, 'content');
@@ -1828,10 +1801,10 @@
             }
         }
 
-        // Функции для статистики завершённых товаров
+        // Функции для статистики завершенных товаров
         async function loadCompletedStats() {
             const contentElement = document.getElementById('completedStatsContent');
-            contentElement.innerHTML = '<div class="no-completed-data">Данные загружаются...</div>';
+            contentElement.innerHTML = '<div class="no-completed-data">Данные загружаются…</div>';
 
             try {
                 // Определяем выбранный месяц
@@ -1905,7 +1878,7 @@
                 if (sortedGroups.length === 0) {
                     contentElement.innerHTML = `
                         <div class="no-completed-data">
-                            Нет завершённых товаров по группе 3 за выбранный период
+                            Нет завершенных товаров по группе 3 за выбранный период
                         </div>
                     `;
                     return;
@@ -1921,22 +1894,22 @@
                     <div class="completed-stats-summary">
                         <div>
                             <strong>Период:</strong> ${monthName} ${selectedYear}<br>
-                            <small>Всего файлов: ${totalFiles}</small>
+                            Всего файлов: ${totalFiles}
                         </div>
                         <div class="completed-stats-total">
                             Всего товаров: ${totalProducts.toLocaleString('ru-RU')}
                         </div>
                     </div>
-                    
-                    <table class="completed-stats-table">
-                        <thead>
-                            <tr>
-                                <th width="50%">Группа 3</th>
-                                <th width="25%">Количество товаров</th>
-                                <th width="25%">Количество файлов</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div class="files-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th width="50%">Группа 3</th>
+                                    <th width="25%">Товаров</th>
+                                    <th width="25%">Файлов</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                 `;
 
                 sortedGroups.forEach((group, index) => {
@@ -1944,7 +1917,7 @@
                     const filesList = group.files.map((file, fileIndex) =>
                         `<div class="file-item">
                             ${fileIndex + 1}. ${file.filename}<br>
-                            <small>Товаров: ${file.productsCount}${file.completionDate ? ` | Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Кам' : 'Контент'}</small>
+                            Товаров: ${file.productsCount}${file.completionDate ? ` | Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Кам' : 'Контент'}
                         </div>`
                     ).join('');
 
@@ -1977,8 +1950,9 @@
                 });
 
                 html += `
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    <div class="files-wrapper">
                 `;
 
                 contentElement.innerHTML = html;
