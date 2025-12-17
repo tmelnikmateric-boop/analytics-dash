@@ -37,7 +37,8 @@
             --font-size-4xl: 44px;
             --font-weight-normal: 400;
             --font-weight-semibold: 600;
-            --radius-small: 4px;
+            --radius-base: 4px;
+            --radius-md: 8px;
             --radius-2xl: 14px;
             --radius-circle: 50%;
             --spacing-xs: 5px;
@@ -134,7 +135,7 @@
             align-items: center;
             background: var(--color-bg-primary);
             padding: var(--spacing-sm) var(--spacing-lg);
-            border-radius: var(--radius-small);
+            border-radius: var(--radius-base);
             cursor: pointer;
             font-size: var(--font-size-base);
             gap: var(--spacing-sm);
@@ -298,7 +299,7 @@
         }
 
         .indicator {
-            border-radius: var(--radius-circle);
+            border-radius: var(--radius-md-base);
             padding: var(--spacing-xs) var(--spacing-sm);
             text-align: center;
             display: inline-block;
@@ -588,7 +589,6 @@
         }
 
         .completed-stats-total {
-            font-size: var(--font-size-xl);
             font-weight: var(--font-weight-semibold);
         }
 
@@ -617,7 +617,7 @@
             left: 0;
             background: var(--color-bg-primary);
             border: 1px solid var(--color-border-dashed);
-            border-radius: var(--radius-small);
+            border-radius: var(--radius-base);
             padding: var(--spacing-md);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             z-index: 1000;
@@ -635,19 +635,17 @@
         .tooltip-title {
             font-weight: var(--font-weight-semibold);
             margin-bottom: var(--spacing-sm);
-            color: var(--color-text-dark);
-            border-bottom: 1px solid var(--color-border-dashed);
-            padding-bottom: var(--spacing-xs);
         }
 
         .file-list {
             display: flex;
             flex-direction: column;
             gap: var(--spacing-xs);
+            width: 450px;
         }
 
         .file-item {
-            padding: var(--spacing-xs);
+            padding: var(--spacing-md);
             border-bottom: 1px dashed var(--color-border-dashed);
             word-break: break-all;
         }
@@ -684,7 +682,7 @@
 
         .month-selector select {
             padding: var(--spacing-sm);
-            border-radius: var(--radius-small);
+            border-radius: var(--radius-base);
             border: 1px solid var(--color-border-dashed);
             background: var(--color-bg-primary);
             font-size: var(--font-size-base);
@@ -758,16 +756,14 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Файл</th>
-                                    <th width="10%">Товаров</th>
-                                    <th width="12%">Начало работы</th>
-                                    <th width="10%">Поступление</th>
-                                    <th width="10%">Статус</th>
-                                    <th width="10%">Добавление</th>
-                                    <th width="10%" style="white-space: nowrap;" title="Дата указана ориентировочная">
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i> Завершение
-                                    </th>
-                                    <th width="13%">Срочность</th>
+                                    <th valign="top">Файл</th>
+                                    <th valign="top" width="10%">Товаров</th>
+                                    <th valign="top" width="12%">Начало работы</th>
+                                    <th valign="top" width="10%">Поступление</th>
+                                    <th valign="top" width="10%">Статус</th>
+                                    <th valign="top" width="10%">Добавление</th>
+                                    <th valign="top" width="10%">Ориентировочное завершение</th>
+                                    <th valign="top" width="13%">Срочность</th>
                                 </tr>
                             </thead>
                             <tbody id="managerFilesTableBody"></tbody>
@@ -780,15 +776,13 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Файл</th>
-                                    <th width="10%">Товаров</th>
-                                    <th width="12%">Начало работы</th>
-                                    <th width="10%">Статус</th>
-                                    <th width="10%">Добавление</th>
-                                    <th width="10%" style="white-space: nowrap;" title="Дата указана ориентировочная">
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i> Завершение
-                                    </th>
-                                    <th width="13%">Срочность</th>
+                                    <th valign="top">Файл</th>
+                                    <th valign="top" width="10%">Товаров</th>
+                                    <th valign="top" width="12%">Начало работы</th>
+                                    <th valign="top" width="10%">Статус</th>
+                                    <th valign="top" width="10%">Добавление</th>
+                                    <th valign="top" valign="top" width="10%">Ориентировочное завершение</th>
+                                    <th valign="top" width="13%">Срочность</th>
                                 </tr>
                             </thead>
                             <tbody id="contentFilesTableBody"></tbody>
@@ -1883,9 +1877,9 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th width="50%">Группа 3</th>
-                                    <th width="25%">Товаров</th>
-                                    <th width="25%">Файлов</th>
+                                    <th valign="top" width="50%">Группа 3</th>
+                                    <th valign="top" width="25%">Товаров</th>
+                                    <th valign="top" width="25%">Файлов</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1896,7 +1890,7 @@
                     const filesList = group.files.map((file, fileIndex) =>
                         `<div class="file-item">
                             ${fileIndex + 1}. ${file.filename}<br>
-                            Товаров: ${file.productsCount}${file.completionDate ? ` | Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Кам' : 'Контент'}
+                            Товаров: ${file.productsCount}${file.completionDate ? ` Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Кам' : 'Контент'}
                         </div>`
                     ).join('');
 
@@ -1913,7 +1907,7 @@
 
                     html += `
                         <tr>
-                            <td>${group.name}</td>
+                            <td><span class="file-name">${group.name}</span></td>
                             <td>${group.totalProducts.toLocaleString('ru-RU')}</td>
                             <td>
                                 <div class="files-count-wrapper">
