@@ -18,10 +18,10 @@
             --color-bg-secondary: #f5f7fa;
             --color-bg-tertiary: #f8f9fa;
             --color-bg-modal-overlay: rgba(0, 0, 0, 0.5);
-            --color-text-secondary: #555;
-            --color-text-tertiary: #666;
-            --color-text-white: #fff;
-            --color-text-dark: #1e293b;
+            --color-secondary: #555;
+            --color-tertiary: #666;
+            --color-white: #fff;
+            --color-dark: #1e293b;
             --color-border-dashed: #ccc;
             --color-border-primary: #0369a1;
             --color-status-completed-bg: #d4edda;
@@ -130,7 +130,7 @@
         }
 
         button {
-            border: 1px solid var(--color-color-dark);
+            border: 1px solid var(--color-dark);
             display: flex;
             align-items: center;
             background: var(--color-bg-primary);
@@ -143,8 +143,8 @@
         }
 
         button:hover {
-            background: var(--color-color-dark);
-            color: var(--color-text-white);
+            background: var(--color-dark);
+            color: var(--color-white);
         }
 
         a {
@@ -210,7 +210,7 @@
         }
 
         .main-loading {
-            color: var(--color-text-tertiary);
+            color: var(--color-tertiary);
             padding: var(--spacing-3xl);
             text-align: center;
             font-size: var(--font-size-lg);
@@ -281,7 +281,7 @@
 
         .summary-label {
             font-size: var(--font-size-xl);
-            color: var(--color-text-secondary);
+            color: var(--color-secondary);
             line-height: 1.3;
         }
 
@@ -294,7 +294,7 @@
         .files-none {
             text-align: center;
             padding: var(--spacing-3xl);
-            color: var(--color-text-tertiary);
+            color: var(--color-tertiary);
         }
 
         .indicator {
@@ -371,7 +371,6 @@
 
         .completion-date-soon {
             color: var(--color-primary);
-            font-weight: var(--font-weight-semibold);
         }
 
         .completion-date-future {
@@ -379,7 +378,7 @@
         }
 
         .completion-date-normal {
-            color: var(--color-text-secondary);
+            color: var(--color-secondary);
         }
 
         .chart-controls {
@@ -391,14 +390,14 @@
 
         .chart-btn-active {
             background: var(--color-primary);
-            color: var(--color-text-white);
-            border-color: var(--color-color-dark);
+            color: var(--color-white);
+            border-color: var(--color-dark);
             cursor: default;
         }
 
         .chart-btn-active:hover {
-            background: var(--color-color-dark);
-            color: var(--color-text-white);
+            background: var(--color-dark);
+            color: var(--color-white);
         }
 
         .chart-data {
@@ -409,7 +408,7 @@
             width: 100%;
             position: relative;
             height: var(--chart-height);
-            color: var(--color-text-tertiary);
+            color: var(--color-tertiary);
         }
 
         .chart-data-none {
@@ -418,7 +417,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: var(--font-size-base);
-            color: var(--color-text-tertiary);
+            color: var(--color-tertiary);
         }
 
         .chart-stats {
@@ -450,12 +449,12 @@
 
         .chart-stat-label {
             font-size: var(--font-size-lg);
-            color: var(--color-text-secondary);
+            color: var(--color-secondary);
         }
 
         .footer-info {
             text-align: center;
-            color: var(--color-text-tertiary);
+            color: var(--color-tertiary);
             padding: var(--spacing-lg);
             font-size: var(--font-size-base);
         }
@@ -511,7 +510,7 @@
             right: var(--spacing-lg);
             top: var(--spacing-lg);
             z-index: 1001;
-            color: var(--color-text-secondary);
+            color: var(--color-secondary);
             border-radius: var(--radius-circle);
             transition: all 0.3s ease;
         }
@@ -544,7 +543,7 @@
 
         .timeline-step-marker {
             background: var(--color-primary);
-            color: var(--color-text-white);
+            color: var(--color-white);
             font-size: var(--font-size-lg);
             font-weight: var(--font-weight-semibold);
             width: var(--timeline-step-marker-size);
@@ -557,7 +556,7 @@
         }
 
         .timeline-desc {
-            color: var(--color-text-secondary);
+            color: var(--color-secondary);
         }
 
         .notice-content {
@@ -594,7 +593,7 @@
         }
 
         .info-icon {
-            color: var(--color-text-secondary);
+            color: var(--color-secondary);
             cursor: pointer;
             font-size: var(--font-size-sm);
             transition: color 0.3s ease;
@@ -650,7 +649,7 @@
 
         .file-item small {
             display: block;
-            color: var(--color-text-tertiary);
+            color: var(--color-tertiary);
             font-size: var(--font-size-sm);
             margin-top: 2px;
         }
@@ -662,7 +661,7 @@
         .no-completed-data {
             text-align: center;
             padding: var(--spacing-4xl);
-            color: var(--color-text-tertiary);
+            color: var(--color-tertiary);
             font-size: var(--font-size-lg);
         }
 
