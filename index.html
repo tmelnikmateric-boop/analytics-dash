@@ -132,7 +132,7 @@
             border: 1px solid var(--color-neutral-dark);
             display: flex;
             align-items: center;
-            background: var(--color-bg-primary);
+            background: var(--color-bg-tertiary);
             padding: var(--spacing-sm) var(--spacing-lg);
             border-radius: var(--radius-small);
             cursor: pointer;
@@ -169,17 +169,21 @@
             background: var(--color-bg-tertiary);
             padding: var(--spacing-md);
             font-weight: var(--font-weight-semibold);
-            border-bottom: 1px dashed var(--color-border-dashed);
+            border-bottom: 2px solid var(--color-border-dashed);
             text-align: left;
         }
 
         table td {
             padding: var(--spacing-md);
-            border-bottom: 1px dashed var(--color-border-dashed);
+            border-bottom: 1px solid var(--color-border-dashed);
         }
 
         table tr:nth-child(even) {
             background-color: var(--color-bg-tertiary);
+        }
+
+        table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
         }
 
         ul {
@@ -193,9 +197,8 @@
             margin-bottom: var(--spacing-xs);
         }
 
-        .wrapper {
+        .top-wrapper {
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
             align-items: center;
             margin-bottom: var(--spacing-lg);
@@ -219,14 +222,18 @@
             color: var(--color-danger);
             padding: var(--spacing-lg);
             text-align: center;
-            font-size: var(--font-size-lg);
+            background-color: rgba(220, 38, 38, 0.1);
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--color-danger);
         }
 
         .main-warning {
-            color: var(--color-success);
+            color: #155724;
             padding: var(--spacing-lg);
             text-align: center;
-            font-size: var(--font-size-lg);
+            background-color: rgba(40, 167, 69, 0.1);
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--color-success);
         }
 
         .content {
@@ -295,6 +302,7 @@
             text-align: center;
             padding: var(--spacing-3xl);
             color: var(--color-text-tertiary);
+            font-style: italic;
         }
 
         .indicator {
@@ -418,7 +426,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: var(--font-size-base);
+            font-size: var(--font-size-lg);
             color: var(--color-text-tertiary);
         }
 
@@ -444,7 +452,7 @@
         }
 
         .chart-stat-number {
-            font-size: var(--font-size-3xl);
+            font-size: var(--font-size-2xl);
             font-weight: var(--font-weight-semibold);
             color: var(--color-primary);
         }
@@ -475,13 +483,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
@@ -496,6 +499,18 @@
             padding: var(--spacing-2xl);
             max-height: 90vh;
             overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-60%);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(-50%);
+            }
         }
 
         .close-modal {
@@ -559,6 +574,7 @@
 
         .timeline-desc {
             color: var(--color-text-secondary);
+            line-height: 1.5;
         }
 
         .notice-content {
@@ -569,27 +585,46 @@
             margin-bottom: var(--spacing-xl);
         }
 
-        .status-content {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-lg);
+        /* Стили для статистики завершённых товаров */
+        .completed-stats-table {
             width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--spacing-lg);
         }
 
-        /* Стили для статистики завершенных товаров */
+        .completed-stats-table th {
+            background: var(--color-bg-tertiary);
+            padding: var(--spacing-md);
+            font-weight: var(--font-weight-semibold);
+            text-align: left;
+            border-bottom: 2px solid var(--color-border-dashed);
+        }
+
+        .completed-stats-table td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--color-border-dashed);
+            vertical-align: middle;
+        }
+
+        .completed-stats-table tr:hover {
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+
         .completed-stats-summary {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: var(--spacing-2xl);
             padding: var(--spacing-lg);
+            background: rgba(40, 167, 69, 0.1);
             border-radius: var(--radius-2xl);
-            border: 1px dashed var(--color-border-dashed);
-            background: var(--color-bg-tertiary);
+            border: 1px solid rgba(40, 167, 69, 0.3);
         }
 
         .completed-stats-total {
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-semibold);
+            color: var(--color-success);
         }
 
         .files-count-wrapper {
@@ -597,6 +632,12 @@
             align-items: center;
             gap: var(--spacing-xs);
             position: relative;
+        }
+
+        .files-count {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-primary);
         }
 
         .info-icon {
@@ -670,16 +711,14 @@
             font-size: var(--font-size-lg);
         }
 
-        .month-block {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-lg);
-        }
-
         .month-selector {
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-md);
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-2xl);
         }
 
         .month-selector select {
@@ -695,7 +734,7 @@
 
 <body>
     <article>
-        <div class="wrapper">
+        <div class="top-wrapper">
             <header class="header">
                 <h1><i class="fa fa-chart-pie"></i> Загрузка контента на сайт</h1>
             </header>
@@ -845,6 +884,7 @@
             </div>
         </footer>
 
+        <!-- Модальное окно информации о процессе -->
         <div id="infoModal" class="modal">
             <div class="modal-content">
                 <button class="close-modal" onclick="closeModal()">&times;</button>
@@ -860,8 +900,7 @@
                         <div class="timeline-step">
                             <div class="timeline-step-marker">2</div>
                             <h4>Сбор данных</h4>
-                            <p class="timeline-desc">Менеджером запрашивается информация о товарах и фото у поставщика
-                            </p>
+                            <p class="timeline-desc">Менеджером запрашивается информация о товарах и фото у поставщика</p>
                         </div>
                         <div class="timeline-step">
                             <div class="timeline-step-marker">3</div>
@@ -914,25 +953,27 @@
             </div>
         </div>
 
-        <!-- Модальное окно статистики завершенных товаров -->
+        <!-- Модальное окно статистики завершённых товаров -->
         <div id="completedStatsModal" class="modal">
-            <div class="modal-content">
+            <div class="modal-content" style="max-width: 900px;">
                 <button class="close-modal" onclick="closeCompletedStatsModal()">&times;</button>
                 <section>
                     <h3>Подробнее по завершенным группам</h3>
+                    <p style="margin-bottom: var(--spacing-lg); color: var(--color-text-secondary);">
+                        Количнство добавленных товары по группе 3 за выбранный период
+                        Количество добавленных товары по группе 3 за выбранный период
+                    </p>
 
-                    <div class="month-block">
-                        <p>
-                            Добавлено товаров по группе 3 за период:
-                        </p>
-                        <div class="month-selector">
-                            <select id="monthSelect" onchange="loadCompletedStats()"></select>
-                        </div>
+                    <div class="month-selector">
+                        <label for="monthSelect">Период:</label>
+                        <select id="monthSelect" onchange="loadCompletedStats()">
+                            <!-- Опции будут заполнены динамически -->
+                        </select>
                     </div>
 
-                    <div id="completedStatsContent" class="status-content">
+                    <div id="completedStatsContent">
                         <div class="no-completed-data">
-                            Данные загружаются…
+                            Данные загружаются...
                         </div>
                     </div>
                 </section>
@@ -1010,7 +1051,7 @@
         function updateLoadingDetails(text) {
             const loading = document.getElementById('loading');
             if (loading && text) {
-                loading.textContent = `${text}`;
+                loading.textContent = `Данные загружаются… ${text}`;
             }
         }
 
@@ -1116,13 +1157,13 @@
                 contentFilesForProcessing = [];
                 monthlyCompletedData = {};
 
-                updateLoadingDetails('Загрузка данных менеджеров…');
+                updateLoadingDetails('Загрузка данных менеджеров...');
                 const managerData = await loadSheetData('manager');
                 if (managerData && managerData.length > 1) {
                     processData(managerData, 'manager');
                 }
 
-                updateLoadingDetails('Загрузка данных контента…');
+                updateLoadingDetails('Загрузка данных контента...');
                 const contentData = await loadSheetData('content');
                 if (contentData && contentData.length > 1) {
                     processData(contentData, 'content');
@@ -1781,10 +1822,10 @@
             }
         }
 
-        // Функции для статистики завершенных товаров
+        // Функции для статистики завершённых товаров
         async function loadCompletedStats() {
             const contentElement = document.getElementById('completedStatsContent');
-            contentElement.innerHTML = '<div class="no-completed-data">Данные загружаются…</div>';
+            contentElement.innerHTML = '<div class="no-completed-data">Данные загружаются...</div>';
 
             try {
                 // Определяем выбранный месяц
@@ -1809,12 +1850,12 @@
                 // Объединяем и фильтруем данные
                 const allData = [...managerData, ...contentData];
                 const filteredData = allData.filter(item => {
-                    return item.statusType === 'completed' &&
-                        item.group3 &&
-                        item.completionMonth &&
-                        item.completionYear &&
-                        item.completionMonth === selectedMonth &&
-                        item.completionYear === selectedYear;
+                    return item.statusType === 'completed' && 
+                           item.group3 && 
+                           item.completionMonth && 
+                           item.completionYear &&
+                           item.completionMonth === selectedMonth &&
+                           item.completionYear === selectedYear;
                 });
 
                 // Группируем по группе 3
@@ -1847,7 +1888,7 @@
                 });
 
                 // Сортируем группы по убыванию количества товаров
-                const sortedGroups = Object.values(groupedData).sort((a, b) =>
+                const sortedGroups = Object.values(groupedData).sort((a, b) => 
                     b.totalProducts - a.totalProducts
                 );
 
@@ -1858,7 +1899,7 @@
                 if (sortedGroups.length === 0) {
                     contentElement.innerHTML = `
                         <div class="no-completed-data">
-                            Нет завершенных товаров по группе 3 за выбранный период
+                            Нет завершённых товаров по группе 3 за выбранный период
                         </div>
                     `;
                     return;
@@ -1873,30 +1914,31 @@
                 let html = `
                     <div class="completed-stats-summary">
                         <div>
-                            <b>Период:</b> ${monthName} ${selectedYear}. Всего файлов: ${totalFiles}
+                            <strong>Период:</strong> ${monthName} ${selectedYear}<br>
+                            <small>Всего файлов: ${totalFiles}</small>
                         </div>
                         <div class="completed-stats-total">
                             Всего товаров: ${totalProducts.toLocaleString('ru-RU')}
                         </div>
                     </div>
-                    <div class="files-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th width="50%">Группа 3</th>
-                                    <th width="25%">Товаров</th>
-                                    <th width="25%">Файлов</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    
+                    <table class="completed-stats-table">
+                        <thead>
+                            <tr>
+                                <th width="50%">Группа 3</th>
+                                <th width="25%">Количество товаров</th>
+                                <th width="25%">Количество файлов</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                 `;
 
                 sortedGroups.forEach((group, index) => {
                     // Создаем список файлов для тултипа
-                    const filesList = group.files.map((file, fileIndex) =>
+                    const filesList = group.files.map((file, fileIndex) => 
                         `<div class="file-item">
                             ${fileIndex + 1}. ${file.filename}<br>
-                            Товаров: ${file.productsCount}${file.completionDate ? ` | Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Кам' : 'Контент'}
+                            <small>Товаров: ${file.productsCount}${file.completionDate ? ` | Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Кам' : 'Контент'}</small>
                         </div>`
                     ).join('');
 
@@ -1914,13 +1956,13 @@
                     html += `
                         <tr>
                             <td>${group.name}</td>
-                            <td>${group.totalProducts.toLocaleString('ru-RU')}</td>
+                            <td><strong>${group.totalProducts.toLocaleString('ru-RU')}</strong></td>
                             <td>
                                 <div class="files-count-wrapper">
-                                    <i class="fa fa-info-circle info-icon"
+                                    <span class="files-count">${group.filesCount}</span>
+                                    <i class="fa fa-info-circle info-icon" 
                                        onclick="toggleTooltip('${tooltipId}', this)"
                                        title="Показать список файлов"></i>
-                                    ${group.filesCount}
                                     ${tooltipHTML}
                                 </div>
                             </td>
@@ -1929,9 +1971,8 @@
                 });
 
                 html += `
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 `;
 
                 contentElement.innerHTML = html;
@@ -2125,7 +2166,7 @@
             loadPublicData();
 
             // Закрытие тултипов при клике вне их
-            document.addEventListener('click', function (event) {
+            document.addEventListener('click', function(event) {
                 if (!event.target.closest('.files-count-wrapper')) {
                     document.querySelectorAll('.files-tooltip.show').forEach(tooltip => {
                         tooltip.classList.remove('show');
@@ -2135,5 +2176,4 @@
         });
     </script>
 </body>
-
 </html>
