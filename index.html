@@ -169,13 +169,13 @@
             background: var(--color-bg-tertiary);
             padding: var(--spacing-md);
             font-weight: var(--font-weight-semibold);
-            border-bottom: 2px solid var(--color-border-dashed);
+            border-bottom: 1px dashed var(--color-border-dashed);
             text-align: left;
         }
 
         table td {
             padding: var(--spacing-md);
-            border-bottom: 1px solid var(--color-border-dashed);
+            border-bottom: 1px dashed var(--color-border-dashed);
         }
 
         table tr:nth-child(even) {
@@ -197,8 +197,9 @@
             margin-bottom: var(--spacing-xs);
         }
 
-        .top-wrapper {
+        .wrapper {
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
             align-items: center;
             margin-bottom: var(--spacing-lg);
@@ -302,7 +303,6 @@
             text-align: center;
             padding: var(--spacing-3xl);
             color: var(--color-text-tertiary);
-            font-style: italic;
         }
 
         .indicator {
@@ -452,7 +452,7 @@
         }
 
         .chart-stat-number {
-            font-size: var(--font-size-2xl);
+            font-size: var(--font-size-3xl);
             font-weight: var(--font-weight-semibold);
             color: var(--color-primary);
         }
@@ -483,8 +483,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .modal-content {
@@ -503,11 +508,12 @@
         }
 
         @keyframes slideIn {
-            from { 
+            from {
                 opacity: 0;
                 transform: translateY(-60%);
             }
-            to { 
+
+            to {
                 opacity: 1;
                 transform: translateY(-50%);
             }
@@ -597,12 +603,12 @@
             padding: var(--spacing-md);
             font-weight: var(--font-weight-semibold);
             text-align: left;
-            border-bottom: 2px solid var(--color-border-dashed);
+            border-bottom: 2px dashed var(--color-border-dashed);
         }
 
         .completed-stats-table td {
             padding: var(--spacing-md);
-            border-bottom: 1px solid var(--color-border-dashed);
+            border-bottom: 1px dashed var(--color-border-dashed);
             vertical-align: middle;
         }
 
@@ -734,7 +740,7 @@
 
 <body>
     <article>
-        <div class="top-wrapper">
+        <div class="wrapper">
             <header class="header">
                 <h1><i class="fa fa-chart-pie"></i> Загрузка контента на сайт</h1>
             </header>
@@ -900,7 +906,8 @@
                         <div class="timeline-step">
                             <div class="timeline-step-marker">2</div>
                             <h4>Сбор данных</h4>
-                            <p class="timeline-desc">Менеджером запрашивается информация о товарах и фото у поставщика</p>
+                            <p class="timeline-desc">Менеджером запрашивается информация о товарах и фото у поставщика
+                            </p>
                         </div>
                         <div class="timeline-step">
                             <div class="timeline-step-marker">3</div>
@@ -962,14 +969,14 @@
                     <p style="margin-bottom: var(--spacing-lg); color: var(--color-text-secondary);">
                         Количество добавленных товары по группе 3 за выбранный период
                     </p>
-                    
+
                     <div class="month-selector">
                         <label for="monthSelect">Период:</label>
                         <select id="monthSelect" onchange="loadCompletedStats()">
                             <!-- Опции будут заполнены динамически -->
                         </select>
                     </div>
-                    
+
                     <div id="completedStatsContent">
                         <div class="no-completed-data">
                             Данные загружаются...
@@ -1026,10 +1033,10 @@
         window.onclick = function (event) {
             const modal = document.getElementById('infoModal');
             const completedModal = document.getElementById('completedStatsModal');
-            
+
             if (event.target == modal) closeModal();
             if (event.target == completedModal) closeCompletedStatsModal();
-            
+
             // Закрываем тултипы при клике вне их
             if (!event.target.closest('.files-count-wrapper')) {
                 document.querySelectorAll('.files-tooltip.show').forEach(tooltip => {
@@ -1050,7 +1057,7 @@
         function updateLoadingDetails(text) {
             const loading = document.getElementById('loading');
             if (loading && text) {
-                loading.textContent = `Данные загружаются… ${text}`;
+                loading.textContent = `${text}`;
             }
         }
 
@@ -1205,12 +1212,12 @@
                     const timestamp = new Date().getTime();
                     const finalUrl = `${urls[i]}${urls[i].includes('?') ? '&' : '?'}_=${timestamp}`;
                     const response = await fetch(finalUrl);
-                    
+
                     if (!response.ok) continue;
-                    
+
                     const text = await response.text();
                     if (!text || text.trim() === '' || text.includes('<!DOCTYPE') || text.includes('<html')) continue;
-                    
+
                     const rows = parseCSV(text);
                     if (rows.length > 0) return rows;
                 } catch (error) {
@@ -1831,7 +1838,7 @@
                 const monthSelect = document.getElementById('monthSelect');
                 const selectedValue = monthSelect.value;
                 let selectedMonth, selectedYear;
-                
+
                 if (selectedValue === 'current') {
                     const currentDate = new Date();
                     selectedMonth = currentDate.getMonth() + 1;
@@ -1845,16 +1852,16 @@
                     loadCompletedDataFromSheet('manager'),
                     loadCompletedDataFromSheet('content')
                 ]);
-                
+
                 // Объединяем и фильтруем данные
                 const allData = [...managerData, ...contentData];
                 const filteredData = allData.filter(item => {
-                    return item.statusType === 'completed' && 
-                           item.group3 && 
-                           item.completionMonth && 
-                           item.completionYear &&
-                           item.completionMonth === selectedMonth &&
-                           item.completionYear === selectedYear;
+                    return item.statusType === 'completed' &&
+                        item.group3 &&
+                        item.completionMonth &&
+                        item.completionYear &&
+                        item.completionMonth === selectedMonth &&
+                        item.completionYear === selectedYear;
                 });
 
                 // Группируем по группе 3
@@ -1872,7 +1879,7 @@
                             files: []
                         };
                     }
-                    
+
                     groupedData[groupKey].totalProducts += item.productsCount;
                     groupedData[groupKey].filesCount++;
                     groupedData[groupKey].files.push({
@@ -1881,13 +1888,13 @@
                         completionDate: item.completionDate,
                         source: item.source
                     });
-                    
+
                     totalProducts += item.productsCount;
                     totalFiles++;
                 });
 
                 // Сортируем группы по убыванию количества товаров
-                const sortedGroups = Object.values(groupedData).sort((a, b) => 
+                const sortedGroups = Object.values(groupedData).sort((a, b) =>
                     b.totalProducts - a.totalProducts
                 );
 
@@ -1931,16 +1938,16 @@
                         </thead>
                         <tbody>
                 `;
-                
+
                 sortedGroups.forEach((group, index) => {
                     // Создаем список файлов для тултипа
-                    const filesList = group.files.map((file, fileIndex) => 
+                    const filesList = group.files.map((file, fileIndex) =>
                         `<div class="file-item">
                             ${fileIndex + 1}. ${file.filename}<br>
                             <small>Товаров: ${file.productsCount}${file.completionDate ? ` | Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Кам' : 'Контент'}</small>
                         </div>`
                     ).join('');
-                    
+
                     // Создаем HTML для тултипа
                     const tooltipId = `tooltip-${index}`;
                     const tooltipHTML = `
@@ -1951,7 +1958,7 @@
                             </div>
                         </div>
                     `;
-                    
+
                     html += `
                         <tr>
                             <td>${group.name}</td>
@@ -1968,14 +1975,14 @@
                         </tr>
                     `;
                 });
-                
+
                 html += `
                         </tbody>
                     </table>
                 `;
-                
+
                 contentElement.innerHTML = html;
-                
+
             } catch (error) {
                 console.error('Ошибка загрузки статистики:', error);
                 contentElement.innerHTML = `
@@ -1990,21 +1997,21 @@
         function toggleTooltip(tooltipId, iconElement) {
             const tooltip = document.getElementById(tooltipId);
             const isVisible = tooltip.classList.contains('show');
-            
+
             // Закрываем все открытые тултипы
             document.querySelectorAll('.files-tooltip.show').forEach(t => {
                 t.classList.remove('show');
             });
-            
+
             // Если текущий тултип не был виден, показываем его
             if (!isVisible) {
                 tooltip.classList.add('show');
-                
+
                 // Позиционируем тултип
                 const rect = iconElement.getBoundingClientRect();
                 const modalContent = document.querySelector('.modal-content');
                 const modalRect = modalContent.getBoundingClientRect();
-                
+
                 // Проверяем, помещается ли тултип справа
                 if (rect.right + tooltip.offsetWidth <= modalRect.right) {
                     tooltip.style.left = '0';
@@ -2020,26 +2027,26 @@
         async function loadCompletedDataFromSheet(source) {
             const gid = source === 'manager' ? MANAGER_SHEET_GID : CONTENT_SHEET_GID;
             const url = `https://docs.google.com/spreadsheets/d/e/${PUBLIC_SPREADSHEET_ID}/pub?gid=${gid}&single=true&output=csv`;
-            
+
             try {
                 const timestamp = new Date().getTime();
                 const finalUrl = `${url}&_=${timestamp}`;
                 const response = await fetch(finalUrl);
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 const text = await response.text();
                 const rows = parseCSV(text);
-                
+
                 if (rows.length < 2) {
                     return [];
                 }
-                
+
                 const headers = rows[0];
                 const completedData = [];
-                
+
                 const indices = {
                     group3: findColumnIndex(headers, ['Группа 3', 'Group 3', 'Товарная группа', 'Категория']),
                     filename: findColumnIndex(headers, ['Имя файла', 'Файл', 'Название файла']),
@@ -2047,26 +2054,26 @@
                     status: findColumnIndex(headers, ['Статус', 'Статус группы', 'Состояние']),
                     completionDate: findColumnIndex(headers, ['Дата завершения', 'Дата окончания', 'Completion Date'])
                 };
-                
+
                 for (let i = 1; i < rows.length; i++) {
                     const row = rows[i];
                     if (row.length === 0) continue;
-                    
+
                     const status = row[indices.status] ? row[indices.status].toString().trim() : '';
                     const statusType = determineStatusType(status);
-                    
+
                     if (statusType === 'completed') {
                         const group3 = row[indices.group3] ? row[indices.group3].toString().trim() : '';
                         const filename = row[indices.filename] ? row[indices.filename].toString().trim() : '';
                         const productsStr = row[indices.products] ? row[indices.products].toString().trim() : '0';
                         const completionDateStr = row[indices.completionDate] ? row[indices.completionDate].toString().trim() : '';
-                        
+
                         const productsCount = parseProductsCount(productsStr);
-                        
+
                         let completionMonth = null;
                         let completionYear = null;
                         let formattedDate = '';
-                        
+
                         if (completionDateStr) {
                             formattedDate = formatDate(completionDateStr);
                             try {
@@ -2079,7 +2086,7 @@
                                 // Игнорируем ошибки парсинга даты
                             }
                         }
-                        
+
                         if (group3 && productsCount > 0) {
                             completedData.push({
                                 group3: group3,
@@ -2094,9 +2101,9 @@
                         }
                     }
                 }
-                
+
                 return completedData;
-                
+
             } catch (error) {
                 console.error(`Ошибка загрузки данных из ${source}:`, error);
                 return [];
@@ -2118,17 +2125,17 @@
             const currentDate = new Date();
             const currentMonth = currentDate.getMonth() + 1;
             const currentYear = currentDate.getFullYear();
-            
+
             // Добавляем текущий месяц
             uniqueMonths.add(`${currentYear}-${currentMonth}`);
-            
+
             // Собираем уникальные месяцы из данных
             allData.forEach(item => {
                 if (item.completionMonth && item.completionYear) {
                     uniqueMonths.add(`${item.completionYear}-${item.completionMonth}`);
                 }
             });
-            
+
             // Преобразуем в массив и сортируем по убыванию (сначала новые)
             const monthsArray = Array.from(uniqueMonths).sort((a, b) => {
                 const [yearA, monthA] = a.split('-').map(Number);
@@ -2136,13 +2143,13 @@
                 if (yearB !== yearA) return yearB - yearA;
                 return monthB - monthA;
             });
-            
+
             // Очищаем и заполняем селектор
             monthSelect.innerHTML = '';
-            
+
             // Добавляем опцию "Текущий месяц"
             monthSelect.innerHTML += `<option value="current">Текущий месяц (${getMonthName(currentMonth)} ${currentYear})</option>`;
-            
+
             // Добавляем остальные месяцы
             monthsArray.forEach(monthKey => {
                 const [year, month] = monthKey.split('-').map(Number);
@@ -2163,9 +2170,9 @@
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function () {
             loadPublicData();
-            
+
             // Закрытие тултипов при клике вне их
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 if (!event.target.closest('.files-count-wrapper')) {
                     document.querySelectorAll('.files-tooltip.show').forEach(tooltip => {
                         tooltip.classList.remove('show');
@@ -2175,4 +2182,5 @@
         });
     </script>
 </body>
+
 </html>
