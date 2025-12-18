@@ -893,10 +893,8 @@
                     </div>
 
                     <div class="notice-content">
-                        <p><b>Стандартный срок обработки</b></p>
-                        <p>Время работы с файлом зависит от количества товаров. Средняя скорость добавления составляет
-                            50–60 товаров в один рабочий день (одним контент-менеджером) и зависит от количества
-                            характеристик и качества изображений.</p>
+                        <p><b>Стандартный срок обработка</b></p>
+                        <p>Время работы с файлом зависит от количества товаров. Средняя скорость добавления составляет 50–60 товаров в один рабочий день (одним контент-менеджером) и зависит от количества характеристик и качества изображений.</p>
                     </div>
                 </section>
             </div>
@@ -943,6 +941,7 @@
         let chart = null;
         let currentChartType = 'monthly';
         let availableMonths = [];
+        let isDataLoaded = false;
 
         // Основные функции модальных окон
         function openModal() {
@@ -955,11 +954,10 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Исправляем функцию openCompletedStatsModal
         function openCompletedStatsModal() {
             document.getElementById('completedStatsModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
-
+            
             // Если данные уже загружены, сразу загружаем статистику
             if (isDataLoaded) {
                 loadCompletedStats();
@@ -967,79 +965,12 @@
                 // Показываем сообщение о загрузке
                 const contentElement = document.getElementById('completedStatsContent');
                 contentElement.innerHTML = '<div class="no-completed-data">Загрузка данных... Пожалуйста, подождите.</div>';
-
+                
                 // Пытаемся загрузить данные, если они еще не загружены
                 loadPublicData().then(() => {
                     // После загрузки данных загружаем статистику
                     loadCompletedStats();
                 });
-            }
-        }
-
-        // Модифицируем функцию loadCompletedStats для проверки данных
-        async function loadCompletedStats() {
-            const contentElement = document.getElementById('completedStatsContent');
-
-            // Проверяем, есть ли данные
-            if (!isDataLoaded || Object.keys(monthlyCompletedData).length === 0) {
-                contentElement.innerHTML = '<div class="no-completed-data">Данные еще не загружены. Загружаем...</div>';
-
-                // Если данные не загружены, загружаем их
-                if (!isDataLoaded) {
-                    try {
-                        await loadPublicData();
-                        // После загрузки данных продолжаем загрузку статистики
-                        await loadCompletedStatsReal();
-                    } catch (error) {
-                        contentElement.innerHTML = `
-                    <div class="no-completed-data" style="color: var(--color-danger);">
-                        Ошибка загрузки данных. Попробуйте обновить страницу.
-                    </div>
-                `;
-                    }
-                } else {
-                    // Если флаг установлен, но данных нет, пытаемся загрузить статистику
-                    await loadCompletedStatsReal();
-                }
-            } else {
-                // Если данные есть, загружаем статистику
-                await loadCompletedStatsReal();
-            }
-        }
-
-        // Создаем отдельную функцию для загрузки статистики (чтобы избежать рекурсии)
-        async function loadCompletedStatsReal() {
-            const contentElement = document.getElementById('completedStatsContent');
-            contentElement.innerHTML = '<div class="no-completed-data">Данные загружаются…</div>';
-
-            try {
-                // ... весь существующий код из loadCompletedStats, начиная с:
-                // Определяем выбранный месяц
-                const monthSelect = document.getElementById('monthSelect');
-                // ... и до конца функции
-            } catch (error) {
-                console.error('Ошибка загрузки статистики:', error);
-                contentElement.innerHTML = `
-            <div class="no-completed-data" style="color: var(--color-danger);">
-                Ошибка загрузки данных. Попробуйте обновить страницу.
-            </div>
-        `;
-            }
-        }
-
-        // Функция для инициализации селектора месяцев
-        async function initializeMonthSelector() {
-            try {
-                // Загружаем данные для инициализации селектора
-                const [managerData, contentData] = await Promise.all([
-                    loadCompletedDataFromSheet('manager'),
-                    loadCompletedDataFromSheet('content')
-                ]);
-
-                const allData = [...managerData, ...contentData];
-                updateMonthSelector(allData);
-            } catch (error) {
-                console.error('Ошибка инициализации селектора месяцев:', error);
             }
         }
 
@@ -1204,6 +1135,7 @@
 
                 loading.style.display = 'none';
                 statsSection.style.display = 'flex';
+                isDataLoaded = true;
 
                 if (managerFilesForProcessing.length > 0 || contentFilesForProcessing.length > 0 || Object.keys(monthlyCompletedData).length > 0) {
                     warningMessage.style.display = 'block';
@@ -1217,6 +1149,7 @@
                 statsSection.style.display = 'flex';
                 errorMessage.style.display = 'block';
                 document.getElementById('errorText').textContent = `Ошибка: ${error.message}. Попробуйте обновить данные.`;
+                isDataLoaded = false;
             }
         }
 
@@ -1854,6 +1787,37 @@
         // Функции для статистики завершенных товаров
         async function loadCompletedStats() {
             const contentElement = document.getElementById('completedStatsContent');
+            
+            // Проверяем, есть ли данные
+            if (!isDataLoaded || Object.keys(monthlyCompletedData).length === 0) {
+                contentElement.innerHTML = '<div class="no-completed-data">Данные еще не загружены. Загружаем...</div>';
+                
+                // Если данные не загружены, загружаем их
+                if (!isDataLoaded) {
+                    try {
+                        await loadPublicData();
+                        // После загрузки данных загружаем статистику
+                        await loadCompletedStatsReal();
+                    } catch (error) {
+                        contentElement.innerHTML = `
+                            <div class="no-completed-data" style="color: var(--color-danger);">
+                                Ошибка загрузки данных. Попробуйте обновить страницу.
+                            </div>
+                        `;
+                    }
+                } else {
+                    // Если флаг установлен, но данных нет, пытаемся загрузить статистику
+                    await loadCompletedStatsReal();
+                }
+            } else {
+                // Если данные есть, загружаем статистику
+                await loadCompletedStatsReal();
+            }
+        }
+
+        // Создаем отдельную функцию для загрузки статистики (чтобы избежать рекурсии)
+        async function loadCompletedStatsReal() {
+            const contentElement = document.getElementById('completedStatsContent');
             contentElement.innerHTML = '<div class="no-completed-data">Данные загружаются…</div>';
 
             try {
@@ -2190,7 +2154,10 @@
 
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function () {
-            initializeMonthSelector();
+            // Инициализируем селектор месяцев пустыми данными
+            updateMonthSelector([]);
+            
+            // Загружаем основные данные
             loadPublicData();
 
             // Закрытие тултипов при клике вне их
