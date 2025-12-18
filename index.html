@@ -1882,7 +1882,7 @@
                     const filesList = group.files.map((file, fileIndex) =>
                         `<div class="file-item">
                             ${fileIndex + 1}. ${file.filename}<br>
-                            Товаров: ${file.productsCount}${file.completionDate ? ` Завершено: ${file.completionDate}` : ''}}
+                            Товаров: ${file.productsCount}${file.completionDate ? `. Завершено: ${file.completionDate}` : ''}
                         </div>`
                     ).join('');
 
