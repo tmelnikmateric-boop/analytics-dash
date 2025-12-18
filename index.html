@@ -1027,15 +1027,6 @@
             }
         }
 
-        // Также добавляем инициализацию селектора месяцев при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function () {
-            // Инициализируем селектор месяцев
-            initializeMonthSelector();
-            loadPublicData();
-
-            // ... остальной код
-        });
-
         // Функция для инициализации селектора месяцев
         async function initializeMonthSelector() {
             try {
@@ -2199,6 +2190,7 @@
 
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function () {
+            initializeMonthSelector();
             loadPublicData();
 
             // Закрытие тултипов при клике вне их
