@@ -955,17 +955,101 @@
             document.body.style.overflow = 'auto';
         }
 
+        // Исправляем функцию openCompletedStatsModal
         function openCompletedStatsModal() {
             document.getElementById('completedStatsModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
 
-            // Сначала загружаем данные, потом статистику
-            loadPublicData().then(() => {
-                // Небольшая задержка для гарантии обновления данных
-                setTimeout(() => {
+            // Если данные уже загружены, сразу загружаем статистику
+            if (isDataLoaded) {
+                loadCompletedStats();
+            } else {
+                // Показываем сообщение о загрузке
+                const contentElement = document.getElementById('completedStatsContent');
+                contentElement.innerHTML = '<div class="no-completed-data">Загрузка данных... Пожалуйста, подождите.</div>';
+
+                // Пытаемся загрузить данные, если они еще не загружены
+                loadPublicData().then(() => {
+                    // После загрузки данных загружаем статистику
                     loadCompletedStats();
-                }, 100);
-            });
+                });
+            }
+        }
+
+        // Модифицируем функцию loadCompletedStats для проверки данных
+        async function loadCompletedStats() {
+            const contentElement = document.getElementById('completedStatsContent');
+
+            // Проверяем, есть ли данные
+            if (!isDataLoaded || Object.keys(monthlyCompletedData).length === 0) {
+                contentElement.innerHTML = '<div class="no-completed-data">Данные еще не загружены. Загружаем...</div>';
+
+                // Если данные не загружены, загружаем их
+                if (!isDataLoaded) {
+                    try {
+                        await loadPublicData();
+                        // После загрузки данных продолжаем загрузку статистики
+                        await loadCompletedStatsReal();
+                    } catch (error) {
+                        contentElement.innerHTML = `
+                    <div class="no-completed-data" style="color: var(--color-danger);">
+                        Ошибка загрузки данных. Попробуйте обновить страницу.
+                    </div>
+                `;
+                    }
+                } else {
+                    // Если флаг установлен, но данных нет, пытаемся загрузить статистику
+                    await loadCompletedStatsReal();
+                }
+            } else {
+                // Если данные есть, загружаем статистику
+                await loadCompletedStatsReal();
+            }
+        }
+
+        // Создаем отдельную функцию для загрузки статистики (чтобы избежать рекурсии)
+        async function loadCompletedStatsReal() {
+            const contentElement = document.getElementById('completedStatsContent');
+            contentElement.innerHTML = '<div class="no-completed-data">Данные загружаются…</div>';
+
+            try {
+                // ... весь существующий код из loadCompletedStats, начиная с:
+                // Определяем выбранный месяц
+                const monthSelect = document.getElementById('monthSelect');
+                // ... и до конца функции
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+                contentElement.innerHTML = `
+            <div class="no-completed-data" style="color: var(--color-danger);">
+                Ошибка загрузки данных. Попробуйте обновить страницу.
+            </div>
+        `;
+            }
+        }
+
+        // Также добавляем инициализацию селектора месяцев при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function () {
+            // Инициализируем селектор месяцев
+            initializeMonthSelector();
+            loadPublicData();
+
+            // ... остальной код
+        });
+
+        // Функция для инициализации селектора месяцев
+        async function initializeMonthSelector() {
+            try {
+                // Загружаем данные для инициализации селектора
+                const [managerData, contentData] = await Promise.all([
+                    loadCompletedDataFromSheet('manager'),
+                    loadCompletedDataFromSheet('content')
+                ]);
+
+                const allData = [...managerData, ...contentData];
+                updateMonthSelector(allData);
+            } catch (error) {
+                console.error('Ошибка инициализации селектора месяцев:', error);
+            }
         }
 
         function closeCompletedStatsModal() {
