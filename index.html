@@ -601,7 +601,7 @@
         .files-tooltip {
             display: none;
             position: absolute;
-            top: 100%;
+            bottom: 0;
             left: 0;
             background: var(--color-bg-primary);
             border: 1px solid var(--color-border-dashed);
@@ -633,7 +633,7 @@
 
         .file-item {
             padding: var(--spacing-md) 0 var(--spacing-md);
-            border-bottom: 1px solid var(--color-border-dashed);
+            border-bottom: 1px dashed var(--color-border-dashed);
             word-break: break-all;
         }
 
@@ -912,7 +912,7 @@
                             Добавлено товаров по группе 3 за период:
                         </p>
                         <div class="month-selector">
-                            <select id="monthSelect" onchange="loadCompletedStats()"></select>
+                            <select id="monthSelect"></select>
                         </div>
                     </div>
 
@@ -1978,6 +1978,16 @@
             }
         }
 
+        // Функция для сохранения выбранного месяца
+        function saveSelectedMonth(value) {
+            localStorage.setItem('selectedMonthValue', value);
+        }
+
+        // Функция для получения сохраненного месяца
+        function getSavedSelectedMonth() {
+            return localStorage.getItem('selectedMonthValue');
+        }
+
         // Функция для переключения тултипа
         function toggleTooltip(tooltipId, iconElement) {
             const tooltip = document.getElementById(tooltipId);
@@ -2112,7 +2122,7 @@
             const currentYear = currentDate.getFullYear();
 
             // Добавляем текущий месяц
-            uniqueMonths.add(`${currentYear}-${currentMonth}`);
+            uniqueMonths.add(`current`);
 
             // Собираем уникальные месяцы из данных
             allData.forEach(item => {
@@ -2123,25 +2133,46 @@
 
             // Преобразуем в массив и сортируем по убыванию (сначала новые)
             const monthsArray = Array.from(uniqueMonths).sort((a, b) => {
+                if (a === 'current') return -1;
+                if (b === 'current') return 1;
+                
                 const [yearA, monthA] = a.split('-').map(Number);
                 const [yearB, monthB] = b.split('-').map(Number);
                 if (yearB !== yearA) return yearB - yearA;
                 return monthB - monthA;
             });
 
+            // Сохраняем текущее выбранное значение
+            const currentSelectedValue = monthSelect.value;
+
             // Очищаем и заполняем селектор
             monthSelect.innerHTML = '';
 
-            // Добавляем опцию "Текущий месяц"
-            monthSelect.innerHTML += `<option value="current">Текущий месяц (${getMonthName(currentMonth)} ${currentYear})</option>`;
-
-            // Добавляем остальные месяцы
+            // Добавляем опции
             monthsArray.forEach(monthKey => {
-                const [year, month] = monthKey.split('-').map(Number);
-                if (!(year === currentYear && month === currentMonth)) {
+                if (monthKey === 'current') {
+                    monthSelect.innerHTML += `<option value="current">Текущий месяц (${getMonthName(currentMonth)} ${currentYear})</option>`;
+                } else {
+                    const [year, month] = monthKey.split('-').map(Number);
                     monthSelect.innerHTML += `<option value="${monthKey}">${getMonthName(month)} ${year}</option>`;
                 }
             });
+
+            // Восстанавливаем сохраненное значение или используем текущее выбранное
+            const savedValue = getSavedSelectedMonth();
+            let valueToSelect = savedValue || currentSelectedValue;
+            
+            // Проверяем, существует ли выбранное значение в списке
+            const optionExists = Array.from(monthSelect.options).some(option => option.value === valueToSelect);
+            if (!optionExists) {
+                // Если сохраненного значения нет в списке, выбираем "текущий месяц"
+                valueToSelect = 'current';
+            }
+            
+            monthSelect.value = valueToSelect;
+            
+            // Сохраняем выбранное значение в localStorage
+            saveSelectedMonth(valueToSelect);
         }
 
         function getMonthName(monthNumber) {
@@ -2154,6 +2185,14 @@
 
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function () {
+            // Добавляем обработчик события change для сохранения выбранного месяца
+            document.getElementById('monthSelect').addEventListener('change', function(e) {
+                // Сохраняем выбранное значение
+                saveSelectedMonth(e.target.value);
+                // Загружаем статистику с новым выбранным месяцем
+                loadCompletedStats();
+            });
+            
             // Инициализируем селектор месяцев пустыми данными
             updateMonthSelector([]);
             
