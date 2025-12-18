@@ -153,7 +153,7 @@
         }
 
         a:hover {
-            text-decoration: underline;
+            text-decoration: none;
         }
 
         .accent {
@@ -299,6 +299,7 @@
 
         .indicator {
             padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-md);
             text-align: center;
             display: inline-block;
             font-size: var(--font-size-base);
@@ -582,7 +583,7 @@
         .files-count-wrapper {
             display: flex;
             align-items: center;
-            gap: var(--spacing-xs);
+            gap: var(--spacing-sm);
             position: relative;
         }
 
@@ -621,7 +622,6 @@
 
         .tooltip-title {
             font-weight: var(--font-weight-semibold);
-            margin-bottom: var(--spacing-sm);
         }
 
         .file-list {
@@ -632,8 +632,8 @@
         }
 
         .file-item {
-            padding: var(--spacing-md);
-            border-bottom: 1px dashed var(--color-border-dashed);
+            padding: var(--spacing-md) 0 var(--spacing-md);
+            border-bottom: 1px solid var(--color-border-dashed);
             word-break: break-all;
         }
 
@@ -650,6 +650,7 @@
 
         .show-more {
             border-bottom: 1px dashed var(--color-border-dashed);
+            cursor: pointer;
         }
 
         .no-completed-data {
@@ -691,7 +692,7 @@
 
             <div class="menu">
                 <button onclick="openCompletedStatsModal()" class="menu-button">
-                    <i class="fa fa-check-circle"></i> Подробнее по добавленным в группы
+                    <i class="fa fa-check-circle"></i> Подробная статистики
                 </button>
                 <button onclick="openModal()" class="menu-button">
                     <i class="fa fa-info-circle" aria-hidden="true"></i> Ознакомиться с процессом работы
@@ -904,7 +905,7 @@
             <div class="modal-content">
                 <button class="close-modal" onclick="closeCompletedStatsModal()">&times;</button>
                 <section>
-                    <h3>Подробнее по завершенным группам</h3>
+                    <h3>Подробная статистика по товаром добавленным в группы</h3>
 
                     <div class="month-block">
                         <p>
@@ -1881,7 +1882,7 @@
                     const filesList = group.files.map((file, fileIndex) =>
                         `<div class="file-item">
                             ${fileIndex + 1}. ${file.filename}<br>
-                            Товаров: ${file.productsCount}${file.completionDate ? `<br>Завершено: ${file.completionDate}` : ''} | ${file.source === 'manager' ? 'Менеджер' : 'Контент'}
+                            Товаров: ${file.productsCount}${file.completionDate ? `<br>Завершено: ${file.completionDate}` : ''}}
                         </div>`
                     ).join('');
 
@@ -1903,7 +1904,7 @@
                             <td>
                                 <div class="files-count-wrapper">
                                     ${group.filesCount}
-                                    <span class="show-more" onclick="toggleTooltip('${tooltipId}', this)">(показать)</span>
+                                    <span class="show-more" mouseover="toggleTooltip('${tooltipId}', this)">(подробнее)</span>
                                     ${tooltipHTML}
                                 </div>
                             </td>
