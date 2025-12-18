@@ -176,7 +176,14 @@
 
         table td {
             padding: var(--spacing-md);
+        }
+
+        table tr {
             border-bottom: 1px dashed var(--color-border-dashed);
+        }
+
+        table tr:last-child {
+            border-bottom: none;
         }
 
         table tr:nth-child(even) {
@@ -288,7 +295,6 @@
         .files-wrapper {
             border-radius: var(--radius-2xl);
             border: 1px dashed var(--color-border-dashed);
-            border-bottom: none;
             width: 100%;
         }
 
@@ -895,7 +901,9 @@
 
                     <div class="notice-content">
                         <p><b>Стандартный срок обработка</b></p>
-                        <p>Время работы с файлом зависит от количества товаров. Средняя скорость добавления составляет 50–60 товаров в один рабочий день (одним контент-менеджером) и зависит от количества характеристик и качества изображений.</p>
+                        <p>Время работы с файлом зависит от количества товаров. Средняя скорость добавления составляет
+                            50–60 товаров в один рабочий день (одним контент-менеджером) и зависит от количества
+                            характеристик и качества изображений.</p>
                     </div>
                 </section>
             </div>
@@ -958,7 +966,7 @@
         function openCompletedStatsModal() {
             document.getElementById('completedStatsModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
-            
+
             // Если данные уже загружены, сразу загружаем статистику
             if (isDataLoaded) {
                 loadCompletedStats();
@@ -966,7 +974,7 @@
                 // Показываем сообщение о загрузке
                 const contentElement = document.getElementById('completedStatsContent');
                 contentElement.innerHTML = '<div class="no-completed-data">Загрузка данных... Пожалуйста, подождите.</div>';
-                
+
                 // Пытаемся загрузить данные, если они еще не загружены
                 loadPublicData().then(() => {
                     // После загрузки данных загружаем статистику
@@ -1788,11 +1796,11 @@
         // Функции для статистики завершенных товаров
         async function loadCompletedStats() {
             const contentElement = document.getElementById('completedStatsContent');
-            
+
             // Проверяем, есть ли данные
             if (!isDataLoaded || Object.keys(monthlyCompletedData).length === 0) {
                 contentElement.innerHTML = '<div class="no-completed-data">Данные еще не загружены. Загружаем...</div>';
-                
+
                 // Если данные не загружены, загружаем их
                 if (!isDataLoaded) {
                     try {
@@ -2136,7 +2144,7 @@
             const monthsArray = Array.from(uniqueMonths).sort((a, b) => {
                 if (a === 'current') return -1;
                 if (b === 'current') return 1;
-                
+
                 const [yearA, monthA] = a.split('-').map(Number);
                 const [yearB, monthB] = b.split('-').map(Number);
                 if (yearB !== yearA) return yearB - yearA;
@@ -2162,16 +2170,16 @@
             // Восстанавливаем сохраненное значение или используем текущее выбранное
             const savedValue = getSavedSelectedMonth();
             let valueToSelect = savedValue || currentSelectedValue;
-            
+
             // Проверяем, существует ли выбранное значение в списке
             const optionExists = Array.from(monthSelect.options).some(option => option.value === valueToSelect);
             if (!optionExists) {
                 // Если сохраненного значения нет в списке, выбираем "текущий месяц"
                 valueToSelect = 'current';
             }
-            
+
             monthSelect.value = valueToSelect;
-            
+
             // Сохраняем выбранное значение в localStorage
             saveSelectedMonth(valueToSelect);
         }
@@ -2187,16 +2195,16 @@
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function () {
             // Добавляем обработчик события change для сохранения выбранного месяца
-            document.getElementById('monthSelect').addEventListener('change', function(e) {
+            document.getElementById('monthSelect').addEventListener('change', function (e) {
                 // Сохраняем выбранное значение
                 saveSelectedMonth(e.target.value);
                 // Загружаем статистику с новым выбранным месяцем
                 loadCompletedStats();
             });
-            
+
             // Инициализируем селектор месяцев пустыми данными
             updateMonthSelector([]);
-            
+
             // Загружаем основные данные
             loadPublicData();
 
