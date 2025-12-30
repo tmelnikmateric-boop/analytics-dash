@@ -667,10 +667,10 @@
 
             <div class="menu">
                 <button onclick="openModal()" class="menu-button">
-                    <i class="fa fa-info-circle" aria-hidden="true"></i> Процесс работы
+                    <i class="fa fa-info-circle" aria-hidden="true"></i> Рабочий процесс
                 </button>
                 <button onclick="openCompletedStatsModal()" class="menu-button">
-                    <i class="fa fa-check-circle"></i> Подробная статистика
+                    <i class="fa fa-check-circle"></i> Детальная статистика
                 </button>
                 <button onclick="loadPublicData()" class="menu-button">
                     <i class="fa fa-sync-alt"></i> Обновить данные
@@ -718,7 +718,7 @@
                 </section>
                 <section>
                     <h2>Загрузка товаров от менеджера</h2>
-                    <p>Ассортимент от менеджеров загружается на сайты в первую очердь.</p>
+                    <p>Ассортимент от менеджеров загружается на сайты в первую очередь.</p>
                     <div class="files-wrapper">
                         <table>
                             <thead>
@@ -739,7 +739,7 @@
                 </section>
                 <section>
                     <h2>Загрузка товаров от контент-отдела</h2>
-                    <p>Ассортимент загружается контент-отделом при отсутвии товаров от менеджеров.</p>
+                    <p>Ассортимент загружается контент-отделом при отсутствии товаров от менеджеров.</p>
                     <div class="files-wrapper">
                         <table>
                             <thead>
@@ -802,7 +802,7 @@
 
         <footer>
             <div class="footer-info">
-                Тестовая версия 0.5. Разработано отделом эл. коммерции.
+                Тестовая версия 0.5. Разработано отделом электронной коммерции.
                 Последнее обновление данных: <span id="lastUpdateTime">загружается</span>.
             </div>
         </footer>
@@ -882,7 +882,7 @@
             <div class="modal-content">
                 <button class="close-modal" onclick="closeCompletedStatsModal()">&times;</button>
                 <section>
-                    <h3>Подробная статистика по товаром добавленным в группы</h3>
+                    <h3>Подробная статистика по товарам, добавленным в группы</h3>
 
                     <div class="month-block">
                         <p>
@@ -1506,12 +1506,12 @@
 
             if (managerFilesForProcessing.length === 0) {
                 tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="files-none">
-                            Нет файлов для обработки менеджеров
-                        </td>
-                    </tr>
-                `;
+            <tr>
+                <td colspan="8" class="files-none">
+                    Нет файлов для обработки менеджеров
+                </td>
+            </tr>
+        `;
                 return;
             }
 
@@ -1523,17 +1523,22 @@
                 const daysText = file.daysToAdd > 0 ? `${file.daysToAdd} дн.` : '0 дн.';
                 const completionDate = calculateCompletionDate(file.additionDate, file.daysToAdd);
 
+                // Формируем название с группой и файлом
+                const displayName = file.group3 ?
+                    `<div class="file-name">${file.group3}</div><small>${file.filename}</small>` :
+                    `<small>${file.filename}</small>`;
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><span class="file-name">${file.filename}</span></td>
-                    <td>${file.productsCount}</td>
-                    <td>${file.additionDate}</td>
-                    <td>${file.managerAdditionDate}</td>
-                    <td><span class="indicator ${statusClass}">${statusText}</span></td>
-                    <td><span class="indicator ${file.daysClass}">${daysText}</span></td>
-                    <td>${completionDate}</td>
-                    <td><span class="indicator ${urgencyClass}">${urgencyText}</span></td>
-                `;
+            <td>${displayName}</td>
+            <td>${file.productsCount}</td>
+            <td>${file.additionDate}</td>
+            <td>${file.managerAdditionDate}</td>
+            <td><span class="indicator ${statusClass}">${statusText}</span></td>
+            <td><span class="indicator ${file.daysClass}">${daysText}</span></td>
+            <td>${completionDate}</td>
+            <td><span class="indicator ${urgencyClass}">${urgencyText}</span></td>
+        `;
                 tableBody.appendChild(row);
             });
         }
@@ -1544,12 +1549,12 @@
 
             if (contentFilesForProcessing.length === 0) {
                 tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="files-none">
-                            Нет файлов для обработки контента
-                        </td>
-                    </tr>
-                `;
+            <tr>
+                <td colspan="7" class="files-none">
+                    Нет файлов для обработки контента
+                </td>
+            </tr>
+        `;
                 return;
             }
 
@@ -1561,16 +1566,21 @@
                 const daysText = file.daysToAdd > 0 ? `${file.daysToAdd} дн.` : '0 дн.';
                 const completionDate = calculateCompletionDate(file.additionDate, file.daysToAdd);
 
+                // Формируем название с группой и файлом
+                const displayName = file.group3 ?
+                    `<div class="file-name">${file.group3}</div><small>${file.filename}</small>` :
+                    `<small>${file.filename}</small>`;
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td><span class="file-name">${file.filename}</span></td>
-                    <td>${file.productsCount}</td>
-                    <td>${file.additionDate}</td>
-                    <td><span class="indicator ${statusClass}">${statusText}</span></td>
-                    <td><span class="indicator ${file.daysClass}">${daysText}</span></td>
-                    <td>${completionDate}</td>
-                    <td><span class="indicator ${urgencyClass}">${urgencyText}</span></td>
-                `;
+            <td>${displayName}</td>
+            <td>${file.productsCount}</td>
+            <td>${file.additionDate}</td>
+            <td><span class="indicator ${statusClass}">${statusText}</span></td>
+            <td><span class="indicator ${file.daysClass}">${daysText}</span></td>
+            <td>${completionDate}</td>
+            <td><span class="indicator ${urgencyClass}">${urgencyText}</span></td>
+        `;
                 tableBody.appendChild(row);
             });
         }
@@ -1896,7 +1906,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th valign="top" width="90%">Группа / Файл</th>
+                                    <th valign="top" width="90%">Группа / Количество файлов</th>
                                     <th valign="top" width="10%">Товаров</th>
                                 </tr>
                             </thead>
@@ -1926,7 +1936,7 @@
                     html += `
                         <tr>
                             <td>
-                                <span class="file-name">${group.name}</span>
+                                <div class="file-name">${group.name}</div>
                                 <div class="files-count-wrapper" onclick="toggleTooltip('${tooltipId}', this)">
                                     <small class="show-more">Файлов: ${group.filesCount}</small>
                                     ${tooltipHTML}
