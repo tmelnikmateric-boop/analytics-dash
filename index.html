@@ -22,8 +22,7 @@
             --color-tertiary: #666;
             --color-white: #fff;
             --color-dark: #1e293b;
-            --color-border-dashed: #ccc;
-            --color-border-primary: #0369a1;
+            --color-border-table: #ccc;
             --color-status-completed-bg: #d4edda;
             --color-neutral-dark: #999;
             --color-neutral-light: rgba(255, 255, 255, 0.2);
@@ -50,8 +49,6 @@
             --spacing-3xl: 40px;
             --spacing-4xl: 60px;
             --chart-height: 400px;
-            --timeline-step-marker-size: 36px;
-            --step-number-size: 28px;
             --modal-close-btn-size: 40px;
         }
 
@@ -170,7 +167,7 @@
             background: var(--color-bg-tertiary);
             padding: var(--spacing-md);
             font-weight: normal;
-            border-bottom: 1px dashed var(--color-border-dashed);
+            border-bottom: 1px solid var(--color-border-table);
             text-align: left;
         }
 
@@ -179,7 +176,7 @@
         }
 
         table tr {
-            border-bottom: 1px dashed var(--color-border-dashed);
+            border-bottom: 1px solid var(--color-border-table);
         }
 
         table tr:last-child {
@@ -258,7 +255,7 @@
             padding: var(--spacing-2xl);
             background: var(--color-bg-tertiary);
             border-radius: var(--radius-2xl);
-            border: 1px dashed var(--color-border-dashed);
+            border: 1px solid var(--color-border-table);
             text-align: center;
             flex: 1;
             min-height: 180px;
@@ -293,8 +290,7 @@
         }
 
         .files-wrapper {
-            border-radius: var(--radius-2xl);
-            border: 1px dashed var(--color-border-dashed);
+            border: 1px solid var(--color-border-table);
             width: 100%;
         }
 
@@ -435,7 +431,7 @@
             gap: var(--spacing-md);
             background: var(--color-bg-tertiary);
             border-radius: var(--radius-2xl);
-            border: 1px dashed var(--color-border-dashed);
+            border: 1px solid var(--color-border-table);
             text-align: center;
             padding: var(--spacing-lg);
             width: 25%;
@@ -530,37 +526,6 @@
             margin: var(--spacing-2xl) 0;
         }
 
-        .timeline-step {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
-            padding: var(--spacing-xl);
-            background: var(--color-bg-tertiary);
-            border-radius: var(--radius-2xl);
-            border: 1px dashed var(--color-border-dashed);
-            text-align: center;
-            align-items: center;
-            width: 25%;
-        }
-
-        .timeline-step-marker {
-            background: var(--color-primary);
-            color: var(--color-white);
-            font-size: var(--font-size-lg);
-            font-weight: var(--font-weight-semibold);
-            width: var(--timeline-step-marker-size);
-            height: var(--timeline-step-marker-size);
-            border-radius: var(--radius-circle);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .timeline-desc {
-            color: var(--color-secondary);
-        }
-
         .notice-content {
             display: flex;
             flex-direction: column;
@@ -582,8 +547,7 @@
             justify-content: space-between;
             align-items: center;
             padding: var(--spacing-lg);
-            border-radius: var(--radius-2xl);
-            border: 1px dashed var(--color-border-dashed);
+            border: 1px solid var(--color-border-table);
             background: var(--color-bg-tertiary);
         }
 
@@ -592,6 +556,7 @@
             align-items: center;
             gap: var(--spacing-sm);
             position: relative;
+            width: fit-content;
         }
 
         .info-icon {
@@ -609,16 +574,16 @@
             display: none;
             position: absolute;
             bottom: 0;
-            left: 0;
+            right: 0;
             background: var(--color-bg-primary);
-            border: 1px solid var(--color-border-dashed);
+            border: 1px solid var(--color-border-table);
             border-radius: var(--radius-base);
             padding: var(--spacing-md);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             z-index: 1000;
-            min-width: 300px;
+            min-width: 450px;
             max-width: 500px;
-            max-height: 300px;
+            height: fit-content;
             overflow-y: auto;
             font-size: var(--font-size-sm);
         }
@@ -629,18 +594,19 @@
 
         .tooltip-title {
             font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-sm);
         }
 
         .file-list {
             display: flex;
             flex-direction: column;
             gap: var(--spacing-xs);
-            width: 450px;
+            width: 100%;
         }
 
         .file-item {
-            padding: var(--spacing-md) 0 var(--spacing-md);
-            border-bottom: 1px dashed var(--color-border-dashed);
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--color-border-table);
             word-break: break-all;
         }
 
@@ -656,8 +622,10 @@
         }
 
         .show-more {
-            border-bottom: 1px dashed var(--color-border-primary);
+            color: #0369a1;
             cursor: pointer;
+            border-bottom: 1px dashed rgba(3, 105, 161, .5);
+            display: inline-block;
         }
 
         .no-completed-data {
@@ -682,7 +650,7 @@
         .month-selector select {
             padding: var(--spacing-sm);
             border-radius: var(--radius-base);
-            border: 1px solid var(--color-border-dashed);
+            border: 1px solid var(--color-border-table);
             background: var(--color-bg-primary);
             font-size: var(--font-size-base);
             min-width: 200px;
@@ -729,21 +697,21 @@
                         <div class="summary-item summary-card-new-km">
                             <div class="summary-number" id="managerProductsToAdd">0</div>
                             <div class="summary-label">
-                                Количество новых товаров в работе на добавление, запрошенных менеджерами
+                                Количество новых товаров в процессе добавления, запрошенных менеджерами.
                             </div>
                         </div>
 
                         <div class="summary-item summary-card-new-cm">
                             <div class="summary-number" id="contentProductsToAdd">0</div>
                             <div class="summary-label">
-                                Количество новых товаров в работе на добавление от отдела контента
+                                Количество новых товаров в работе по добавлению со стороны контент-отдела.
                             </div>
                         </div>
 
                         <div class="summary-item summary-card-done">
                             <div class="summary-number" id="productsAddedThisMonth">0</div>
                             <div class="summary-label">
-                                Всего добавлено товаров в текущем месяце
+                                Общее количество товаров, добавленных за текущий месяц.
                             </div>
                         </div>
                     </div>
@@ -755,7 +723,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th valign="top">Файл</th>
+                                    <th valign="top">Группа / Файл</th>
                                     <th valign="top" width="10%">Товаров</th>
                                     <th valign="top" width="12%">Начало работы</th>
                                     <th valign="top" width="10%">Поступление</th>
@@ -770,13 +738,13 @@
                     </div>
                 </section>
                 <section>
-                    <h2>Загрузка товаров от отдела контента</h2>
-                    <p>Ассортимент загружается отделом контента при отсутвии товаров от менеджеров.</p>
+                    <h2>Загрузка товаров от контент-отдела</h2>
+                    <p>Ассортимент загружается контент-отделом при отсутвии товаров от менеджеров.</p>
                     <div class="files-wrapper">
                         <table>
                             <thead>
                                 <tr>
-                                    <th valign="top">Файл</th>
+                                    <th valign="top">Группа / Файл</th>
                                     <th valign="top" width="10%">Товаров</th>
                                     <th valign="top" width="12%">Начало работы</th>
                                     <th valign="top" width="10%">Статус</th>
@@ -843,48 +811,17 @@
             <div class="modal-content">
                 <button class="close-modal" onclick="closeModal()">&times;</button>
                 <section>
-                    <!--
-                    <h3>Инструкция по сотрудничеству отдела контента и коммерческого отдела</h3>
-                    <div class="timeline-container">
-                        <div class="timeline-step">
-                            <div class="timeline-step-marker">1</div>
-                            <h4>Подготовка</h4>
-                            <p class="timeline-desc">Менеджер формирует шаблон для добавления товаров со своего
-                                файла из папки «КАМ_работаем_здесь»</p>
-                        </div>
-                        <div class="timeline-step">
-                            <div class="timeline-step-marker">2</div>
-                            <h4>Сбор данных</h4>
-                            <p class="timeline-desc">Менеджером запрашивается информация о товарах и фото у поставщика
-                            </p>
-                        </div>
-                        <div class="timeline-step">
-                            <div class="timeline-step-marker">3</div>
-                            <h4>Передача</h4>
-                            <p class="timeline-desc">Менеджер <a class="show-more"
-                                    href="mailto:content@palas.by">передает</a>
-                                подготовленный материал в отдел контента</p>
-                        </div>
-                        <div class="timeline-step">
-                            <div class="timeline-step-marker">4</div>
-                            <h4>Обработка</h4>
-                            <p class="timeline-desc">Срок размещения материала зависит от кол-ва и качества данных.</p>
-                        </div>
-                    </div>
-                    -->
-                </section>
-                <section>
                     <h3>Добавление товаров в открытые на сайтах товарные группы</h3>
                     <div class="notice-content">
-                        <p><b>Основной процесс (инициатива отдела контента)</b></p>
-                        <p>Товары на сайте размещает отдел контента. В его обязанности входит: найти необходимую
+                        <p><b>Основной процесс (инициатива контент-отдела)</b></p>
+                        <p>Товары на сайте размещает контент-отделом. В его обязанности входит: найти необходимую
                             и
                             достоверную информацию о товаре (характеристики и фото), качественно ее обработать
                             и загрузить
                             на сайты.</p>
-                        <p>При отсутствии заявок от менеджеров отдел контента самостоятельно добавляет новые товары в
-                            открытые товарные группы, которые отображаются в разделе <b>«Загрузка товаров отделом
-                                контента»</b>. В
+                        <p>При отсутствии заявок от менеджеров контент-отдел самостоятельно добавляет новые товары в
+                            открытые товарные группы, которые отображаются в разделе <b>«Загрузка товаров
+                                контент-отделом»</b>. В
                             качестве источника информации используются файлы из папки
                             «КАМ_работаем_здесь». Приоритетность добавления может согласовываться дополнительно.</p>
                     </div>
@@ -892,28 +829,29 @@
                         <p><b>Процесс работы по запросу менеджера</b></p>
                         <p>Чтобы добавить <i>приоритетные</i> товары в открытые товарные группы, <i>менеджеру
                                 необходимо</i> <a class="show-more" href="mailto:content@palas.by">отправить заявку</a>
-                            в отдел контента.
+                            в контент-отдел.
                         </p>
                         <p>Обязательная информация в заявке:</p>
                         <ul>
                             <li>Название товарной группы.</li>
                             <li>Список товаров для добавления (можно указать всю группу, бренд или производителя —
                                 т.е. информацию, достаточную
-                                для однозначной идентификации товаров).</li>
+                                для однозначной идентификации товаров контент-редактором).</li>
                         </ul>
                         <p>Заявки на сезонный ассортимент лучше подавать заранее.</p>
                     </div>
                     <div class="notice-content">
                         <p><b>Контроль и обучение</b></p>
                         <ul>
-                            <li>Все поступившие заявки от менеджеров обрабатываются в порядке очереди и имеют высший приоритет. Актуальный статус, очередь и
+                            <li>Все поступившие заявки от менеджеров обрабатываются в порядке очереди и имеют высший
+                                приоритет. Актуальный статус, очередь и
                                 планируемые сроки выполнения отображаются в разделе <b>«Загрузка товаров от
                                     менеджера»</b>.
                             </li>
                             <li>Менеджер по своему желанию может ознакомиться с результатами работы
                                 по заявке на сайтах после ее завершения. О готовности контент-редактор
                                 сообщит, выслав ссылки для контроля, ответив на исходное письмо с заявкой.</li>
-                            <li>По запросу менеджера отдел контента готов провести обучение по работе с товарными
+                            <li>По запросу менеджера контент-отдел готов провести обучение по работе с товарными
                                 файлами. Это позволит менеджеру самостоятельно контролировать свойства товаров,
                                 фильтры,
                                 качество фотографий и выполнять выгрузку.</li>
@@ -925,7 +863,7 @@
                         </p>
                         <ul>
                             <li>Ссылки на сайты-источники (реферальные сайты) с описаниями и фото.</li>
-                            <li>Контакты поставщика, у которого отдел контента может запросить информацию.</li>
+                            <li>Контакты поставщика, у которого контент-отдел может запросить информацию.</li>
                             <li>Также менеджер может запросить у контент-редактора шаблон файла для
                                 самостоятельного заполнения или для
                                 отправки поставщику.</li>
@@ -1176,11 +1114,13 @@
                 statsSection.style.display = 'flex';
                 isDataLoaded = true;
 
+                /*
                 if (managerFilesForProcessing.length > 0 || contentFilesForProcessing.length > 0 || Object.keys(monthlyCompletedData).length > 0) {
                     warningMessage.style.display = 'block';
                     warningMessage.textContent = 'Данные успешно загружены.';
                     setTimeout(() => warningMessage.style.display = 'none', 3000);
                 }
+                */
 
             } catch (error) {
                 console.error('Ошибка загрузки:', error);
@@ -1956,9 +1896,8 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th valign="top" width="50%">Группа 3</th>
-                                    <th valign="top" width="25%">Товаров</th>
-                                    <th valign="top" width="25%">Файлов</th>
+                                    <th valign="top" width="90%">Группа / Файл</th>
+                                    <th valign="top" width="10%">Товаров</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1986,15 +1925,14 @@
 
                     html += `
                         <tr>
-                            <td><span class="file-name">${group.name}</span></td>
-                            <td>${group.totalProducts.toLocaleString('ru-RU')}</td>
                             <td>
-                                <div class="files-count-wrapper">
-                                    ${group.filesCount}
-                                    <span class="show-more" onclick="toggleTooltip('${tooltipId}', this)">подробнее</span>
+                                <span class="file-name">${group.name}</span>
+                                <div class="files-count-wrapper" onclick="toggleTooltip('${tooltipId}', this)">
+                                    <small class="show-more">Файлов: ${group.filesCount}</small>
                                     ${tooltipHTML}
                                 </div>
                             </td>
+                            <td>${group.totalProducts.toLocaleString('ru-RU')}</td>
                         </tr>
                     `;
                 });
@@ -2048,12 +1986,12 @@
 
                 // Проверяем, помещается ли тултип справа
                 if (rect.right + tooltip.offsetWidth <= modalRect.right) {
-                    tooltip.style.left = '0';
-                    tooltip.style.right = 'auto';
-                } else {
-                    // Если не помещается справа, показываем слева
+                    // Если не помещается слева, показываем справа
                     tooltip.style.left = 'auto';
                     tooltip.style.right = '0';
+                } else {
+                    tooltip.style.left = '0';
+                    tooltip.style.right = 'auto';
                 }
             }
         }
